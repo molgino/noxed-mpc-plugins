@@ -3,11 +3,14 @@
 Zwei eigenständige Instrumente für Akai MPC Standalone, gebaut mit dem
 [inMusic MPC Plugin Builder SDK](https://github.com/inmusic-software/mpc-plugin-builder-sdk).
 
-**Acidline 0.1.1 · Prism Wave 0.1.0.** Die Grundversionen wurden vom Auftraggeber auf seiner MPC ausprobiert. Acidlines neuer silberner Skin ist am Computer validiert; die Bedienung des neuen Skins auf der MPC steht noch aus.
+**Acidline 0.1.1 · Prism Wave 0.1.1.** Die Grundversionen wurden vom Auftraggeber auf seiner MPC ausprobiert. Die neuen Skins (Acidline silbern, Prism Wave dunkel) sind am Computer validiert; die Bedienung auf der MPC steht noch aus.
 
 ![Acidline 0.1.1 – silbernes Bass-Line-Panel](docs/screenshots/acidline-bassline.png)
 
-Vorschau aus den echten Skin-Dateien und Reglergrafiken, kein Foto vom MPC-Bildschirm.
+![Prism Wave 0.1.1 – Oszillatorseite mit Wavetable-Anzeigen](docs/screenshots/prism-wave-osc.png)
+
+Vorschauen aus den echten Skin-Dateien und Reglergrafiken, kein Foto vom MPC-Bildschirm.
+Weitere Prism-Wave-Seiten: [Filter/FX](docs/screenshots/prism-wave-filter.png) · [Envelopes](docs/screenshots/prism-wave-env.png) · [LFOs](docs/screenshots/prism-wave-lfo.png) · [Matrix](docs/screenshots/prism-wave-matrix.png).
 
 ## Instrumente
 
@@ -23,7 +26,7 @@ Prism Wave hat keinen Serum-Presetimport, Sample-/Granular-Modus, MPE oder grafi
 ## Download und Installation
 
 Die fertigen Pakete und Hörbeispiele stehen unter **[Releases](../../releases)**.
-Das aktuelle kombinierte Paket heißt `NOXED-MPC-Plugins-0.1.1.zip` und enthält Acidline 0.1.1 sowie Prism Wave 0.1.0.
+Das aktuelle kombinierte Paket heißt `NOXED-MPC-Plugins-0.1.1.zip` und enthält Acidline 0.1.1 sowie Prism Wave 0.1.0. Prism Wave 0.1.1 (neuer Skin) liegt bisher nur als Quellcode vor; die ARM-Binaries dafür müssen noch gebaut werden.
 
 1. ZIP am Computer entpacken.
 2. Den enthaltenen Ordner `VST2 Plugins` ins Stammverzeichnis eines MPC-Datenträgers kopieren.
@@ -32,7 +35,7 @@ Das aktuelle kombinierte Paket heißt `NOXED-MPC-Plugins-0.1.1.zip` und enthält
    **Enable Enhancements** und **External Plugin Support** einschalten.
 4. Bei Bedarf MPC neu starten und das Instrument unter **External Plugins** auswählen.
 
-**Acidline-Update:** Den bisherigen Ordner `NOXED - VST - Acidline` durch 0.1.1 ersetzen und die MPC neu starten, damit der neue Skin geladen wird. Klang, Plugin-ID, Parameterzuordnung und Presets bleiben erhalten. Details im [Changelog](CHANGELOG.md).
+**Updates:** Den bisherigen Ordner `NOXED - VST - Acidline` bzw. `NOXED - VST - Prism Wave` durch 0.1.1 ersetzen und die MPC neu starten, damit der neue Skin geladen wird. Klang, Plugin-ID, Parameterzuordnung und Presets bleiben erhalten. Details im [Changelog](CHANGELOG.md).
 
 ARM32- und ARM64-Binaries liegen bei; die MPC Live III verwendet ARM64.
 Die Release-Binaries benötigen glibc ≥ 2.38; laut SDK verwendet MPC OS 3 glibc 2.39.
@@ -65,6 +68,7 @@ Details: [Prism-Wave-Anleitung](plugins/Prism%20Wave/README.md) ·
 - ARM32/ARM64-Paketvalidator: keine Fehler; je zwei Kompatibilitätshinweise zu glibc ≥ 2.38.
 
 [Testzusammenfassung](tests/reports/summary.json) und vollständige Logs liegen bei.
+Der [Skin-Testbericht für Prism Wave 0.1.1](tests/reports/prism-wave-0.1.1-skin-checks.txt) belegt Skin-Prüfung, 19 bestandene Hostprüfungen und bytegleiches Audio.
 Der [Skin-Testbericht für Acidline 0.1.1](tests/reports/acidline-0.1.1-skin-checks.txt)
 prüft alle 16 Parameterbindungen, Q-Link-Gruppen, PNG-Abmessungen und unveränderten Klang:
 die gerenderte Audiodatei ist bytegleich mit der 0.1.0-Referenz.

@@ -80,7 +80,7 @@ public:
     i.name = "Prism Wave";
     i.vendor = "NOXED";
     i.uniqueId = MPC_FOURCC('N', 'H', 's', 'C');
-    i.version = 100;
+    i.version = 101;
     i.isInstrument = true;
     i.numInputs = 0;
     return i;
