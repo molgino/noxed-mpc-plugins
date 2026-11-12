@@ -1,0 +1,2 @@
+Generated original silver-panel skin: 2 pages, 16 parameters, 127-frame knobs, working waveform/slide switches.
+Artwork and previews: <workspace>\work\github-publish\plugins\Acidline\skins <workspace>\outputs

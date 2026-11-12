@@ -1,4 +1,4 @@
-# NOXED 0.1.0 source projects
+# NOXED source projects
 
 Original SDK revision: febd2ca (2026-11-07). NOXED changes are in plugins/Acidline,
 plugins/Prism Wave, tests/noxed_audio.cpp and tools/build_noxed_windows.py.

@@ -1,7 +1,7 @@
 {
   "name": "Acidline",
   "manufacturer": "NOXED",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "format": "vst2",
   "kind": "instrument",
   "uid": "Ncep",
@@ -12,6 +12,6 @@
   "file64": "VST/acidline-arm64.so",
   "description": "Monophonic acid bass with a nonlinear three-pole resonant filter, velocity accent and legato slide. Original NOXED design.",
   "author": "NOXED",
-  "url": "https://github.com/inmusic-software/mpc-plugin-builder-sdk",
+  "url": "https://github.com/molgino/noxed-mpc-plugins",
   "license": "MIT"
 }

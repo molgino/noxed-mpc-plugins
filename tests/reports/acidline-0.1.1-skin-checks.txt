@@ -1,0 +1,7 @@
+PASS all 16 existing parameters are reachable through bound controls
+PASS custom component references preserve the SDK version/handle shape
+PASS filmstrip dimensions match knob bounds and button PNGs match their native bounds
+PASS every visible control has a Q-Link mapping on its page
+PASS overlay duplicate version keys remain intact
+PASS DSP source differs only in plugin version metadata; identity and parameter order preserved
+PASS rendered WAV is byte-identical to the 0.1.0 audio reference

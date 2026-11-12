@@ -1,9 +1,9 @@
-NOXED MPC Instruments 0.1.0 — Acidline und Prism Wave
+NOXED MPC Instruments — Acidline 0.1.1 / Prism Wave 0.1.0 — Acidline und Prism Wave
 Erstellt am 12. November 2026
 
 INSTALLATION AUF DEINER MPC LIVE III
 
-1. NOXED-MPC-Plugins-0.1.0.zip vollständig am Computer entpacken.
+1. NOXED-MPC-Plugins-0.1.1.zip vollständig am Computer entpacken.
 2. Den enthaltenen Ordner "VST2 Plugins" ins Stammverzeichnis deiner SD-Karte,
    deines USB-Datenträgers oder des internen Laufwerks kopieren.
    Existiert dort bereits VST2 Plugins, nur die beiden NOXED-Unterordner ergänzen.
@@ -23,7 +23,15 @@ Slide und Drive. Kein originalgetreues Schaltungsmodell und kein interner
 303-Sequencer: Verwende den MPC-Sequencer.
 Accent: Velocity mindestens 100 (über Accent Vel änderbar).
 Slide: MIDI-Noten überlappen lassen und Legato Slide einschalten.
-Bedienseiten: ACID und SETUP.
+Bedienseiten: BASSLINE und SETUP.
+Neuer silberner Hardware-Skin mit sechs klassischen Tone-Reglern, schwarzen
+Drehknoepfen und Waveform-/Legato-Tastern. Die Klangerzeugung ist unveraendert.
+Release liegt jetzt auf der Hauptseite; Pulse Width, Accent Velocity, Key Track
+und Bend Range auf SETUP.
+
+UPDATE: Den bisherigen Ordner NOXED - VST - Acidline durch Version 0.1.1
+ersetzen und danach die MPC NEU STARTEN, damit der Skin neu geladen wird.
+Plugin-ID, Parameter und Presets bleiben zugeordnet.
 
 PRISM WAVE
 
@@ -77,7 +85,8 @@ validiert. Validator: 0 Fehler und je 2 Hinweise auf GLIBC >=2.38; ältere
 Firmware mit glibc 2.36 ist nicht kompatibel. Laut SDK verwendet MPC OS 3
 glibc 2.39. Verwendet wurden Arm GNU 15.2 und LLVM-MinGW für die Computertests.
 
-Noch NICHT auf echter MPC getestet: CPU, Ladezeit, Touch/Q-Link-Bedienung und
+Die Grundversion 0.1.0 wurde vom Auftraggeber auf der MPC ausprobiert.
+Der NEUE SKIN 0.1.1 ist noch NICHT auf echter MPC getestet: CPU, Ladezeit, Touch/Q-Link-Bedienung und
 Projektwiederherstellung müssen auf deinem Gerät geprüft werden. Desktop-
 Zeitmessungen sind keine MPC-CPU-Messung. Bei hoher Last Unison reduzieren.
 Plugins laufen ohne Crashschutz in der MPC-Anwendung: vor dem Test speichern.
@@ -91,8 +100,8 @@ Plugin-Lautstärke richtet sich nach Master, Preset und Anzahl der Stimmen.
 
 DATEIEN
 
-NOXED-MPC-Plugins-0.1.0.zip: beide installierbaren Plugin-Ordner, Importwerkzeuge,
+NOXED-MPC-Plugins-0.1.1.zip: beide installierbaren Plugin-Ordner, Importwerkzeuge,
 Readmes, Anleitung, Lizenzen und Testbericht.
-NOXED-MPC-Quellcode-0.1.0.zip: vollständige Projekte samt SDK und Tests, ohne
+NOXED-MPC-Quellcode-0.1.1.zip: vollständige Projekte samt SDK und Tests, ohne
 Compilerpakete oder private Daten. Originaler NOXED-Code/Demotabelle: MIT.
 Das Paket ist eigenständig und nicht von Roland oder Xfer freigegeben.

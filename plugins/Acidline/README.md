@@ -1,4 +1,4 @@
-# NOXED Acidline 0.1.0
+# NOXED Acidline 0.1.1
 
 Monophoner Acid-Synth fuer Akai MPC Standalone. Eigenstaendige TB-303-inspirierte Klangerzeugung; keine originalgetreue Schaltungsemulation, keine Roland-Software oder Original-Samples.
 
@@ -11,9 +11,13 @@ Monophoner Acid-Synth fuer Akai MPC Standalone. Eigenstaendige TB-303-inspiriert
 
 ## Bedienung
 
-**ACID:** Cutoff, Resonance, Env Amount, Decay, Accent, Slide Time, Drive, Tune, Master, Waveform (Saw/Square), Legato Slide.
+**BASSLINE:** Silbernes Hardware-Panel mit sechs klassischen Tone-Reglern: Tuning, Cut Off Freq, Resonance, Env Mod, Decay, Accent. Darunter Volume, Drive, Slide Time, Release sowie Waveform-Tasten (Saw/Square) und ein Legato-Schalter mit Status-LED. Regler und Wertfelder reagieren auf Touch und Q-Links; Doppeltippen oeffnet den grossen Werteditor.
 
-**SETUP:** Pulse Width, Accent Vel, Release, Key Track, Bend Range.
+**SETUP:** Pulse Width, Accent Velocity, Key Track, Bend Range. Release ist jetzt direkt auf der Hauptseite erreichbar.
+
+Seit 0.1.1: eigene silberne Panelgrafik, geriffelte schwarze Filmstrip-Knoepfe, elfenbeinfarbene Taster und orange Akzente. Alle Grafiken sind neu gezeichnet; keine Herstellerbilder. Auf der Hauptseite steuert die erste Q-Link-Gruppe Tuning/Cutoff/Resonance/Env Mod, die zweite Decay/Accent/Waveform/Legato und die dritte Volume/Drive/Slide/Release. Klang, Presets, Parameterreihenfolge und Plugin-ID sind gegenueber 0.1.0 unveraendert, bestehende Projekte bleiben zugeordnet.
+
+Die normalen Builds kopieren **skins/**; ui.json bleibt nur als einfacher Alternativentwurf erhalten. Zur Grafikregeneration: `python tools/make_acidline_skin.py --params plugins/Acidline/build/params.json` (Pillow erforderlich). Die Vorschau wird aus dem erzeugten TUI-Komponentenbaum und denselben PNGs gerendert; sie ist kein Screenshot vom Geraet.
 
 Signalweg: PolyBLEP-Oszillator -> nichtlinearer resonanter Dreipol-Tiefpass (2x Abtastrate) -> VCA/Accent -> Drive/DC-Filter -> Master. Sechs eingebaute Presets: NOXED Acid, Rubber Square, Warehouse, Clean Sub, Sharp Screamer, Liquid.
 
@@ -23,7 +27,11 @@ MPC OS **3.10.1 oder neuer**. Ordner **NOXED - VST - Acidline** unveraendert nac
 
 ## Stand und Grenzen
 
-Version 0.1.0 ist eine erste Implementierung. Host-Simulator- und Funktionstests werden im mitgelieferten Testbericht ausgewiesen. Klangtreue zur TB-303, Hardware-CPU und Funktion auf der echten MPC sind noch nicht verifiziert. Hohe Resonanz ist absichtlich markant. Erst mit niedrigem Pegel auf der MPC testen; ein Pluginfehler kann die MPC-Anwendung beenden. Projekt speichern und neu laden, bevor du das Instrument produktiv nutzt.
+Die urspruengliche Version 0.1.0 wurde vom Auftraggeber auf seiner MPC ausprobiert. Der neue Skin 0.1.1 ist am Computer validiert; die Touch-/Q-Link-Bedienung muss noch auf der MPC geprueft werden. Host-Simulator- und Funktionstests werden im Testbericht ausgewiesen. Klangtreue zur TB-303 und Hardware-CPU sind nicht vermessen. Hohe Resonanz ist absichtlich markant. Erst mit niedrigem Pegel auf der MPC testen; ein Pluginfehler kann die MPC-Anwendung beenden. Projekt speichern und neu laden, bevor du das Instrument produktiv nutzt.
+
+## Update von 0.1.0
+
+Den Ordner **NOXED - VST - Acidline** durch die neue Version ersetzen. Danach die MPC neu starten, damit die geaenderten Skins neu geladen werden. Kein neuer Plugin-Name und keine neue ID; alte Projekte verwenden weiterhin Acidline. MPC OS 3.10.1+ und Enable Enhancements / External Plugin Support muessen aktiviert bleiben.
 
 ## Quellcode und Lizenz
 

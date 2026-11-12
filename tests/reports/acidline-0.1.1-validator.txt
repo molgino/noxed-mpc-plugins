@@ -1,0 +1,29 @@
+Validating <workspace>\work\github-publish\plugins\Acidline\build\NOXED - VST - Acidline
+OK     plugin.json: Acidline by NOXED (instrument, uid Ncep)
+OK     folder name "NOXED - VST - Acidline"
+OK     file32: acidline-arm32.so is a 32-bit ARM shared object
+OK     file32: needed libraries: libm.so.6, libc.so.6, ld-linux-armhf.so.3
+WARN   file32: requires GLIBC_2.38; older MPC firmware (glibc 2.36) will not load it
+OK     file32: exports VSTPluginMain
+OK     file64: acidline-arm64.so is a 64-bit AArch64 shared object
+OK     file64: needed libraries: libm.so.6, libc.so.6
+WARN   file64: requires GLIBC_2.38; older MPC firmware (glibc 2.36) will not load it
+OK     file64: exports VSTPluginMain
+OK     uid matches the binary (Ncep)
+OK     name matches the binary (Acidline)
+OK     manufacturer matches the binary (NOXED)
+OK     kind matches the binary (instrument)
+OK     numInputs matches the binary (0)
+OK     numOutputs matches the binary (2)
+OK     TUI.json: all parameter handles are within 0..15
+OK     TUI.json: image 303-knob.png present
+OK     TUI.json: image panel-main.png present
+OK     TUI.json: image panel-setup.png present
+OK     TUI.json: image slide-off.png present
+OK     TUI.json: image slide-on.png present
+OK     TUI.json: image wave-off.png present
+OK     TUI.json: image wave-on.png present
+OK     TUI.json: 2 tabs
+OK     Q-Links.json: 2 tab maps, all values in range
+OK     version.xml uiversion 0.1.0.0
+0 errors, 2 warnings

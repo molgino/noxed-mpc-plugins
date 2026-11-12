@@ -35,7 +35,7 @@ public:
     i.name = "Acidline";
     i.vendor = "NOXED";
     i.uniqueId = MPC_FOURCC('N', 'c', 'e', 'p');
-    i.version = 100;
+    i.version = 101;
     i.isInstrument = true;
     i.numInputs = 0;
     return i;

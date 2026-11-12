@@ -3,7 +3,11 @@
 Zwei eigenständige Instrumente für Akai MPC Standalone, gebaut mit dem
 [inMusic MPC Plugin Builder SDK](https://github.com/inmusic-software/mpc-plugin-builder-sdk).
 
-**Version 0.1.0: am Computer gebaut und getestet, noch nicht auf echter MPC-Hardware geprüft.**
+**Acidline 0.1.1 · Prism Wave 0.1.0.** Die Grundversionen wurden vom Auftraggeber auf seiner MPC ausprobiert. Acidlines neuer silberner Skin ist am Computer validiert; die Bedienung des neuen Skins auf der MPC steht noch aus.
+
+![Acidline 0.1.1 – silbernes Bass-Line-Panel](docs/screenshots/acidline-bassline.png)
+
+Vorschau aus den echten Skin-Dateien und Reglergrafiken, kein Foto vom MPC-Bildschirm.
 
 ## Instrumente
 
@@ -19,7 +23,7 @@ Prism Wave hat keinen Serum-Presetimport, Sample-/Granular-Modus, MPE oder grafi
 ## Download und Installation
 
 Die fertigen Pakete und Hörbeispiele stehen unter **[Releases](../../releases)**.
-Das kombinierte Paket heißt `NOXED-MPC-Plugins-0.1.0.zip`.
+Das aktuelle kombinierte Paket heißt `NOXED-MPC-Plugins-0.1.1.zip` und enthält Acidline 0.1.1 sowie Prism Wave 0.1.0.
 
 1. ZIP am Computer entpacken.
 2. Den enthaltenen Ordner `VST2 Plugins` ins Stammverzeichnis eines MPC-Datenträgers kopieren.
@@ -27,6 +31,8 @@ Das kombinierte Paket heißt `NOXED-MPC-Plugins-0.1.0.zip`.
 3. **MPC OS 3.10.1 oder neuer** verwenden und unter Preferences → Enhancements (Beta)
    **Enable Enhancements** und **External Plugin Support** einschalten.
 4. Bei Bedarf MPC neu starten und das Instrument unter **External Plugins** auswählen.
+
+**Acidline-Update:** Den bisherigen Ordner `NOXED - VST - Acidline` durch 0.1.1 ersetzen und die MPC neu starten, damit der neue Skin geladen wird. Klang, Plugin-ID, Parameterzuordnung und Presets bleiben erhalten. Details im [Changelog](CHANGELOG.md).
 
 ARM32- und ARM64-Binaries liegen bei; die MPC Live III verwendet ARM64.
 Die Release-Binaries benötigen glibc ≥ 2.38; laut SDK verwendet MPC OS 3 glibc 2.39.
@@ -59,7 +65,10 @@ Details: [Prism-Wave-Anleitung](plugins/Prism%20Wave/README.md) ·
 - ARM32/ARM64-Paketvalidator: keine Fehler; je zwei Kompatibilitätshinweise zu glibc ≥ 2.38.
 
 [Testzusammenfassung](tests/reports/summary.json) und vollständige Logs liegen bei.
-Hardware-CPU, Ladezeit, Touch/Q-Link-Bedienung und Projektwiederherstellung müssen auf
+Der [Skin-Testbericht für Acidline 0.1.1](tests/reports/acidline-0.1.1-skin-checks.txt)
+prüft alle 16 Parameterbindungen, Q-Link-Gruppen, PNG-Abmessungen und unveränderten Klang:
+die gerenderte Audiodatei ist bytegleich mit der 0.1.0-Referenz.
+Hardware-CPU, Ladezeit, Touch/Q-Link-Bedienung des neuen Skins und Projektwiederherstellung müssen auf
 der MPC geprüft werden. Plugins laufen ohne Crashschutz in der MPC-Anwendung.
 
 ## Aus dem Quellcode bauen
