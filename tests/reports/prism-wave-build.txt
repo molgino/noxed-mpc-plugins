@@ -1,0 +1,240 @@
+Building Prism Wave by NOXED  (<workspace>\work\mpc-plugin-builder-sdk\plugins\Prism Wave)
+
+  toolchain: gcc   target: all   release
+
+
+
+[1/7] Native build (for host_sim and testing on this computer)
+
+  [native] compiling 1 source file -> build\native\prism-wave.dll
+
+  [native] ok (811 KB, 4.4s)
+
+
+
+[2/7] Parameter dump (host_sim) -> build/params.json
+
+  host_sim dump -> build\params.json
+
+
+
+[3/7] arm32 build (MPC Live/X/One (32-bit))
+
+  [arm32] compiling 1 source file -> build\NOXED - VST - Prism Wave\VST\prism-wave-arm32.so
+
+In file included from <workspace>\work\mpc-plugin-builder-sdk\plugins\Prism Wave\src\Wavetables.h:7,
+
+                 from <workspace>\work\mpc-plugin-builder-sdk\plugins\Prism Wave\src\PrismWave.cpp:7:
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h: In function 'VstIntPtr mpc::detail::dispatcher(AEffect*, VstInt32, VstInt32, VstIntPtr, void*, float)':
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:72: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size between 5 and 6 [-Wformat-truncation=]
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |                                                                        ^~
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:69: note: directive argument in the range [1, 2147483647]
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |                                                                     ^~~~~~
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:26: note: 'snprintf' output between 4 and 14 bytes into a destination of size 8
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  [arm32] ok (114 KB, 7.0s)
+
+
+
+[4/7] arm64 build (MPC Live II/One+/Key 61/X SE/3 (64-bit))
+
+  [arm64] compiling 1 source file -> build\NOXED - VST - Prism Wave\VST\prism-wave-arm64.so
+
+In file included from <workspace>\work\mpc-plugin-builder-sdk\plugins\Prism Wave\src\Wavetables.h:7,
+
+                 from <workspace>\work\mpc-plugin-builder-sdk\plugins\Prism Wave\src\PrismWave.cpp:7:
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h: In function 'VstIntPtr mpc::detail::dispatcher(AEffect*, VstInt32, VstInt32, VstIntPtr, void*, float)':
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:72: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size between 5 and 6 [-Wformat-truncation=]
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |                                                                        ^~
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:69: note: directive argument in the range [1, 2147483647]
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |                                                                     ^~~~~~
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:26: note: 'snprintf' output between 4 and 14 bytes into a destination of size 8
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  [arm64] ok (195 KB, 7.1s)
+
+
+
+[5/7] Assemble output folder: build/NOXED - VST - Prism Wave/
+
+  copied plugin.json
+
+  gen_ui.py (ui.json) -> Plugin Skins/
+
+  gen_ui: NOTE: drawn bipolar (centre-zero) by auto-detection: "A Octave", "B Octave", "B Semi", "M2 Amount", "M3 Amount", "M4 Amount". Set "polarity" to override.
+
+  copied 2 files from Content/ into Content/
+
+
+
+[6/7] version.xml
+
+  version 0.1.0.0, uiversion 0.1.0.0
+
+
+
+[7/7] Validate
+
+Validating <workspace>\work\mpc-plugin-builder-sdk\plugins\Prism Wave\build\NOXED - VST - Prism Wave
+
+
+OK     plugin.json: Prism Wave by NOXED (instrument, uid NHsC)
+
+
+OK     folder name "NOXED - VST - Prism Wave"
+
+
+OK     file32: prism-wave-arm32.so is a 32-bit ARM shared object
+
+
+OK     file32: needed libraries: libm.so.6, libc.so.6, ld-linux-armhf.so.3
+
+
+WARN   file32: requires GLIBC_2.38; older MPC firmware (glibc 2.36) will not load it
+
+
+OK     file32: exports VSTPluginMain
+
+
+OK     file64: prism-wave-arm64.so is a 64-bit AArch64 shared object
+
+
+OK     file64: needed libraries: libm.so.6, libc.so.6
+
+
+WARN   file64: requires GLIBC_2.38; older MPC firmware (glibc 2.36) will not load it
+
+
+OK     file64: exports VSTPluginMain
+
+
+OK     uid matches the binary (NHsC)
+
+
+OK     name matches the binary (Prism Wave)
+
+
+OK     manufacturer matches the binary (NOXED)
+
+
+OK     kind matches the binary (instrument)
+
+
+OK     numInputs matches the binary (0)
+
+
+OK     numOutputs matches the binary (2)
+
+
+OK     TUI.json: all parameter handles are within 0..55
+
+
+OK     TUI.json: image fader_h_uni.png present
+
+
+OK     TUI.json: image knob_bi.png present
+
+
+OK     TUI.json: image knob_uni.png present
+
+
+OK     TUI.json: image seg4_off.png present
+
+
+OK     TUI.json: image seg4_on.png present
+
+
+OK     TUI.json: image toggle_off.png present
+
+
+OK     TUI.json: image toggle_on.png present
+
+
+OK     TUI.json: 6 tabs
+
+
+OK     Q-Links.json: 6 tab maps, all values in range
+
+
+OK     version.xml uiversion 0.1.0.0
+
+
+OK     Content/: 2 files, 0.1 MB (loaded by the plugin at run time, see framework/mpc_resources.h)
+
+
+0 errors, 2 warnings
+
+
+
+========================================================================
+
+Build finished: NOXED - VST - Prism Wave
+
+  Output folder: <workspace>\work\mpc-plugin-builder-sdk\plugins\Prism Wave\build\NOXED - VST - Prism Wave
+
+    plugin.json                              565 B
+
+    version.xml                              152 B
+
+    Content/Wavetables/README.txt            336 B
+
+    Content/Wavetables/user01.wav            64 KB
+
+    Plugin Skins/Q-Links.json                5 KB
+
+    Plugin Skins/TUI.json                    155 KB
+
+    Plugin Skins/fader_h_uni.png             98 KB
+
+    Plugin Skins/knob_bi.png                 81 KB
+
+    Plugin Skins/knob_uni.png                80 KB
+
+    Plugin Skins/seg4_off.png                544 B
+
+    Plugin Skins/seg4_on.png                 553 B
+
+    Plugin Skins/toggle_off.png              1 KB
+
+    Plugin Skins/toggle_on.png               1 KB
+
+    VST/prism-wave-arm32.so                  114 KB
+
+    VST/prism-wave-arm64.so                  195 KB
+
+  Native test build: <workspace>\work\mpc-plugin-builder-sdk\plugins\Prism Wave\build\native\prism-wave.dll
+
+
+
+Next:
+
+  * Make a zip for sharing:   python tools\package.py "plugins\Prism Wave"
+
+  * Or copy the output folder into a folder named "VST2 Plugins" on your MPC's drive (see INSTALL.txt in the zip).

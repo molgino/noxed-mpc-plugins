@@ -1,0 +1,11 @@
+Imported 16 -> 16 frames into User 2: <workspace>\work\tmp7yvyqckd\Content\Wavetables\user02.wav
+
+Reload all Prism Wave instances on the MPC to load the new slot.
+
+PASS standalone importer writes a valid multiframe slot without Python
+
+PASS occupied slot is preserved unless --replace is supplied
+
+PASS explicit replacement succeeds
+
+PASS nonfinite imported audio is rejected before writing

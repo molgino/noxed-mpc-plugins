@@ -1,0 +1,79 @@
+{
+  "kit": "amber",
+  "pages": [
+    {
+      "name": "ACID",
+      "controls": [
+        {
+          "param": "Cutoff",
+          "widget": "knob"
+        },
+        {
+          "param": "Resonance",
+          "widget": "knob"
+        },
+        {
+          "param": "Env Amount",
+          "widget": "knob"
+        },
+        {
+          "param": "Decay",
+          "widget": "knob"
+        },
+        {
+          "param": "Accent",
+          "widget": "knob"
+        },
+        {
+          "param": "Slide Time",
+          "widget": "knob"
+        },
+        {
+          "param": "Drive",
+          "widget": "knob"
+        },
+        {
+          "param": "Tune",
+          "widget": "knob"
+        },
+        {
+          "param": "Master",
+          "widget": "fader"
+        },
+        {
+          "param": "Waveform",
+          "widget": "switch"
+        },
+        {
+          "param": "Legato Slide",
+          "widget": "switch"
+        }
+      ]
+    },
+    {
+      "name": "SETUP",
+      "controls": [
+        {
+          "param": "Pulse Width",
+          "widget": "knob"
+        },
+        {
+          "param": "Accent Vel",
+          "widget": "knob"
+        },
+        {
+          "param": "Release",
+          "widget": "knob"
+        },
+        {
+          "param": "Key Track",
+          "widget": "knob"
+        },
+        {
+          "param": "Bend Range",
+          "widget": "knob"
+        }
+      ]
+    }
+  ]
+}

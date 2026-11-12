@@ -1,0 +1,227 @@
+Building Acidline by NOXED  (<workspace>\work\mpc-plugin-builder-sdk\plugins\Acidline)
+
+  toolchain: gcc   target: all   release
+
+
+
+[1/7] Native build (for host_sim and testing on this computer)
+
+  [native] compiling 1 source file -> build\native\acidline.dll
+
+  [native] ok (742 KB, 3.2s)
+
+
+
+[2/7] Parameter dump (host_sim) -> build/params.json
+
+  host_sim dump -> build\params.json
+
+
+
+[3/7] arm32 build (MPC Live/X/One (32-bit))
+
+  [arm32] compiling 1 source file -> build\NOXED - VST - Acidline\VST\acidline-arm32.so
+
+In file included from <workspace>\work\mpc-plugin-builder-sdk\plugins\Acidline\src\Acidline.cpp:9:
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h: In function 'VstIntPtr mpc::detail::dispatcher(AEffect*, VstInt32, VstInt32, VstIntPtr, void*, float)':
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:72: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size between 5 and 6 [-Wformat-truncation=]
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |                                                                        ^~
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:69: note: directive argument in the range [1, 2147483647]
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |                                                                     ^~~~~~
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:26: note: 'snprintf' output between 4 and 14 bytes into a destination of size 8
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  [arm32] ok (82 KB, 4.4s)
+
+
+
+[4/7] arm64 build (MPC Live II/One+/Key 61/X SE/3 (64-bit))
+
+  [arm64] compiling 1 source file -> build\NOXED - VST - Acidline\VST\acidline-arm64.so
+
+In file included from <workspace>\work\mpc-plugin-builder-sdk\plugins\Acidline\src\Acidline.cpp:9:
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h: In function 'VstIntPtr mpc::detail::dispatcher(AEffect*, VstInt32, VstInt32, VstIntPtr, void*, float)':
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:72: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size between 5 and 6 [-Wformat-truncation=]
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |                                                                        ^~
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:69: note: directive argument in the range [1, 2147483647]
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |                                                                     ^~~~~~
+
+<workspace>\work\mpc-plugin-builder-sdk\framework/mpc_plugin.h:734:26: note: 'snprintf' output between 4 and 14 bytes into a destination of size 8
+
+  734 |             std::snprintf(pin->shortLabel, sizeof(pin->shortLabel), "%s%d", opcode == effGetInputProperties ? "In" : "Out", index + 1);
+
+      |             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  [arm64] ok (194 KB, 5.1s)
+
+
+
+[5/7] Assemble output folder: build/NOXED - VST - Acidline/
+
+  copied plugin.json
+
+  gen_ui.py (ui.json) -> Plugin Skins/
+
+  gen_ui: NOTE: drawn bipolar (centre-zero) by auto-detection: "Tune". Set "polarity" to override.
+
+
+
+[6/7] version.xml
+
+  version 0.1.0.0, uiversion 0.1.0.0
+
+
+
+[7/7] Validate
+
+Validating <workspace>\work\mpc-plugin-builder-sdk\plugins\Acidline\build\NOXED - VST - Acidline
+
+
+OK     plugin.json: Acidline by NOXED (instrument, uid Ncep)
+
+
+OK     folder name "NOXED - VST - Acidline"
+
+
+OK     file32: acidline-arm32.so is a 32-bit ARM shared object
+
+
+OK     file32: needed libraries: libm.so.6, libc.so.6, ld-linux-armhf.so.3
+
+
+WARN   file32: requires GLIBC_2.38; older MPC firmware (glibc 2.36) will not load it
+
+
+OK     file32: exports VSTPluginMain
+
+
+OK     file64: acidline-arm64.so is a 64-bit AArch64 shared object
+
+
+OK     file64: needed libraries: libm.so.6, libc.so.6
+
+
+WARN   file64: requires GLIBC_2.38; older MPC firmware (glibc 2.36) will not load it
+
+
+OK     file64: exports VSTPluginMain
+
+
+OK     uid matches the binary (Ncep)
+
+
+OK     name matches the binary (Acidline)
+
+
+OK     manufacturer matches the binary (NOXED)
+
+
+OK     kind matches the binary (instrument)
+
+
+OK     numInputs matches the binary (0)
+
+
+OK     numOutputs matches the binary (2)
+
+
+OK     TUI.json: all parameter handles are within 0..15
+
+
+OK     TUI.json: image fader_h_uni.png present
+
+
+OK     TUI.json: image knob_bi.png present
+
+
+OK     TUI.json: image knob_uni.png present
+
+
+OK     TUI.json: image seg2_off.png present
+
+
+OK     TUI.json: image seg2_on.png present
+
+
+OK     TUI.json: image toggle_off.png present
+
+
+OK     TUI.json: image toggle_on.png present
+
+
+OK     TUI.json: 2 tabs
+
+
+OK     Q-Links.json: 2 tab maps, all values in range
+
+
+OK     version.xml uiversion 0.1.0.0
+
+
+0 errors, 2 warnings
+
+
+
+========================================================================
+
+Build finished: NOXED - VST - Acidline
+
+  Output folder: <workspace>\work\mpc-plugin-builder-sdk\plugins\Acidline\build\NOXED - VST - Acidline
+
+    plugin.json                              541 B
+
+    version.xml                              152 B
+
+    Plugin Skins/Q-Links.json                2 KB
+
+    Plugin Skins/TUI.json                    82 KB
+
+    Plugin Skins/fader_h_uni.png             99 KB
+
+    Plugin Skins/knob_bi.png                 81 KB
+
+    Plugin Skins/knob_uni.png                79 KB
+
+    Plugin Skins/seg2_off.png                586 B
+
+    Plugin Skins/seg2_on.png                 618 B
+
+    Plugin Skins/toggle_off.png              1 KB
+
+    Plugin Skins/toggle_on.png               1 KB
+
+    VST/acidline-arm32.so                    82 KB
+
+    VST/acidline-arm64.so                    194 KB
+
+  Native test build: <workspace>\work\mpc-plugin-builder-sdk\plugins\Acidline\build\native\acidline.dll
+
+
+
+Next:
+
+  * Make a zip for sharing:   python tools\package.py plugins\Acidline
+
+  * Or copy the output folder into a folder named "VST2 Plugins" on your MPC's drive (see INSTALL.txt in the zip).

@@ -1,0 +1,71 @@
+PASS Acidline produces audio at 32-frame blocks
+
+PASS MIDI sample offset leaves pre-note region silent
+
+PASS Acidline releases without a stuck note
+
+PASS Velocity accent changes amplitude/brightness
+
+PASS Overlapping notes use legato slide rather than retrigger
+
+PASS Mono last-note priority returns to held note
+
+PASS Overlapping mono notes eventually release
+
+PASS NOXED Acid
+
+PASS Rubber Square
+
+PASS Warehouse
+
+PASS Clean Sub
+
+PASS Sharp Screamer
+
+PASS Liquid
+
+PASS User 01 demo WAV is actually loaded
+
+PASS Empty user slot has a defined Basic Morph fallback
+
+PASS Imported multiframe WAV preserves all 16 frames
+
+PASS Imported wavetable frame scanning changes the wave
+
+PASS High-pitch mip level suppresses out-of-band harmonics
+
+PASS Prism Wave plays the imported WAV at 32-frame blocks
+
+PASS Selecting an imported slot changes rendered plugin audio
+
+PASS Prism Wave releases without a stuck note
+
+PASS Position knob scans imported frames in the actual plugin
+
+INFO modulation audio difference 0.00062241 (amount 90.0)
+
+PASS Modulation matrix moves imported wavetable position
+
+PASS Sustain pedal holds and then releases Prism voices
+
+PASS NOXED Init
+
+PASS Wide Horizon
+
+PASS Spectral Pluck
+
+PASS Talking Bass
+
+PASS Digital Glass
+
+PASS User 01 Scan
+
+PASS Slow Motion
+
+PASS Neon Lead
+
+PASS Eight-voice / 48-oscillator unison stress render is finite and audible
+
+INFO desktop worst-case rendering 0.127 seconds for 2 seconds audio (not MPC CPU)
+
+ALL NOXED FUNCTIONAL TESTS PASSED

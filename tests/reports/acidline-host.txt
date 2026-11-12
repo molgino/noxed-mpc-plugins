@@ -1,0 +1,99 @@
+host_sim: testing <workspace>\work\mpc-plugin-builder-sdk\plugins\Acidline\build\native\acidline.dll
+
+          3.00 s at 44100 Hz, process block 128 frames, notes 36 43 48, transport playing
+
+
+
+== Load (MPC sequence) ==
+
+PASS  load: library opened and VSTPluginMain found
+
+PASS  AEffect: magic 'VstP', resvd2 == 0, object != NULL
+
+INFO  uid 'Ncep' (1315136880)  version 100  flags 0x130  instrument  0 in / 2 out  16 params  6 programs  chunks
+
+PASS  MPC load sequence: "Acidline" by "NOXED", instrument, 6 program(s), first program "NOXED Acid"
+
+
+
+== Prepare ==
+
+PASS  prepare: speaker arrangement, sample rate 44100, block size 128, resume, parameter-0 toggle quirk, start
+
+
+
+== Render ==
+
+INFO  main pass: 1034 blocks, peak -15.09 dBFS, rms -32.34 dBFS
+
+PASS  instrument produced sound in response to MIDI notes
+
+PASS  main pass: no NaN/Inf in the output
+
+
+
+== Check 1: block sizes 32 and 512 (re-prepare like the MPC) ==
+
+PASS  block size 32 (told 128): 690 blocks ok, peak -15.10 dBFS
+
+PASS  block size 512 (told 512): 44 blocks ok, peak -15.10 dBFS
+
+
+
+== Check 2: random parameter sweep (200 setParameter calls between blocks) ==
+
+PASS  parameter sweep: 200 random setParameter calls round-trip through getParameter
+
+PASS  parameter sweep: audio stayed finite while parameters changed
+
+
+
+== Check 3: state round-trip (effGetChunk -> randomise -> effSetChunk) ==
+
+INFO  state chunk is 252 bytes
+
+PASS  state round-trip: all 16 parameters restored from the chunk
+
+PASS  state round-trip: re-saved chunk is byte-identical
+
+PASS  effSetChunk tolerated invalid data without crashing (returned 0)
+
+
+
+== Check 4: all-notes-off and 0.5 s of silence ==
+
+PASS  instrument went quiet after all-notes-off (peak -200.0 dBFS in the last 100 ms)
+
+
+
+== Check 5: output sanity (all passes) ==
+
+PASS  no NaN/Inf anywhere in the main pass
+
+PASS  no clipping in the main pass (peak -15.09 dBFS)
+
+PASS  no denormals in the main pass
+
+
+
+== Check 6: timing ==
+
+INFO  block of 128 frames = 2.90 ms; processReplacing took on average 0.66% of that, worst block 1.22% (desktop CPU, for orientation only)
+
+PASS  timing: average 0.66% CPU per block
+
+
+
+== Host callbacks seen ==
+
+INFO  audioMasterGetTime 2152, Automate 0, UpdateDisplay 0, IOChanged 0, ProcessEvents 0 calls (0 MIDI events out)
+
+
+
+== Teardown ==
+
+PASS  effStopProcess, effMainsChanged(0), effClose
+
+
+
+Result: PASS  (19 passed, 0 warnings, 0 failures)

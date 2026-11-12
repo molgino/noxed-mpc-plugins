@@ -1,0 +1,14 @@
+# Local builds, toolchains and caches
+.sdk-tools/
+build/
+dist/
+__pycache__/
+*.pyc
+*.exe
+*.dll
+*.so
+*.dylib
+.DS_Store
+Thumbs.db
+# Generated audio; the shipped wavetable remains tracked.
+tests/*.wav

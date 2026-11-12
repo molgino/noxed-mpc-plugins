@@ -1,0 +1,17 @@
+{
+  "name": "Prism Wave",
+  "manufacturer": "NOXED",
+  "version": "0.1.0",
+  "format": "vst2",
+  "kind": "instrument",
+  "uid": "NHsC",
+  "numInputs": 0,
+  "numOutputs": 2,
+  "category": "Synth",
+  "file32": "VST/prism-wave-arm32.so",
+  "file64": "VST/prism-wave-arm64.so",
+  "description": "Eight-voice wavetable instrument with two oscillators, WAV import slots, unison, modulation matrix, chorus and delay. Original NOXED design.",
+  "author": "NOXED",
+  "url": "https://github.com/inmusic-software/mpc-plugin-builder-sdk",
+  "license": "MIT"
+}

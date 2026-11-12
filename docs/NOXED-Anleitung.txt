@@ -1,0 +1,98 @@
+NOXED MPC Instruments 0.1.0 — Acidline und Prism Wave
+Erstellt am 12. November 2026
+
+INSTALLATION AUF DEINER MPC LIVE III
+
+1. NOXED-MPC-Plugins-0.1.0.zip vollständig am Computer entpacken.
+2. Den enthaltenen Ordner "VST2 Plugins" ins Stammverzeichnis deiner SD-Karte,
+   deines USB-Datenträgers oder des internen Laufwerks kopieren.
+   Existiert dort bereits VST2 Plugins, nur die beiden NOXED-Unterordner ergänzen.
+   Die Ordnernamen "NOXED - VST - Acidline" und "NOXED - VST - Prism Wave"
+   müssen unverändert bleiben. Die ZIP selbst wird nicht geladen.
+3. MPC OS 3.10.1 oder neuer verwenden. Unter Preferences > Enhancements (Beta)
+   sowohl Enable Enhancements als auch External Plugin Support einschalten.
+4. Datenträger anschließen; falls nötig MPC neu starten. Ein Plugin-Instrument
+   anlegen und unter External Plugins Acidline oder Prism Wave auswählen.
+5. Zunächst in einem neuen Projekt testen, dann speichern und erneut laden.
+
+ACIDLINE
+
+Monophoner, TB-303-inspirierter Acid-Synth, 16 Parameter und 6 Presets.
+Saw/Square, resonanter nichtlinearer Dreipol-Tiefpass, Envelope, Accent,
+Slide und Drive. Kein originalgetreues Schaltungsmodell und kein interner
+303-Sequencer: Verwende den MPC-Sequencer.
+Accent: Velocity mindestens 100 (über Accent Vel änderbar).
+Slide: MIDI-Noten überlappen lassen und Legato Slide einschalten.
+Bedienseiten: ACID und SETUP.
+
+PRISM WAVE
+
+Eigenständiger, Serum-inspirierter Wavetable-Synth, 56 Parameter und 8 Presets.
+8 Stimmen, 2 Wavetable-Oszillatoren mit je bis zu 3 Unison-Stimmen, Sub/Noise,
+Stereo-Filter, 2 Hüllkurven, 2 globale LFOs, 4 Modulationsrouten, Drive,
+Chorus und Ping-Pong-Delay. Bedienseiten: OSC A, OSC B, TONE FX, ENVS, LFOS, MODS.
+Vier eigene Grundbänke plus acht WAV-Importslots. User 01 enthält eine eigene
+NOXED-Demotabelle; das Preset "User 01 Scan" demonstriert sie.
+Kein vollständiger Serum-2-Klon; kein Serum-Presetimport, Sample-/Granular-Modus,
+MPE, grafischer Wavetable-Editor oder Reverb. Keine Serum-/Roland-Originalinhalte.
+
+WAVETABLE-IMPORT OHNE PYTHON (WINDOWS 64 BIT)
+
+1. Im entpackten Paket "Wavetable Import/import_wavetable.exe" doppelklicken.
+2. Den Pfad deiner WAV-Tabelle eingeben (z. B. aus dem Explorer kopieren),
+   Slot 1..8 wählen und Samples pro Frame angeben (häufig 2048).
+3. Als Ziel den Plugin-Ordner auf deinem Datenträger angeben, beispielsweise:
+   E:/VST2 Plugins/NOXED - VST - Prism Wave
+4. In Prism Wave A Table oder B Table auf den entsprechenden User-Slot stellen.
+   Nach Dateiänderungen alle bestehenden Instanzen entfernen und neu hinzufügen;
+   bei Bedarf MPC neu starten. Position morpht zwischen den Wavetable-Frames.
+
+Akzeptiert werden zyklische Mono-/Stereo-WAV-Wavetables als PCM 8/16/24/32 Bit
+oder Float32. Die Länge eines Frames muss bekannt sein; keine automatische
+Zykluserkennung. Songs und One-Shot-Samples sind nicht direkt geeignet.
+Das Werkzeug normalisiert, entfernt DC und resampelt auf 2048 Samples je Frame.
+Maximal 64 Frames werden gespeichert. Bei größeren Tabellen bis 1024 Frames
+werden 64 gleichmäßig verteilte Frames ausgewählt. Leere/ungültige User-Slots
+spielen Basic Morph. Nur Inhalte importieren, die du verwenden darfst.
+
+Auf macOS/Linux steht alternativ import_wavetable.py für Python 3.9+ bereit.
+Eine genaue Anleitung mit Terminalbeispielen steht in Prism-Wave-README.md.
+Der Import erfolgt am Computer; die MPC-Oberfläche hat keinen Dateiauswahldialog.
+
+WICHTIG FÜR PROJEKTE
+
+Projekte speichern Slotnummern, keine Wavetable-Audiodateien. Content/Wavetables
+mit deinen Projekten sichern. Das Ersetzen eines Slots ändert auch den Klang
+alter Projekte, die diesen Slot verwenden. Eigene Dateien bei Updates erhalten.
+
+TESTSTAND
+
+Beide Instrumente: 19 SDK-Hostprüfungen ohne Warnung/Fehler pro Plugin.
+Zusätzlich 33 Audio-/Funktionstests, darunter alle Presets, Accent, Slide,
+Sustain, Import, Frame-Morphing, Modulationsmatrix und volle Unison-Belegung.
+Python-Importer: 4 Tests; Windows-Importer: erfolgreicher Import, Schutz vor
+ungewolltem Überschreiben, explizites Ersetzen und Ablehnung von NaN-Audio.
+ARM32/ARM64: Manifest, ELF-Architektur, Exporte, Abhängigkeiten, UI und Q-Links
+validiert. Validator: 0 Fehler und je 2 Hinweise auf GLIBC >=2.38; ältere
+Firmware mit glibc 2.36 ist nicht kompatibel. Laut SDK verwendet MPC OS 3
+glibc 2.39. Verwendet wurden Arm GNU 15.2 und LLVM-MinGW für die Computertests.
+
+Noch NICHT auf echter MPC getestet: CPU, Ladezeit, Touch/Q-Link-Bedienung und
+Projektwiederherstellung müssen auf deinem Gerät geprüft werden. Desktop-
+Zeitmessungen sind keine MPC-CPU-Messung. Bei hoher Last Unison reduzieren.
+Plugins laufen ohne Crashschutz in der MPC-Anwendung: vor dem Test speichern.
+
+HÖRBEISPIELE
+
+Acidline-Demo.wav: Acid-Riff mit Velocity-Akzenten und überlappenden Noten.
+Prism-Wave-Demo.wav: Akkorde mit der importierten NOXED-Tabelle, Unison und FX.
+Die Vorschaudateien sind auf -1 dBFS Spitzenpegel normalisiert. Die tatsächliche
+Plugin-Lautstärke richtet sich nach Master, Preset und Anzahl der Stimmen.
+
+DATEIEN
+
+NOXED-MPC-Plugins-0.1.0.zip: beide installierbaren Plugin-Ordner, Importwerkzeuge,
+Readmes, Anleitung, Lizenzen und Testbericht.
+NOXED-MPC-Quellcode-0.1.0.zip: vollständige Projekte samt SDK und Tests, ohne
+Compilerpakete oder private Daten. Originaler NOXED-Code/Demotabelle: MIT.
+Das Paket ist eigenständig und nicht von Roland oder Xfer freigegeben.

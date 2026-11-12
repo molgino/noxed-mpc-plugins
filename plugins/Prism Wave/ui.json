@@ -1,0 +1,276 @@
+{
+  "kit": "cyan",
+  "pages": [
+    {
+      "name": "OSC A",
+      "controls": [
+        {
+          "param": "A Position",
+          "widget": "knob"
+        },
+        {
+          "param": "A Detune",
+          "widget": "knob"
+        },
+        {
+          "param": "A Octave",
+          "widget": "knob"
+        },
+        {
+          "param": "A Unison",
+          "widget": "knob"
+        },
+        {
+          "param": "A Level",
+          "widget": "fader"
+        },
+        {
+          "param": "Master",
+          "widget": "fader"
+        },
+        {
+          "param": "Sub Level",
+          "widget": "fader"
+        },
+        {
+          "param": "Noise Level",
+          "widget": "fader"
+        },
+        {
+          "param": "A Table",
+          "widget": "slider",
+          "overlay": "menu"
+        }
+      ]
+    },
+    {
+      "name": "OSC B",
+      "controls": [
+        {
+          "param": "B Position",
+          "widget": "knob"
+        },
+        {
+          "param": "B Detune",
+          "widget": "knob"
+        },
+        {
+          "param": "B Octave",
+          "widget": "knob"
+        },
+        {
+          "param": "B Semi",
+          "widget": "knob"
+        },
+        {
+          "param": "B Unison",
+          "widget": "knob"
+        },
+        {
+          "param": "Width",
+          "widget": "knob"
+        },
+        {
+          "param": "B Level",
+          "widget": "fader"
+        },
+        {
+          "param": "B Table",
+          "widget": "slider",
+          "overlay": "menu"
+        }
+      ]
+    },
+    {
+      "name": "TONE FX",
+      "controls": [
+        {
+          "param": "Cutoff",
+          "widget": "knob"
+        },
+        {
+          "param": "Resonance",
+          "widget": "knob"
+        },
+        {
+          "param": "Env>Filter",
+          "widget": "knob",
+          "polarity": "bipolar"
+        },
+        {
+          "param": "Key Track",
+          "widget": "knob"
+        },
+        {
+          "param": "Filter Mode",
+          "widget": "switch"
+        },
+        {
+          "param": "Drive",
+          "widget": "knob"
+        },
+        {
+          "param": "Feedback",
+          "widget": "knob"
+        },
+        {
+          "param": "Bend Range",
+          "widget": "knob"
+        },
+        {
+          "param": "Chorus Mix",
+          "widget": "fader"
+        },
+        {
+          "param": "Delay Mix",
+          "widget": "fader"
+        },
+        {
+          "param": "Delay Div",
+          "widget": "slider",
+          "overlay": "menu"
+        }
+      ]
+    },
+    {
+      "name": "ENVS",
+      "controls": [
+        {
+          "param": "Amp Attack",
+          "widget": "fader"
+        },
+        {
+          "param": "Amp Decay",
+          "widget": "fader"
+        },
+        {
+          "param": "Amp Sustain",
+          "widget": "fader"
+        },
+        {
+          "param": "Amp Release",
+          "widget": "fader"
+        },
+        {
+          "param": "Env2 Attack",
+          "widget": "fader"
+        },
+        {
+          "param": "Env2 Decay",
+          "widget": "fader"
+        },
+        {
+          "param": "Env2 Sustain",
+          "widget": "fader"
+        },
+        {
+          "param": "Env2 Release",
+          "widget": "fader"
+        }
+      ]
+    },
+    {
+      "name": "LFOS",
+      "controls": [
+        {
+          "param": "LFO1 Rate",
+          "widget": "knob"
+        },
+        {
+          "param": "LFO2 Rate",
+          "widget": "knob"
+        },
+        {
+          "param": "LFO1 Sync",
+          "widget": "switch"
+        },
+        {
+          "param": "LFO2 Sync",
+          "widget": "switch"
+        },
+        {
+          "param": "LFO1 Shape",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "LFO1 Div",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "LFO2 Shape",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "LFO2 Div",
+          "widget": "slider",
+          "overlay": "menu"
+        }
+      ]
+    },
+    {
+      "name": "MODS",
+      "controls": [
+        {
+          "param": "M1 Source",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "M1 Target",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "M1 Amount",
+          "widget": "knob",
+          "polarity": "bipolar"
+        },
+        {
+          "param": "M2 Source",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "M2 Target",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "M2 Amount",
+          "widget": "knob"
+        },
+        {
+          "param": "M3 Source",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "M3 Target",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "M3 Amount",
+          "widget": "knob"
+        },
+        {
+          "param": "M4 Source",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "M4 Target",
+          "widget": "slider",
+          "overlay": "menu"
+        },
+        {
+          "param": "M4 Amount",
+          "widget": "knob"
+        }
+      ]
+    }
+  ]
+}

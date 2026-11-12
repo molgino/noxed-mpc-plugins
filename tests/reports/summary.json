@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-12",
+  "hardware_tested": false,
+  "functional_passes": 33,
+  "plugins": {
+    "Acidline": {
+      "host": "19 passed, 0 warnings, 0 failures",
+      "arm32_and_arm64": "validator: 0 errors, 2 glibc compatibility warnings; requires glibc >=2.38",
+      "presets": 6,
+      "demo": {
+        "seconds": 9.0,
+        "peak_dbfs": -14.592440299277047,
+        "rms_dbfs": -32.63091426139978
+      }
+    },
+    "Prism Wave": {
+      "host": "19 passed, 0 warnings, 0 failures",
+      "arm32_and_arm64": "validator: 0 errors, 2 glibc compatibility warnings; requires glibc >=2.38",
+      "presets": 8,
+      "demo": {
+        "seconds": 10.0,
+        "peak_dbfs": -26.291988737372808,
+        "rms_dbfs": -41.357128742150515
+      }
+    }
+  }
+}
