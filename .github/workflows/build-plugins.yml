@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plugin: ['Prism Wave', 'Acidline']
+        plugin: ['Prism Wave', 'Acidline', 'MPC Overwitch']
     steps:
       - uses: actions/checkout@v4
 

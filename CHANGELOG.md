@@ -1,5 +1,11 @@
 # Änderungen
 
+## MPC Overwitch 0.1.0 – Stufe 1: USB-Test (neu)
+
+- Neues Projekt: Overbridge-Client für Elektron-Geräte auf der MPC, später auf Basis von Overwitch (GPL-3). Stufe 1 macht keinen Ton und prüft nur, ob ein Plugin das Gerät per USB sehen, öffnen und belegen darf.
+- Eine Seite mit STATUS, DEVICE, USB MODE, DRIVER, ACCESS, CLAIM, SYSTEM; REPORT-Regler zum Blättern; optionaler CLAIM TEST (belegen und sofort freigeben, keine Datenübertragung); Bericht `MPC-Overwitch-Report.txt` im Plugin-Ordner.
+- Hosttest: 18 bestanden, 1 erwartete Warnung (Stille). Scan mit nachgebautem Digitone-II-Gerätebaum geprüft. Noch nicht auf MPC-Hardware getestet.
+
 ## Prism Wave 0.1.1 – Wavetable-Studio-Oberfläche
 
 - Neuer dunkler Skin im Stil moderner Software-Wavetable-Synths mit fünf Seiten: OSC, FILTER, ENV, LFO, MATRIX (vorher sechs generische Rasterseiten).

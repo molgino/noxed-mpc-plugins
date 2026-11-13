@@ -1,0 +1,17 @@
+{
+  "name": "MPC Overwitch",
+  "manufacturer": "NOXED",
+  "version": "0.1.0",
+  "format": "vst2",
+  "kind": "instrument",
+  "uid": "NMmv",
+  "numInputs": 0,
+  "numOutputs": 2,
+  "category": "Generator",
+  "file32": "VST/mpc-overwitch-arm32.so",
+  "file64": "VST/mpc-overwitch-arm64.so",
+  "description": "MPC Overwitch: Overbridge client for Elektron devices on the MPC, based on the Overwitch project. Stage 0.1 is a USB probe that checks whether the MPC lets a plugin reach the device (e.g. Digitone II). Makes no sound yet.",
+  "author": "NOXED",
+  "url": "",
+  "license": "GPL-3.0-or-later"
+}

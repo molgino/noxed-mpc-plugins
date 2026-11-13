@@ -18,6 +18,7 @@ Weitere Prism-Wave-Seiten: [Filter/FX](docs/screenshots/prism-wave-filter.png) �
 | --- | --- |
 | **Acidline** | Monophoner, TB-303-inspirierter Acid-Synth mit Saw/Square, nichtlinearem resonantem Filter, Velocity-Accent, Legato-Slide, Drive und sechs Presets. |
 | **Prism Wave** | Eigenst채ndiger, Serum-inspirierter Wavetable-Synth mit acht Stimmen, zwei Oszillatoren, je bis zu drei Unison-Stimmen, Sub/Noise, Filter, zwei ADSRs, zwei LFOs, vier Modulationsrouten, Chorus, Delay und acht Presets. |
+| **MPC Overwitch** *(in Arbeit)* | Overbridge f체r Elektron-Ger채te (zuerst Digitone II) direkt in der MPC, auf Basis von Overwitch (GPL-3). Version 0.1 ist nur ein USB-Test ohne Ton, siehe [README](plugins/MPC%20Overwitch/README.md). |
 
 Keine originalgetreue TB-303-Schaltungsemulation und keine vollst채ndige Serum-2-Nachbildung.
 Es sind keine propriet채ren Roland-/Xfer-Codebestandteile, Samples oder Presets enthalten.
