@@ -1,5 +1,10 @@
 # Änderungen
 
+## MPC Overwitch 0.1.1
+
+- Statuszeilen aktualisieren sich jetzt von selbst: Bei jeder sichtbaren Änderung bittet das Plugin die MPC um eine Neuanzeige. In 0.1.0 musste man es dafür neu öffnen.
+- Hardwaretest mit 0.1.0 auf der MPC Live III: Digitone II im Overbridge-Modus erkannt, Zugriff als Root, Claim der Overbridge-Schnittstelle erfolgreich („PROMISING: claim works“).
+
 ## MPC Overwitch 0.1.0 – Stufe 1: USB-Test (neu)
 
 - Neues Projekt: Overbridge-Client für Elektron-Geräte auf der MPC, später auf Basis von Overwitch (GPL-3). Stufe 1 macht keinen Ton und prüft nur, ob ein Plugin das Gerät per USB sehen, öffnen und belegen darf.

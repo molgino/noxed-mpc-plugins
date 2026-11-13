@@ -14,8 +14,8 @@
 //   the box in or switching its USB mode shows up while the plugin is open. Results are
 //   shown as the value text of read-only parameters, and the full report is written to
 //   "MPC-Overwitch-Report.txt" in the plugin folder on the MPC drive (only when it changes).
-//   The REPORT knob scrolls through the report one line at a time; its text always
-//   refreshes because turning it changes its value.
+//   When a visible row changes, the plugin asks the host to re-read all texts (requestDisplayUpdate).
+//   The REPORT knob scrolls through the report one line at a time.
 //
 // Nothing here modifies the system: only reads from /sys and /proc, opens the device node
 // and (optionally) claims/releases one interface with the standard usbfs ioctls.
@@ -407,12 +407,23 @@ private:
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             if (stop_.load()) break;
             Snapshot s = scan(getBool(kClaimTest), ++scans_);
+            bool changed;
             {
                 std::lock_guard<std::mutex> lock(mutex_);
+                changed = visibleKey(s) != visibleKey(snap_);
                 snap_ = std::move(s);
             }
             writeReport();
+            // The MPC redraws a value text only when the value moves; these rows never move, so ask
+            // the host to re-read all texts, but only when something on screen actually changed
+            // (plugging in, USB mode, claim result). Called from this worker thread, never from audio.
+            if (changed) requestDisplayUpdate();
         }
+    }
+
+    static std::string visibleKey(const Snapshot& s)
+    {
+        return s.status + "|" + s.device + "|" + s.mode + "|" + s.driver + "|" + s.access + "|" + s.claim + "|" + s.system;
     }
 
     // Writes the report next to the plugin, only when its content (apart from the scan number) changed.
@@ -441,7 +452,7 @@ private:
         info.name         = "MPC Overwitch";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 100;            // 0.1.0
+        info.version      = 101;            // 0.1.1
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;

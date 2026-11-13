@@ -1,4 +1,4 @@
-# NOXED MPC Overwitch 0.1.0 – Stufe 1: USB-Test
+# NOXED MPC Overwitch 0.1.1 – Stufe 1: USB-Test
 
 Ziel des Projekts: Elektron-Geräte (zuerst Digitone II) per Overbridge-Protokoll direkt in der MPC nutzen. Die Samplerate wird im Plugin von 48 kHz auf die 44,1 kHz der MPC umgerechnet. Grundlage ist später das Open-Source-Projekt [Overwitch](https://github.com/dagargo/overwitch) (GPL-3) von David García Goñi. Overwitch beruht auf dem Reverse Engineering von Stefan Rehm (dtdump). Code, Grafiken oder Software von Elektron werden nicht verwendet.
 
@@ -18,7 +18,9 @@ Ziel des Projekts: Elektron-Geräte (zuerst Digitone II) per Overbridge-Protokol
 
 Die Prüfung läuft alle 2 Sekunden in einem eigenen Thread, nie im Audio-Thread. Ein- und Ausstecken oder ein Wechsel des USB-Modus wird also angezeigt. Mit dem REPORT-Regler (erster Q-Link) blätterst du durch den ganzen Bericht. Der komplette Text steht außerdem in `MPC-Overwitch-Report.txt` im Plugin-Ordner auf dem MPC-Datenträger. Er wird nur geschrieben, wenn sich etwas ändert.
 
-Hinweis: Die oberen Zeilen aktualisiert die MPC eventuell erst, wenn man die Seite neu aufruft. Der REPORT-Regler zeigt immer den neuesten Stand.
+Die MPC zeichnet Wert-Texte normalerweise nur neu, wenn sich ein Wert bewegt. Ab 0.1.1 bittet das Plugin die MPC deshalb um eine Neuanzeige (`requestDisplayUpdate`), sobald sich eine sichtbare Statuszeile ändert, zum Beispiel beim Einstecken oder Moduswechsel. In 0.1.0 musste man das Plugin dafür schließen und wieder öffnen. Der REPORT-Regler zeigt in jedem Fall den neuesten Stand.
+
+**Erster Hardwaretest (MPC Live III, 13.11.2026):** Digitone II im Overbridge-Modus gefunden (1935:0b34), Overbridge-Schnittstelle frei, Gerät als Root les- und schreibbar, Claim und Release von Schnittstelle 3 erfolgreich. Ergebnis: „PROMISING: claim works“.
 
 ## So testest du
 
