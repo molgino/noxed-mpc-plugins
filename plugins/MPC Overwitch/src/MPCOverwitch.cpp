@@ -40,7 +40,7 @@ namespace {
 
 enum ParamIndex { kLevel = 0, kSource, kLine, kStatus, kDevice, kStream, kDropouts, kSystem, kNumParams };
 constexpr int kMaxLines = 64;
-const char* const kVersion = "0.2.0";
+const char* const kVersion = "0.2.1";
 
 std::atomic<bool> g_deviceOwned{false};   // one instance per process owns the USB device
 
@@ -242,7 +242,9 @@ private:
         }
         lines.push_back(system_);
 
-        std::string key = status + "|" + device + "|" + dropouts;
+        // Also redraw once when the first rate measurement arrives (the STREAM row showed 0.00 kHz until reopened).
+        const bool rateKnown = owner_ && engine_->measuredRate() > 1000.0;
+        std::string key = status + "|" + device + "|" + dropouts + (rateKnown ? "|rate" : "");
         bool changed;
         std::string report;
         {
@@ -281,7 +283,7 @@ private:
         info.name         = "MPC Overwitch";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 200;            // 0.2.0
+        info.version      = 201;            // 0.2.1
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;

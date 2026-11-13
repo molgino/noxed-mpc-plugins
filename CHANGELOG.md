@@ -1,5 +1,10 @@
 # Änderungen
 
+## MPC Overwitch 0.2.1
+
+- Hardwaretest von 0.2.0 auf der MPC Live III mit Digitone II: Ton kommt sauber an, 48,00 kHz gemessen, ~8 ms Puffer, 0 Aussetzer, 0 USB-Fehler.
+- Die STREAM-Zeile wird neu gezeichnet, sobald die erste Ratenmessung vorliegt.
+
 ## MPC Overwitch 0.2.0 – erster Ton (Vorschau)
 
 - Overbridge-Streaming vom Elektron-Gerät zur MPC: eigene USB-Engine über usbfs (Protokoll nach Overwitch `engine.c`, MIT), Gerätetabelle aus Overwitch `devices.json` für alle Overbridge-2/2.1-Geräte.

@@ -1,10 +1,10 @@
-# NOXED MPC Overwitch 0.2.0 – erster Ton (Vorschau)
+# NOXED MPC Overwitch 0.2.1 – erster Ton
 
 MPC Overwitch holt den Ton eines Elektron-Geräts per **Overbridge** direkt in die MPC. Zuerst getestet wird der Digitone II, die Tabelle enthält auch Digitakt II, Digitakt, Digitone (Keys), Syntakt, Analog Four/Rytm MKII und Analog Heat. Das Gerät liefert 48 kHz; das Plugin rechnet auf die Samplerate der MPC um (44,1 kHz) und gleicht dabei die kleine Taktabweichung zwischen beiden Geräten laufend aus. Damit fällt das Samplerate-Problem von USB-Audio weg.
 
 Grundlage ist das Open-Source-Projekt [Overwitch](https://github.com/dagargo/overwitch) von David García Goñi. Sein USB-Protokoll (`engine.c`, MIT, Stefan Rehm und David García Goñi) wurde für die MPC neu umgesetzt, die Gerätetabelle ist aus Overwitchs `devices.json` (GPL-3) erzeugt (`tools/gen_overwitch_devices.py`). Code, Grafiken oder Software von Elektron werden nicht verwendet. Lizenz dieses Plugins: GPL-3.0-or-later.
 
-**Stand:** Version 0.2 ist auf der MPC noch nicht mit Ton getestet. Der USB-Zugriff selbst ist auf der Live III bestätigt (siehe Verlauf).
+**Stand:** Version 0.2.0 läuft auf der MPC Live III mit dem Digitone II (13.11.2026): STREAMING, gemessen 48,00 kHz, etwa 8 ms Puffer, Drift-Ausgleich bei wenigen ppm, 0 Aussetzer, 0 USB-Fehler, USB-Thread mit Echtzeit-Priorität; der Ton kommt sauber auf der Plugin-Spur an. Längere Sessions, CPU-Last und die anderen Elektron-Geräte sind noch nicht geprüft.
 
 ## Bedienung
 
@@ -42,7 +42,8 @@ Q-Links: erste Reihe Source und Level, zweite Reihe Report. Im Program-Modus Q-L
 
 ## Verlauf
 
-- **0.2.0:** Overbridge-Streaming vom Gerät zur MPC, Quellenwahl, Pegel, Drift-Ausgleich.
+- **0.2.1:** Die STREAM-Zeile aktualisiert sich, sobald die erste Ratenmessung vorliegt (vorher blieb „0.00 kHz“ stehen).
+- **0.2.0:** Overbridge-Streaming vom Gerät zur MPC, Quellenwahl, Pegel, Drift-Ausgleich. Auf der MPC Live III mit Digitone II erfolgreich getestet.
 - **0.1.1:** Statuszeilen aktualisieren sich selbst.
 - **0.1.0:** USB-Test. Ergebnis auf der MPC Live III mit Digitone II im Overbridge-Modus (13.11.2026): Gerät gefunden (1935:0b34), Overbridge-Schnittstelle frei, Zugriff als Root, Claim erfolgreich.
 
