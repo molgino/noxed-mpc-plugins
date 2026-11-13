@@ -1,4 +1,4 @@
-# NOXED MPC Overwitch 0.3.0 – mehrere Spuren
+# NOXED MPC Overwitch 0.3.1 – mehrere Spuren
 
 MPC Overwitch holt den Ton eines Elektron-Geräts per **Overbridge** direkt in die MPC. Zuerst getestet wird der Digitone II, die Tabelle enthält auch Digitakt II, Digitakt, Digitone (Keys), Syntakt, Analog Four/Rytm MKII und Analog Heat. Das Gerät liefert 48 kHz; das Plugin rechnet auf die Samplerate der MPC um (44,1 kHz) und gleicht dabei die kleine Taktabweichung zwischen beiden Geräten laufend aus. Damit fällt das Samplerate-Problem von USB-Audio weg.
 
@@ -47,6 +47,7 @@ Q-Links: erste Reihe Source und Level, zweite Reihe Report. Im Program-Modus Q-L
 
 ## Verlauf
 
+- **0.3.1:** Pegelanzeige im Send-Plugin; beide Plugins müssen 0.3.1 sein.
 - **0.3.0:** Bis zu 16 Instanzen gleichzeitig mit eigener Quelle; gemeinsame USB-Verbindung mit dem neuen Effekt MPC Overwitch Send (Audio zum Gerät). Noch nicht auf Hardware getestet.
 - **0.2.1:** Die STREAM-Zeile aktualisiert sich, sobald die erste Ratenmessung vorliegt (vorher blieb „0.00 kHz“ stehen).
 - **0.2.0:** Overbridge-Streaming vom Gerät zur MPC, Quellenwahl, Pegel, Drift-Ausgleich. Auf der MPC Live III mit Digitone II erfolgreich getestet.

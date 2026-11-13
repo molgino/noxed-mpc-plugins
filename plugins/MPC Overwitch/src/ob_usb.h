@@ -20,6 +20,7 @@
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
 #include <cstring>
 #include <algorithm>
 #include <mutex>
@@ -143,6 +144,7 @@ struct Slot
     std::atomic<uint32_t> epoch{0};          // bumped by the plugin on (re)start; the engine resets its reader
     std::atomic<uint32_t> sendDropouts{0};   // send slots: reported by the engine
     std::atomic<double> sendLatencyMs{0.0};
+    std::atomic<float> sendUsbPeak{0.0f};    // send slots: peak actually mixed into the USB blocks (engine writes, UI resets)
     StereoRing ring;
 };
 
@@ -416,8 +418,10 @@ private:
             sl.sendDropouts.store(sendRd_[k].dropouts(), std::memory_order_relaxed);
             sl.sendLatencyMs.store(sendRd_[k].latencyMs(), std::memory_order_relaxed);
             const int tl = destsLocal_[(size_t)d].left, tr = destsLocal_[(size_t)d].right;
+            float pk = 0.0f;
             for (int f = 0; f < nFrames; ++f)
             {
+                pk = std::max(pk, std::max(std::fabs(tmpL_[(size_t)f]), std::fabs(tmpR_[(size_t)f])));
                 if (tl == tr) mix_[(size_t)(f * nIn + tl)] += 0.5f * (tmpL_[(size_t)f] + tmpR_[(size_t)f]);
                 else
                 {
@@ -425,6 +429,7 @@ private:
                     mix_[(size_t)(f * nIn + tr)] += tmpR_[(size_t)f];
                 }
             }
+            if (pk > sl.sendUsbPeak.load(std::memory_order_relaxed)) sl.sendUsbPeak.store(pk, std::memory_order_relaxed);
             any = true;
         }
         for (int b = 0; b < kBlocksPerTransfer; ++b)

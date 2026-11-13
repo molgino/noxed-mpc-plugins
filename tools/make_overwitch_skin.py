@@ -24,7 +24,7 @@ def build(params):
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC OVERWITCH', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (300, 22), 'NOXED · OVERBRIDGE FOR THE MPC · 0.3 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (300, 22), 'NOXED · OVERBRIDGE FOR THE MPC · 0.3.1 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
 
     children = []
     # Output panel: source and level.
@@ -104,7 +104,7 @@ def build(params):
 
 
 SEND_SKINS = ROOT / 'plugins' / 'MPC Overwitch Send' / 'skins'
-SEND_ROWS = [(3, 'STATUS'), (4, 'DEVICE'), (5, 'STREAM')]
+SEND_ROWS = [(3, 'STATUS'), (4, 'DEVICE'), (5, 'STREAM'), (6, 'LEVELS')]
 
 
 def build_send(params):
@@ -115,7 +115,7 @@ def build_send(params):
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC OVERWITCH SEND', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (372, 22), 'NOXED · TRACK AUDIO TO THE ELEKTRON DEVICE · 0.3 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (372, 22), 'NOXED · TRACK AUDIO TO THE ELEKTRON DEVICE · 0.3.1 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
     children = []
     pw.panel_box(d, (12, 48, 412, 616), 'SEND', subtitle='MPC TRACK TO DEVICE')
     pw.text(d, (36, 104), 'DESTINATION', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
@@ -132,7 +132,7 @@ def build_send(params):
                            '', 'Hear the result with MPC Overwitch', '(Source Main or the effect).']):
         pw.text(d, (36, 412 + i * 22), t, 12, 'medium', pw.MUTED, 'lm')
     pw.text(d, (36, 590), 'Based on Overwitch by David Garcia Goni', 10, 'medium', pw.DIM, 'lm')
-    pw.panel_box(d, (424, 48, 1268, 300), 'STATUS', subtitle='SHARED USB CONNECTION')
+    pw.panel_box(d, (424, 48, 1268, 364), 'STATUS', subtitle='SHARED USB CONNECTION · LEVELS: IN = AT THIS PLUGIN, USB = SENT TO DEVICE')
     for i, (prm, name) in enumerate(SEND_ROWS):
         y = 100 + i * 64
         if i:
@@ -141,12 +141,12 @@ def build_send(params):
         children.append(pw.entry('row %d' % prm, 'Label',
                                  ui.label_data('Value', 'ff46c8f0' if prm == 3 else 'ffe4e9f2', 28.0 if prm == 3 else 22.0,
                                                'left verticallyCentred'), '600 %d 650 44' % y, [('Data', 'Parameter %d' % prm)]))
-    pw.panel_box(d, (424, 312, 1268, 616), 'ROUTING', subtitle='DIGITONE II INPUTS')
+    pw.panel_box(d, (424, 376, 1268, 616), 'ROUTING', subtitle='DIGITONE II INPUTS')
     rows = [('MAIN', 'Overbridge input Main L / R'), ('DELAY', 'Overbridge input Delay L / R (effect send)'),
             ('REVERB', 'Overbridge input Reverb L / R (effect send)'), ('CHORUS', 'Overbridge input Chorus L / R (effect send)')]
     for i, (a, b) in enumerate(rows):
-        y = 372 + i * 52
-        pw.rrect(d, (452, y - 18, 572, y + 18), pw.FIELD, '#2a2f3b', 1, 5)
+        y = 436 + i * 40
+        pw.rrect(d, (452, y - 16, 572, y + 16), pw.FIELD, '#2a2f3b', 1, 5)
         pw.text(d, (512, y), a, 13, 'bold', pw.ACCENT, 'mm', spacing=1.2)
         pw.text(d, (596, y), b, 14, 'medium', pw.TEXT, 'lm')
     pw.text(d, (452, 590), 'Other Overbridge devices list their own inputs in DESTINATION.', 12, 'medium', pw.DIM, 'lm')

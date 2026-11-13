@@ -28,7 +28,7 @@
 
 namespace ob {
 
-constexpr uint32_t kAbi = 0x4f420003;   // "OB" v3
+constexpr uint32_t kAbi = 0x4f420004;   // "OB" v4 (0.3.1: send peak meter in Slot)
 
 struct Shared
 {

@@ -1,5 +1,10 @@
 # Änderungen
 
+## MPC Overwitch / MPC Overwitch Send 0.3.1
+
+- Send: neue Zeile LEVELS mit zwei Pegeln. IN zeigt, was am Plugin ankommt (nach SEND), USB zeigt, was die Engine tatsächlich zum Gerät mischt. Beides als Diagnose, weil ein Reverb-Send im ersten Test nicht ankam (auf der Spur lag dabei kein Signal an).
+- Gemeinsames Layout geändert (ABI v4): Beide Plugins müssen 0.3.1 sein.
+
 ## MPC Overwitch 0.3.0 und MPC Overwitch Send 0.3.0 (neu)
 
 - Mehrere Spuren: bis zu 16 Instanzen gleichzeitig, jede mit eigener SOURCE, über eine gemeinsame USB-Engine pro MPC-Prozess.

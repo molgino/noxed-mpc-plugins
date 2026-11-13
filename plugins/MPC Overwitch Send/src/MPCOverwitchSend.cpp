@@ -13,7 +13,8 @@
 //   0 Dry          track signal passed through (param 0, nudged by the host on load: harmless)
 //   1 Destination  device input: Main, Delay, Reverb, Chorus (Digitone II names)
 //   2 Send         level sent to the device
-//   3..5           read-only status rows: Status, Device, Stream
+//   3..6           read-only status rows: Status, Device, Stream, Levels (IN = signal arriving at
+//                  the plugin after SEND, USB = what the engine actually mixes into the device input)
 //
 // Licence: GPL-3.0-or-later (shares code with MPC Overwitch, based on Overwitch).
 
@@ -23,6 +24,7 @@
 #include "../../MPC Overwitch/src/ob_shared.h"
 #include "../../MPC Overwitch/src/ob_diag.h"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cmath>
@@ -32,7 +34,7 @@
 #include <vector>
 
 namespace {
-enum ParamIndex { kDry = 0, kDest, kSend, kStatus, kDevice, kStream, kNumParams };
+enum ParamIndex { kDry = 0, kDest, kSend, kStatus, kDevice, kStream, kLevels, kNumParams };
 std::vector<std::string> destNames() { return {"Main", "Delay", "Reverb", "Chorus"}; }
 std::string dB(float g) { return g < 1e-5f ? "-inf dB" : diag::fmt("%.1f dB", 20.0f * std::log10(g)); }
 } // namespace
@@ -45,9 +47,9 @@ public:
         addParam(mpc::floatParam("dry", "Dry", 0.0f, 1.0f, 1.0f));
         addParam(mpc::choiceParam("dest", "Destination", destNames(), 0));
         addParam(mpc::floatParam("send", "Send", 0.0f, 1.0f, 0.8f));
-        const char* ro[] = {"status", "device", "stream"};
-        const char* names[] = {"Status", "Device", "Stream"};
-        for (int i = 0; i < 3; ++i)
+        const char* ro[] = {"status", "device", "stream", "levels"};
+        const char* names[] = {"Status", "Device", "Stream", "Levels"};
+        for (int i = 0; i < 4; ++i)
         {
             mpc::Param p = mpc::floatParam(ro[i], names[i], 0.0f, 1.0f, 0.0f);
             p.automatable = false;
@@ -102,7 +104,7 @@ public:
             const int d = (int)std::lround(get(kDest));
             if (sl->route.load(std::memory_order_relaxed) != d) sl->route.store(d, std::memory_order_relaxed);
         }
-        float dg = dryG_, sg = sendG_;
+        float dg = dryG_, sg = sendG_, pk = 0.0f;
         const float k = 0.002f;
         for (int i = 0; i < n; ++i)
         {
@@ -110,10 +112,13 @@ public:
             const float r = inR ? inR[i] : 0.0f;
             dg += (dryT - dg) * k;
             sg += (sendT - sg) * k;
-            if (sl) sl->ring.push(l * sg, r * sg);
+            const float sL = l * sg, sR = r * sg;
+            pk = std::max(pk, std::max(std::fabs(sL), std::fabs(sR)));
+            if (sl) sl->ring.push(sL, sR);
             outL[i] = l * dg;
             outR[i] = r * dg;
         }
+        if (pk > inPeak_.load(std::memory_order_relaxed)) inPeak_.store(pk, std::memory_order_relaxed);
         if (sl) sl->ring.publish();
         dryG_ = dg;
         sendG_ = sg;
@@ -136,6 +141,7 @@ public:
             case kStatus: out = status_; return true;
             case kDevice: out = device_; return true;
             case kStream: out = stream_; return true;
+            case kLevels: out = levels_; return true;
             default: return false;
         }
     }
@@ -187,12 +193,17 @@ private:
                 stream = diag::clip(diag::fmt("%.1f ms, %u dropouts", sl.sendLatencyMs.load(), sl.sendDropouts.load()));
             }
         }
+        // Peaks since the last rebuild (0.5 s). The row redraws when IN or USB starts or stops carrying signal.
+        const float in = inPeak_.exchange(0.0f);
+        const float usb = (shared_ && slot_ >= 0) ? shared_->slots[slot_].sendUsbPeak.exchange(0.0f) : 0.0f;
+        auto lvl = [](float v) { return v < 1e-4f ? std::string("silent") : diag::fmt("%.0f dB", 20.0f * std::log10(v)); };
+        std::string levels = "IN " + lvl(in) + " / USB " + lvl(usb);
         const bool rateKnown = stream != "-";
-        std::string key = status + "|" + device + (rateKnown ? "|s" : "");
+        std::string key = status + "|" + device + (rateKnown ? "|s" : "") + (in >= 1e-4f ? "|i" : "") + (usb >= 1e-4f ? "|u" : "");
         std::lock_guard<std::mutex> lock(mutex_);
         bool changed = key != key_;
         key_ = key;
-        status_ = status; device_ = device; stream_ = stream; dests_ = dests;
+        status_ = status; device_ = device; stream_ = stream; levels_ = levels; dests_ = dests;
         return changed;
     }
 
@@ -202,7 +213,7 @@ private:
         info.name         = "MPC Overwitch Send";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 300;            // 0.3.0
+        info.version      = 301;            // 0.3.1
         info.isInstrument = false;
         info.numInputs    = 2;
         info.numOutputs   = 2;
@@ -219,7 +230,8 @@ private:
     std::thread monitor_;
     std::atomic<bool> stop_{false};
     std::mutex mutex_;
-    std::string status_, device_, stream_, key_;
+    std::string status_, device_, stream_, levels_, key_;
+    std::atomic<float> inPeak_{0.0f};
     std::vector<ob::Source> dests_;
 };
 
