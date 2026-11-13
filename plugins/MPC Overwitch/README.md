@@ -1,61 +1,51 @@
-# NOXED MPC Overwitch 0.1.1 – Stufe 1: USB-Test
+# NOXED MPC Overwitch 0.2.0 – erster Ton (Vorschau)
 
-Ziel des Projekts: Elektron-Geräte (zuerst Digitone II) per Overbridge-Protokoll direkt in der MPC nutzen. Die Samplerate wird im Plugin von 48 kHz auf die 44,1 kHz der MPC umgerechnet. Grundlage ist später das Open-Source-Projekt [Overwitch](https://github.com/dagargo/overwitch) (GPL-3) von David García Goñi. Overwitch beruht auf dem Reverse Engineering von Stefan Rehm (dtdump). Code, Grafiken oder Software von Elektron werden nicht verwendet.
+MPC Overwitch holt den Ton eines Elektron-Geräts per **Overbridge** direkt in die MPC. Zuerst getestet wird der Digitone II, die Tabelle enthält auch Digitakt II, Digitakt, Digitone (Keys), Syntakt, Analog Four/Rytm MKII und Analog Heat. Das Gerät liefert 48 kHz; das Plugin rechnet auf die Samplerate der MPC um (44,1 kHz) und gleicht dabei die kleine Taktabweichung zwischen beiden Geräten laufend aus. Damit fällt das Samplerate-Problem von USB-Audio weg.
 
-**Diese Version macht noch keinen Ton.** Sie prüft nur, ob die MPC einem Plugin überhaupt Zugriff auf das Gerät am USB-Port erlaubt. Davon hängt ab, ob ein echtes Overbridge-Plugin möglich ist.
+Grundlage ist das Open-Source-Projekt [Overwitch](https://github.com/dagargo/overwitch) von David García Goñi. Sein USB-Protokoll (`engine.c`, MIT, Stefan Rehm und David García Goñi) wurde für die MPC neu umgesetzt, die Gerätetabelle ist aus Overwitchs `devices.json` (GPL-3) erzeugt (`tools/gen_overwitch_devices.py`). Code, Grafiken oder Software von Elektron werden nicht verwendet. Lizenz dieses Plugins: GPL-3.0-or-later.
 
-## Was geprüft wird
+**Stand:** Version 0.2 ist auf der MPC noch nicht mit Ton getestet. Der USB-Zugriff selbst ist auf der Live III bestätigt (siehe Verlauf).
 
-| Zeile | Bedeutung |
-|---|---|
-| STATUS | Gesamturteil (siehe unten) |
-| DEVICE | Gefundenes Elektron-Gerät (Hersteller-ID 1935) und Produkt-ID |
-| USB MODE | `Overbridge`, wenn das Gerät eine herstellerspezifische Schnittstelle anbietet; sonst `USB audio` |
-| DRIVER | Ob ein Kerneltreiber der MPC diese Schnittstelle schon belegt |
-| ACCESS | Ob das Plugin den Geräteknoten `/dev/bus/usb/…` lesen und schreiben darf |
-| CLAIM | Nur mit **CLAIM TEST** an: Schnittstelle kurz belegen und sofort wieder freigeben. Es werden keine Daten gesendet. |
-| SYSTEM | Prozessor, Benutzer-ID, Kernelversion |
+## Bedienung
 
-Die Prüfung läuft alle 2 Sekunden in einem eigenen Thread, nie im Audio-Thread. Ein- und Ausstecken oder ein Wechsel des USB-Modus wird also angezeigt. Mit dem REPORT-Regler (erster Q-Link) blätterst du durch den ganzen Bericht. Der komplette Text steht außerdem in `MPC-Overwitch-Report.txt` im Plugin-Ordner auf dem MPC-Datenträger. Er wird nur geschrieben, wenn sich etwas ändert.
+- **SOURCE** (Doppeltipp öffnet die Liste): welcher Ausgang des Geräts gespielt wird – Main, Track 1–16, Delay, Reverb, Chorus, Input (Namen des Digitone II; andere Geräte zeigen ihre eigenen Ausgänge, nicht vorhandene Einträge bleiben still).
+- **LEVEL:** Ausgangspegel (Standard −1,9 dB, Maximum +1 dB).
+- **STATUS:** Searching… → Connecting… → Streaming (buffering) → **STREAMING**. Weitere Meldungen: „Set device USB: Overbridge“, „Unsupported Elektron device“, „Error: …“, „Busy: other instance has it“.
+- **STREAM:** gemessene Geräte-Samplerate, Puffer-Latenz und Taktabweichung in ppm.
+- **DROPOUTS:** Aussetzer im Puffer und USB-Fehler seit dem Laden.
+- **REPORT:** Details zum Durchblättern, auch in `MPC-Overwitch-Report.txt` im Plugin-Ordner.
 
-Die MPC zeichnet Wert-Texte normalerweise nur neu, wenn sich ein Wert bewegt. Ab 0.1.1 bittet das Plugin die MPC deshalb um eine Neuanzeige (`requestDisplayUpdate`), sobald sich eine sichtbare Statuszeile ändert, zum Beispiel beim Einstecken oder Moduswechsel. In 0.1.0 musste man das Plugin dafür schließen und wieder öffnen. Der REPORT-Regler zeigt in jedem Fall den neuesten Stand.
-
-**Erster Hardwaretest (MPC Live III, 13.11.2026):** Digitone II im Overbridge-Modus gefunden (1935:0b34), Overbridge-Schnittstelle frei, Gerät als Root les- und schreibbar, Claim und Release von Schnittstelle 3 erfolgreich. Ergebnis: „PROMISING: claim works“.
+Q-Links: erste Reihe Source und Level, zweite Reihe Report. Im Program-Modus Q-Link 1 Level, Q-Link 2 Source.
 
 ## So testest du
 
-1. Am Digitone II die USB-Konfiguration auf **Overbridge** stellen. Das geht im System-Menü, genauer Pfad siehe Handbuch.
-2. Den Digitone per USB an einen USB-Host-Port der MPC anschließen.
-3. MPC Overwitch als Plugin-Programm laden. Die Seite **USB** zeigt das Ergebnis.
-4. Erst wenn ACCESS „open rw OK“ meldet: **CLAIM TEST** einschalten.
-5. Mir den Bericht schicken: Foto vom Bildschirm oder `MPC-Overwitch-Report.txt`.
+1. Am Digitone II die USB-Konfiguration auf **Overbridge** stellen und per USB an die MPC hängen.
+2. MPC Overwitch als Plugin-Programm laden. STATUS sollte nach ein bis zwei Sekunden **STREAMING** zeigen.
+3. Am Digitone spielen; der Ton kommt auf der Plugin-Spur. SOURCE umschalten, um einzelne Spuren zu hören.
+4. STATUS, STREAM und DROPOUTS notieren (oder ein Foto machen), auch wenn es knackt oder still bleibt.
 
-## Urteile
+## Technik
 
-| STATUS | Bedeutung |
-|---|---|
-| No Elektron device found | Gerät nicht am Bus (Kabel, Port, Strom) |
-| Set Digitone USB: Overbridge | Gerät läuft im Class-Compliant-Modus |
-| Seen, but no USB access | Plugin sieht das Gerät, darf es aber nicht öffnen (Rechte). Damit wäre der Plugin-Weg vorerst blockiert. |
-| Seen, interface busy | Ein Treiber der MPC hält die Overbridge-Schnittstelle |
-| Open OK - try CLAIM TEST | Öffnen klappt; CLAIM TEST einschalten |
-| PROMISING: claim works | Bester Fall: Ein Overbridge-Plugin ist sehr wahrscheinlich machbar |
-| Open OK, claim failed | Öffnen geht, Belegen nicht; Details im Bericht |
+- Eine eigene Engine spricht direkt mit der Linux-USB-Schnittstelle der MPC (`/dev/bus/usb`, usbfs); es wird keine zusätzliche Bibliothek gebraucht. Interfaces 1 und 2, Alt-Setting 3, Interrupt-Transfers mit 24 Blöcken à 7 Frames.
+- Die USB-Arbeit läuft in einem eigenen Thread (wenn möglich mit Echtzeit-Priorität), nie im Audio-Thread. Der Audio-Thread liest nur einen lock-freien Ringpuffer.
+- Resampler: 4-Punkt-Hermite-Interpolation mit adaptivem Verhältnis. Er hält den Puffer auf etwa 6–17 ms (je nach MPC-Blockgröße) und korrigiert höchstens ±0,2 % (unhörbar). Geht der Puffer leer, wird kurz stummgeschaltet, neu gefüllt und der Sicherheitsabstand vergrößert.
+- Zum Gerät wird bisher nur Stille gesendet (Audio von der MPC zum Digitone kommt später).
+- Abziehen des Kabels oder Wechsel des USB-Modus: Das Plugin wird still und verbindet sich automatisch neu.
+- Nur eine Instanz kann das Gerät belegen; weitere zeigen „Busy“. Mehrere Spuren gleichzeitig (eine Instanz pro Spur) sind für eine spätere Version geplant.
+- CPU: Umrechnung für zwei Kanäle plus Dekodierung; auf der MPC noch zu messen, erwartet deutlich unter einem Prozent eines Kerns.
 
-## Nächste Stufen
+## Tests am Computer
 
-1. **Stufe 2** (nur wenn Stufe 1 positiv ist): Overwitch-Protokoll einbauen, Stereo-Main vom Digitone abspielen, 48 → 44,1 kHz mit Drift-Ausgleich.
-2. **Stufe 3**: Einzelspuren als Auswahl, Audio zum Digitone senden, sauberes Verhalten beim Abziehen.
+- `tests/sim_stream.cpp`: simulierter USB-Strom mit Taktabweichung −150…+200 ppm, Jitter bis 2,5 ms, MPC-Blockgrößen 32–512, Host-Raten 44,1 und 48 kHz: keine Aussetzer, saubere Sinuswiedergabe.
+- `tests/engine_smoke.cpp`: Gerätetabelle, Blockgrößen (Digitone II: 1012/256 Bytes), Quellen-Zuordnung, 24-Bit-Dekodierung, Fehlerpfad ohne Gerät.
+- SDK-Hosttest: bestanden. Ohne Gerät ist die Ausgabe still; die Warnung dazu ist erwartet.
 
-Die Parameter von 0.x können sich bis 1.0 noch ändern; Projekte mit 0.x-Versionen sind nicht für die Zukunft gedacht.
+## Verlauf
 
-## Technik und Grenzen
+- **0.2.0:** Overbridge-Streaming vom Gerät zur MPC, Quellenwahl, Pegel, Drift-Ausgleich.
+- **0.1.1:** Statuszeilen aktualisieren sich selbst.
+- **0.1.0:** USB-Test. Ergebnis auf der MPC Live III mit Digitone II im Overbridge-Modus (13.11.2026): Gerät gefunden (1935:0b34), Overbridge-Schnittstelle frei, Zugriff als Root, Claim erfolgreich.
 
-- Liest nur aus `/sys` und `/proc` und öffnet den USB-Geräteknoten. Es verändert nichts am System und installiert nichts. Kein Root-Zugriff und keine Firmware-Änderung.
-- Im Host-Simulator auf dem PC geprüft, mit einem nachgebauten Digitone-II-Gerätebaum (Variable `OVERWITCH_SYSFS`). Auf echter MPC-Hardware ist noch nichts getestet.
-- Die SDK-Warnung „instrument produced silence“ ist hier gewollt.
-- CPU: vernachlässigbar (ein Scan alle 2 s im Hintergrund).
+Die Parameter von 0.x können sich bis 1.0 noch ändern.
 
 Voraussetzungen wie bei allen NOXED-Plugins: MPC OS 3.10.1 oder neuer, und unter Preferences → Enhancements (Beta) müssen „Enable Enhancements“ und „External Plugin Support“ an sein.
-
-Lizenz: GPL-3.0-or-later.

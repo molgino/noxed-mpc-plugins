@@ -1,5 +1,13 @@
 # Änderungen
 
+## MPC Overwitch 0.2.0 – erster Ton (Vorschau)
+
+- Overbridge-Streaming vom Elektron-Gerät zur MPC: eigene USB-Engine über usbfs (Protokoll nach Overwitch `engine.c`, MIT), Gerätetabelle aus Overwitch `devices.json` für alle Overbridge-2/2.1-Geräte.
+- Adaptiver Resampler 48 kHz → MPC-Rate mit Drift-Ausgleich; in der Simulation ohne Aussetzer bei −150…+200 ppm, Jitter bis 2,5 ms und Blockgrößen 32–512.
+- Neue Oberfläche: SOURCE (Main, Track 1–16, Delay, Reverb, Chorus, Input), LEVEL, STATUS, STREAM, DROPOUTS, REPORT. Parameter gegenüber 0.1 geändert (Vorabversion).
+- Automatische Neuverbindung nach Abziehen oder Moduswechsel; nur eine Instanz belegt das Gerät.
+- Noch nicht auf MPC-Hardware mit Ton getestet; Audio zum Gerät folgt später.
+
 ## MPC Overwitch 0.1.1
 
 - Statuszeilen aktualisieren sich jetzt von selbst: Bei jeder sichtbaren Änderung bittet das Plugin die MPC um eine Neuanzeige. In 0.1.0 musste man es dafür neu öffnen.
