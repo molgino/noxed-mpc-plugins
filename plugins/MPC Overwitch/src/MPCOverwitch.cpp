@@ -5,9 +5,10 @@
 //   (ob_usb.h: usbfs, decodes the selected stereo source) --lock-free ring--> audio thread
 //   (ob_stream.h: adaptive resampler 48 kHz -> host rate that follows the clock drift) --> LEVEL --> out
 //
-// Threads: the engine thread owns the USB device; a monitor thread builds the status text and asks
-// the MPC to redraw when something visible changes; process() only reads the ring. Only one plugin
-// instance can own the device; further instances show "Busy" and stay silent.
+// Threads: one engine thread per MPC process owns the USB device (ob_shared.h); every instance of this
+// plugin (up to 16, each with its own Source) and every MPC Overwitch Send effect takes a slot in it.
+// A monitor thread builds the status text and asks the MPC to redraw when something visible changes;
+// process() only reads its slot's ring.
 //
 // Parameters (0.x: may still change before 1.0)
 //   0 Level    output gain (param 0, nudged by the host on load: harmless)
@@ -22,7 +23,7 @@
 #include "mpc_plugin.h"
 #include "mpc_resources.h"
 
-#include "ob_usb.h"
+#include "ob_shared.h"
 #include "ob_diag.h"
 
 #include <atomic>
@@ -40,9 +41,7 @@ namespace {
 
 enum ParamIndex { kLevel = 0, kSource, kLine, kStatus, kDevice, kStream, kDropouts, kSystem, kNumParams };
 constexpr int kMaxLines = 64;
-const char* const kVersion = "0.2.1";
-
-std::atomic<bool> g_deviceOwned{false};   // one instance per process owns the USB device
+const char* const kVersion = "0.3.0";
 
 std::vector<std::string> sourceNames()
 {
@@ -75,12 +74,11 @@ public:
         uname(&u);
         system_ = diag::clip(diag::fmt("%s uid%u %s", u.machine, (unsigned)geteuid(), u.release));
 
-        owner_ = !g_deviceOwned.exchange(true);
-        if (owner_)
+        shared_ = ob::acquireShared(sharedErr_);
+        if (shared_)
         {
-            engine_.reset(new ob::Engine());
-            engine_->onStateChange = [this] { dirty_.store(true); };
-            engine_->start();
+            slot_ = ob::claimSlot(shared_, ob::Slot::kReceive, 0);
+            engine_ = &shared_->engine;
         }
         rebuild(true);
         monitor_ = std::thread([this] { monitor(); });
@@ -90,11 +88,15 @@ public:
     {
         stop_.store(true);
         if (monitor_.joinable()) monitor_.join();
-        if (engine_) engine_->stop();
-        if (owner_) g_deviceOwned.store(false);
+        ob::freeSlot(shared_, slot_);
+        ob::releaseShared(shared_);
     }
 
-    void prepare(double sampleRate, int) override { reader_.prepare(sampleRate); gain_ = 0.0f; }
+    void prepare(double sampleRate, int) override
+    {
+        reader_.prepare(48000.0, sampleRate, ob::DriftReader::kUsbBurst);
+        gain_ = 0.0f;
+    }
     void reset() override { reader_.reset(); }
 
     void process(mpc::ProcessContext& ctx) override
@@ -102,14 +104,16 @@ public:
         float* l = ctx.outputs[0];
         float* r = ctx.outputs[1];
         const int n = ctx.numFrames;
-        if (!engine_ || engine_->state() != ob::Engine::kStreaming)
+        if (slot_ < 0 || engine_->state() != ob::Engine::kStreaming)
         {
             reader_.reset();
             for (int i = 0; i < n; ++i) l[i] = r[i] = 0.0f;
             return;
         }
-        engine_->source.store((int)std::lround(get(kSource)), std::memory_order_relaxed);
-        reader_.read(engine_->ring, l, r, n);
+        ob::Slot& sl = shared_->slots[slot_];
+        const int src = (int)std::lround(get(kSource));
+        if (sl.route.load(std::memory_order_relaxed) != src) sl.route.store(src, std::memory_order_relaxed);
+        reader_.read(sl.ring, l, r, n);
         // Level: perceptual (squared) curve, smoothed per sample to avoid zipper noise.
         const float lv = get(kLevel);
         const float target = lv * lv * 1.25f;
@@ -195,13 +199,13 @@ private:
         std::vector<ob::Source> sources;
         lines.push_back(diag::fmt("MPC Overwitch %s", kVersion));
 
-        if (!owner_)
+        if (!shared_ || slot_ < 0)
         {
-            status = "Busy: other instance has it";
+            status = !shared_ ? diag::clip("Error: " + sharedErr_) : "Busy: all 16 slots in use";
             device = "-";
             stream = "-";
             dropouts = "-";
-            lines.push_back("only one instance can stream");
+            lines.push_back(status);
         }
         else
         {
@@ -231,6 +235,8 @@ private:
             lines.push_back(diag::clip("rate " + stream));
             lines.push_back(diag::clip(dropouts));
             lines.push_back(engine_->rtPriority() ? "usb thread: realtime" : "usb thread: normal prio");
+            lines.push_back(diag::fmt("slot %d; %d receive, %d send", slot_ + 1,
+                                      ob::slotsInUse(shared_, ob::Slot::kReceive), ob::slotsInUse(shared_, ob::Slot::kSend)));
             int si = (int)std::lround(get(kSource));
             if (si >= 0 && si < (int)sources.size())
                 lines.push_back(diag::clip(diag::fmt("source %s = out %d/%d", sources[(size_t)si].name.c_str(),
@@ -243,7 +249,7 @@ private:
         lines.push_back(system_);
 
         // Also redraw once when the first rate measurement arrives (the STREAM row showed 0.00 kHz until reopened).
-        const bool rateKnown = owner_ && engine_->measuredRate() > 1000.0;
+        const bool rateKnown = engine_ && slot_ >= 0 && engine_->measuredRate() > 1000.0;
         std::string key = status + "|" + device + "|" + dropouts + (rateKnown ? "|rate" : "");
         bool changed;
         std::string report;
@@ -283,7 +289,7 @@ private:
         info.name         = "MPC Overwitch";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 201;            // 0.2.1
+        info.version      = 300;            // 0.3.0
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;
@@ -293,8 +299,10 @@ private:
 
     static constexpr char kUid[5] = "NMmv";
 
-    bool owner_ = false;
-    std::unique_ptr<ob::Engine> engine_;
+    ob::Shared* shared_ = nullptr;
+    ob::Engine* engine_ = nullptr;
+    int slot_ = -1;
+    std::string sharedErr_;
     ob::DriftReader reader_;
     float gain_ = 0.0f;
 

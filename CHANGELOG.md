@@ -1,5 +1,13 @@
 # Änderungen
 
+## MPC Overwitch 0.3.0 und MPC Overwitch Send 0.3.0 (neu)
+
+- Mehrere Spuren: bis zu 16 Instanzen gleichzeitig, jede mit eigener SOURCE, über eine gemeinsame USB-Engine pro MPC-Prozess.
+- Neues Effekt-Plugin **MPC Overwitch Send**: schickt das Audio einer MPC-Spur an einen Geräteeingang (Digitone II: Main, Delay, Reverb, Chorus), mit Send- und Dry-Pegel. Teilt die USB-Verbindung mit MPC Overwitch.
+- Resampler für beide Richtungen; Senderichtung in der Simulation ohne Aussetzer.
+- Neue Tests: gemeinsame Engine und 16 Slots, zwei getrennt geladene Bibliotheken teilen eine Engine (auch nach Entladen der erzeugenden), alles in GitHub Actions.
+- Noch nicht auf MPC-Hardware getestet. Beide Plugins müssen dieselbe Version haben.
+
 ## MPC Overwitch 0.2.1
 
 - Hardwaretest von 0.2.0 auf der MPC Live III mit Digitone II: Ton kommt sauber an, 48,00 kHz gemessen, ~8 ms Puffer, 0 Aussetzer, 0 USB-Fehler.

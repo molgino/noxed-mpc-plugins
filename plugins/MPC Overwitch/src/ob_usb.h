@@ -21,7 +21,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <functional>
+#include <algorithm>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -92,29 +92,32 @@ inline float decodeSample(const uint8_t* s, int size, bool v21)
     return hv * (1.0f / 2147483647.0f);
 }
 
-// A selectable stereo (or mono) source among the device's output tracks.
+// A selectable stereo (or mono) route among a device's tracks: "Track 1 L"/"Track 1 R" or
+// "Main L Input"/"Main R Input" become one stereo route; anything else stays mono.
 struct Source { std::string name; int left = -1, right = -1; };
 
-inline std::vector<Source> sourcesFor(const Device* d)
+inline std::vector<Source> routesFor(const Track* t, int n)
 {
     std::vector<Source> out;
-    if (!d) return out;
     auto tidy = [](std::string s) {
         std::string r;
         for (char c : s) if (!(c == ' ' && !r.empty() && r.back() == ' ')) r += c;
         while (!r.empty() && r.back() == ' ') r.pop_back();
         return r;
     };
-    for (int i = 0; i < d->numOutputs; ++i)
+    for (int i = 0; i < n; ++i)
     {
-        std::string a = d->outputs[i].name;
-        if (i + 1 < d->numOutputs && a.size() > 2 && a.compare(a.size() - 2, 2, " L") == 0)
+        std::string a = t[i].name;
+        size_t p = std::string::npos;
+        if (a.size() > 2 && a.compare(a.size() - 2, 2, " L") == 0) p = a.size() - 2;
+        else if (a.find(" L ") != std::string::npos) p = a.find(" L ");
+        if (p != std::string::npos && i + 1 < n)
         {
-            std::string b = d->outputs[i + 1].name;
-            if (b.size() == a.size() && b.compare(0, b.size() - 2, a, 0, a.size() - 2) == 0 &&
-                b.compare(b.size() - 2, 2, " R") == 0)
+            std::string expect = a;
+            expect[p + 1] = 'R';
+            if (expect == t[i + 1].name)
             {
-                out.push_back({tidy(a.substr(0, a.size() - 2)), i, i + 1});
+                out.push_back({tidy(a.substr(0, p) + a.substr(p + 2)), i, i + 1});
                 ++i;
                 continue;
             }
@@ -123,16 +126,32 @@ inline std::vector<Source> sourcesFor(const Device* d)
     }
     return out;
 }
+inline std::vector<Source> sourcesFor(const Device* d) { return d ? routesFor(d->outputs, d->numOutputs) : std::vector<Source>(); }
+inline std::vector<Source> destinationsFor(const Device* d) { return d ? routesFor(d->inputs, d->numInputs) : std::vector<Source>(); }
+
+// One plugin instance's connection to the engine. Receive slots get the decoded source written into
+// their ring by the engine; send slots get host audio written into their ring by the plugin, which
+// the engine resamples to 48 kHz and mixes into the chosen device input.
+constexpr int kMaxSlots = 16;
+struct Slot
+{
+    enum Kind { kFree = 0, kReceive = 1, kSend = 2 };
+    std::atomic<int> kind{kFree};
+    std::atomic<int> route{0};               // receive: source index; send: destination index
+    std::atomic<double> hostRate{44100.0};   // send slots: the host rate and block size of the writer
+    std::atomic<int> hostBlock{512};
+    std::atomic<uint32_t> epoch{0};          // bumped by the plugin on (re)start; the engine resets its reader
+    std::atomic<uint32_t> sendDropouts{0};   // send slots: reported by the engine
+    std::atomic<double> sendLatencyMs{0.0};
+    StereoRing ring;
+};
 
 class Engine
 {
 public:
     enum State { kStopped, kSearching, kNotOverbridge, kUnknownDevice, kOpening, kStreaming, kError };
 
-    StereoRing ring;
-    std::atomic<int> source{0};              // index into sources() of the connected device
-    std::function<void()> onStateChange;     // called from the engine thread (rate-limited by caller)
-
+    explicit Engine(Slot* slots) : slots_(slots) {}
     ~Engine() { stop(); }
 
     void start()
@@ -156,6 +175,7 @@ public:
     std::string deviceName() { std::lock_guard<std::mutex> l(m_); return devName_; }
     std::string message() { std::lock_guard<std::mutex> l(m_); return msg_; }
     std::vector<Source> sources() { std::lock_guard<std::mutex> l(m_); return sources_; }
+    std::vector<Source> destinations() { std::lock_guard<std::mutex> l(m_); return dests_; }
 
 private:
     struct Found { bool any = false; uint16_t pid = 0; int bus = 0, dev = 0, config = 0; bool vendorIf = false; std::string product; };
@@ -207,7 +227,7 @@ private:
             std::lock_guard<std::mutex> l(m_);
             msg_ = msg;
         }
-        if (state_.exchange(s) != s && onStateChange) onStateChange();
+        state_.store(s);
     }
 
     bool sleepFor(int ms)
@@ -242,6 +262,7 @@ private:
             {
                 std::lock_guard<std::mutex> l(m_);
                 sources_ = sourcesFor(dev);
+                dests_ = destinationsFor(dev);
             }
             setState(kOpening, "opening");
             std::string err;
@@ -361,58 +382,117 @@ private:
         fd_ = -1;
     }
 
-    void fillOut()
+    static inline void encodeSample(uint8_t* s, float f, int size, bool v21)
     {
+        if (f > 1.0f) f = 1.0f;
+        if (f < -1.0f) f = -1.0f;
+        int32_t ov = (int32_t)(f * 2147483647.0f);
+        if (v21 && size == 4) ov >>= 8;
+        ov = (int32_t)__builtin_bswap32((uint32_t)ov);
+        std::memcpy(s, &ov, (size_t)size);
+    }
+
+    // Builds the next host->device transfer: frame counters, plus the mix of all send slots.
+    void fillOut(const Device* dev)
+    {
+        const int nFrames = kFramesPerBlock * kBlocksPerTransfer;   // 168
+        const int nIn = dev->numInputs;
+        std::fill(mix_.begin(), mix_.end(), 0.0f);
+        bool any = false;
+        for (int k = 0; k < kMaxSlots; ++k)
+        {
+            Slot& sl = slots_[k];
+            if (sl.kind.load(std::memory_order_acquire) != Slot::kSend) { sendActive_[k] = false; continue; }
+            uint32_t ep = sl.epoch.load(std::memory_order_acquire);
+            if (!sendActive_[k] || ep != sendEpoch_[k])
+            {
+                sendRd_[k].prepare(sl.hostRate.load(), 48000.0, sl.hostBlock.load());
+                sendEpoch_[k] = ep;
+                sendActive_[k] = true;
+            }
+            const int d = sl.route.load(std::memory_order_relaxed);
+            if (d < 0 || d >= (int)destsLocal_.size()) continue;
+            if (!sendRd_[k].read(sl.ring, tmpL_.data(), tmpR_.data(), nFrames)) { sl.sendDropouts.store(sendRd_[k].dropouts()); continue; }
+            sl.sendDropouts.store(sendRd_[k].dropouts(), std::memory_order_relaxed);
+            sl.sendLatencyMs.store(sendRd_[k].latencyMs(), std::memory_order_relaxed);
+            const int tl = destsLocal_[(size_t)d].left, tr = destsLocal_[(size_t)d].right;
+            for (int f = 0; f < nFrames; ++f)
+            {
+                if (tl == tr) mix_[(size_t)(f * nIn + tl)] += 0.5f * (tmpL_[(size_t)f] + tmpR_[(size_t)f]);
+                else
+                {
+                    mix_[(size_t)(f * nIn + tl)] += tmpL_[(size_t)f];
+                    mix_[(size_t)(f * nIn + tr)] += tmpR_[(size_t)f];
+                }
+            }
+            any = true;
+        }
         for (int b = 0; b < kBlocksPerTransfer; ++b)
         {
             uint8_t* blk = &outBuf_[b * outBlk_];
             blk[2] = (uint8_t)(outCounter_ >> 8);
             blk[3] = (uint8_t)outCounter_;
             outCounter_ = (uint16_t)(outCounter_ + kFramesPerBlock);
-            // Sample data stays zero: sending audio to the device comes in a later version.
+            if (!any && !outDirty_) continue;    // all zero already
+            uint8_t* p = blk + kBlockHeader;
+            for (int f = 0; f < kFramesPerBlock; ++f)
+                for (int t = 0; t < nIn; ++t)
+                {
+                    encodeSample(p, mix_[(size_t)((b * kFramesPerBlock + f) * nIn + t)], dev->inputs[t].size, dev->v21);
+                    p += dev->inputs[t].size;
+                }
         }
+        outDirty_ = any;
     }
 
+    // Decodes one device->host transfer into the ring of every receive slot (each with its own source).
     void decodeIn(const Device* dev, int actual)
     {
-        const std::vector<Source>& src = sourcesLocal_;
-        int si = source.load(std::memory_order_relaxed);
-        int offL = -1, offR = -1, szL = 0, szR = 0;
-        if (si >= 0 && si < (int)src.size())
+        const int blocks = actual / (int)inBlk_;
+        for (int k = 0; k < kMaxSlots; ++k)
         {
-            int o = 0;
-            for (int t = 0; t < dev->numOutputs; ++t)
+            Slot& sl = slots_[k];
+            if (sl.kind.load(std::memory_order_acquire) != Slot::kReceive) continue;
+            const int si = sl.route.load(std::memory_order_relaxed);
+            int offL = -1, offR = -1, szL = 0, szR = 0;
+            if (si >= 0 && si < (int)sourcesLocal_.size())
             {
-                if (t == src[(size_t)si].left) { offL = o; szL = dev->outputs[t].size; }
-                if (t == src[(size_t)si].right) { offR = o; szR = dev->outputs[t].size; }
-                o += dev->outputs[t].size;
+                const int tl = sourcesLocal_[(size_t)si].left, tr = sourcesLocal_[(size_t)si].right;
+                offL = trackOffset_[(size_t)tl]; szL = dev->outputs[tl].size;
+                offR = trackOffset_[(size_t)tr]; szR = dev->outputs[tr].size;
             }
-        }
-        int blocks = actual / (int)inBlk_;
-        for (int b = 0; b < blocks; ++b)
-        {
-            const uint8_t* data = &inBuf_[b * inBlk_ + kBlockHeader];
-            for (int f = 0; f < kFramesPerBlock; ++f)
+            for (int b = 0; b < blocks; ++b)
             {
-                const uint8_t* fr = data + f * inFrame_;
-                float l = offL >= 0 ? decodeSample(fr + offL, szL, dev->v21) : 0.0f;
-                float r = offR >= 0 ? decodeSample(fr + offR, szR, dev->v21) : 0.0f;
-                ring.push(l, r);
+                const uint8_t* data = &inBuf_[b * inBlk_ + kBlockHeader];
+                for (int f = 0; f < kFramesPerBlock; ++f)
+                {
+                    const uint8_t* fr = data + f * inFrame_;
+                    sl.ring.push(offL >= 0 ? decodeSample(fr + offL, szL, dev->v21) : 0.0f,
+                                 offR >= 0 ? decodeSample(fr + offR, szR, dev->v21) : 0.0f);
+                }
             }
+            sl.ring.publish();
         }
-        ring.publish();
         framesIn_ += (uint64_t)blocks * kFramesPerBlock;
     }
 
     void stream(const Device* dev)
     {
         sourcesLocal_ = sourcesFor(dev);
+        destsLocal_ = destinationsFor(dev);
+        trackOffset_.assign((size_t)dev->numOutputs, 0);
+        for (int t = 1; t < dev->numOutputs; ++t) trackOffset_[(size_t)t] = trackOffset_[(size_t)t - 1] + dev->outputs[t - 1].size;
+        mix_.assign((size_t)(kFramesPerBlock * kBlocksPerTransfer * dev->numInputs), 0.0f);
+        tmpL_.assign(kFramesPerBlock * kBlocksPerTransfer, 0.0f);
+        tmpR_.assign(kFramesPerBlock * kBlocksPerTransfer, 0.0f);
+        for (bool& a : sendActive_) a = false;
+        outDirty_ = true;
         usbdevfs_urb in{}, out{};
         in.type = USBDEVFS_URB_TYPE_INTERRUPT; in.endpoint = kEpIn;
         in.buffer = inBuf_.data(); in.buffer_length = (int)inBuf_.size(); in.usercontext = &in;
         out.type = USBDEVFS_URB_TYPE_INTERRUPT; out.endpoint = kEpOut;
         out.buffer = outBuf_.data(); out.buffer_length = (int)outBuf_.size(); out.usercontext = &out;
-        fillOut();
+        fillOut(dev);
         bool inBusy = ioctl(fd_, USBDEVFS_SUBMITURB, &in) == 0;
         bool outBusy = ioctl(fd_, USBDEVFS_SUBMITURB, &out) == 0;
         if (!inBusy || !outBusy)
@@ -454,7 +534,7 @@ private:
                 else if (u == &out)
                 {
                     outBusy = false;
-                    fillOut();
+                    fillOut(dev);
                     if (!gone && !stop_.load()) outBusy = ioctl(fd_, USBDEVFS_SUBMITURB, &out) == 0;
                     if (!outBusy && !stop_.load() && !gone) gone = true;
                 }
@@ -499,7 +579,14 @@ private:
     std::atomic<bool> rt_{false};
     std::mutex m_;
     std::string devName_, msg_;
-    std::vector<Source> sources_, sourcesLocal_;
+    Slot* slots_;
+    std::vector<Source> sources_, dests_, sourcesLocal_, destsLocal_;
+    std::vector<int> trackOffset_;
+    std::vector<float> mix_, tmpL_, tmpR_;
+    DriftReader sendRd_[kMaxSlots];
+    uint32_t sendEpoch_[kMaxSlots] = {};
+    bool sendActive_[kMaxSlots] = {};
+    bool outDirty_ = true;
     int fd_ = -1;
     bool claimed_[3] = {false, false, false};
     size_t inFrame_ = 0, outFrame_ = 0, inBlk_ = 0, outBlk_ = 0;

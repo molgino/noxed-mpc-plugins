@@ -48,16 +48,20 @@ private:
     alignas(64) std::atomic<uint64_t> w_{0};
 };
 
+// Reads a ring written in bursts at srcRate and produces audio at dstRate. Used in both directions:
+//   device -> MPC: src 48000, dst host rate, bursts of 168 frames (one USB transfer)
+//   MPC -> device: src host rate, dst 48000, bursts of one host block
 class DriftReader
 {
 public:
-    static constexpr double kSourceRate = 48000.0;
-    static constexpr int kBurst = 168;            // frames per USB transfer (24 blocks x 7)
+    static constexpr int kUsbBurst = 168;         // frames per USB transfer (24 blocks x 7)
 
-    void prepare(double hostRate)
+    void prepare(double srcRate, double dstRate, int burst)
     {
-        hostRate_ = hostRate > 0 ? hostRate : 44100.0;
-        nominal_ = kSourceRate / hostRate_;
+        srcRate_ = srcRate > 0 ? srcRate : 48000.0;
+        hostRate_ = dstRate > 0 ? dstRate : 44100.0;
+        burst_ = burst > 0 ? burst : kUsbBurst;
+        nominal_ = srcRate_ / hostRate_;
         ratio_ = nominal_;
         primed_ = false;
         primedA_.store(false, std::memory_order_relaxed);
@@ -69,7 +73,7 @@ public:
     bool read(const StereoRing& ring, float* outL, float* outR, int n)
     {
         if (n > maxBlock_) maxBlock_ = n;
-        const double target = maxBlock_ * nominal_ + kBurst + safety_;
+        const double target = maxBlock_ * nominal_ + burst_ + safety_;
         const uint64_t w = ring.written();
 
         if (!primed_)
@@ -123,7 +127,7 @@ public:
             outR[i] = hermite(ring.r(k - 1), ring.r(k), ring.r(k + 1), ring.r(k + 2), t);
             rpos_ += ratio_;
         }
-        latMs_.store(fillAvg_ / kSourceRate * 1000.0, std::memory_order_relaxed);
+        latMs_.store(fillAvg_ / srcRate_ * 1000.0, std::memory_order_relaxed);
         drift_.store((ratio_ / nominal_ - 1.0) * 1.0e6, std::memory_order_relaxed);
         return true;
     }
@@ -152,6 +156,8 @@ private:
         std::memset(r, 0, sizeof(float) * (size_t)n);
     }
 
+    double srcRate_ = 48000.0;
+    int burst_ = kUsbBurst;
     double hostRate_ = 44100.0, nominal_ = 48000.0 / 44100.0, ratio_ = 48000.0 / 44100.0;
     double rpos_ = 0.0, fillAvg_ = 0.0, safety_ = 96.0;
     int maxBlock_ = 0;

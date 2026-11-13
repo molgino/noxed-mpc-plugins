@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plugin: ['Prism Wave', 'Acidline', 'MPC Overwitch']
+        plugin: ['Prism Wave', 'Acidline', 'MPC Overwitch', 'MPC Overwitch Send']
     steps:
       - uses: actions/checkout@v4
 
@@ -33,13 +33,10 @@ jobs:
       - name: Build (native + arm32 + arm64, validated)
         run: python tools/build.py "plugins/${{ matrix.plugin }}"
 
-      - name: MPC Overwitch unit tests (stream simulation, engine smoke)
+      - name: MPC Overwitch desktop tests (stream simulation, engine, two libraries)
         if: matrix.plugin == 'MPC Overwitch'
         working-directory: plugins/MPC Overwitch
-        run: |
-          g++ -O2 -std=c++17 -Isrc tests/sim_stream.cpp -o /tmp/sim && /tmp/sim
-          g++ -O2 -std=c++17 -pthread -Isrc tests/engine_smoke.cpp -o /tmp/smoke
-          mkdir -p /tmp/fakesys/1-1 && cd /tmp/fakesys/1-1 && echo 1935 > idVendor && echo 0b34 > idProduct && echo 1 > busnum && echo 4 > devnum && cd - && /tmp/smoke
+        run: sh tests/run_tests.sh
 
       - name: Host simulator test
         run: |
