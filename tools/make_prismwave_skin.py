@@ -606,19 +606,19 @@ def control(page, d, kind, param, x, y, w=None, h=None, label=None, invalid=None
     if kind in ('knob', 'knobbi'):
         if label:
             knob_name(d, x, y, label)
-        comp = 'knob_bi' if kind == 'knobbi' else 'knob'
+        comp = 'pwKnobBi' if kind == 'knobbi' else 'pwKnobUni'
         w, h = CW, CH
     elif kind == 'field':
         field_bg(d, (x, y, x + w, y + h), label)
-        comp = 'field_%dx%d' % (w, h)
+        comp = 'pwField%dx%d' % (w, h)
     elif kind == 'toggle':
-        comp = 'toggle'
+        comp = 'pwToggle'
         w, h = 58, 28
     elif kind == 'bar':
-        comp = 'bar'
+        comp = 'pwAmountBar'
         w, h = BAR_W, BAR_H
     elif kind == 'master':
-        comp = 'master'
+        comp = 'pwMaster'
     page.add(entry('p%d' % param, comp, ui.obj(('version', 1), ('handleName', 'Data')),
                    '%d %d %d %d' % (x, y, w, h), [('Data', 'Parameter %d' % param)], 'Yes', invalid, 'Hide'))
     return comp
@@ -637,7 +637,7 @@ def osc_panel(page, d, px, which, user_frames):
     panel_box(d, (px, py, px + 622, 616), 'OSC ' + which.upper(), subtitle='WAVETABLE')
     # Table selector in the header.
     fx, fy, fw, fh = px + 352, py + 5, 258, 28
-    page.add(entry('p%d' % tbl, 'field_%dx%d' % (fw, fh), ui.obj(('version', 1), ('handleName', 'Data')),
+    page.add(entry('p%d' % tbl, 'pwField%dx%d' % (fw, fh), ui.obj(('version', 1), ('handleName', 'Data')),
                    '%d %d %d %d' % (fx, fy, fw, fh), [('Data', 'Parameter %d' % tbl)], 'Yes', None, 'Hide'))
     USED_FIELDS.add((fw, fh))
     # Display: one film strip per table, shown only while that table is selected; dragging it moves Position.
@@ -802,7 +802,7 @@ def build_pages(user_frames):
 
     # Header master knob on every page (touch control; its Q-Link lives on FILTER > VOICE).
     for pg in pages:
-        pg.add(entry('master', 'master', ui.obj(('version', 1), ('handleName', 'Data')), '1146 4 122 34',
+        pg.add(entry('master', 'pwMaster', ui.obj(('version', 1), ('handleName', 'Data')), '1146 4 122 34',
                      [('Data', 'Parameter %d' % P['master'])], 'No', None, 'Hide'))
     return pages, arts
 
@@ -818,24 +818,24 @@ def value_label(bounds, size=19.0, colour=VALUE_COL, just='horizontallyCentred v
 
 def definitions():
     defs = []
-    for name, img, overlay in [('knob', 'knob.png', 'knob overlay'), ('knob_bi', 'knob-bi.png', 'knob overlay bipolar')]:
+    for name, img, overlay in [('pwKnobUni', 'knob.png', 'knob overlay'), ('pwKnobBi', 'knob-bi.png', 'knob overlay bipolar')]:
         defs.append((name, ui.component_definition(ui.control_actions(overlay), [
             focus(CW, CH),
             entry('knob', 'Knob', ui.knob_filmstrip_data(img, FRAMES), '%d 0 %d %d' % ((CW - KN) // 2, KN, KN)),
             value_label('0 88 %d 28' % CW)], '0')))
     for w, h in sorted(USED_FIELDS):
-        defs.append(('field_%dx%d' % (w, h), ui.component_definition(ui.control_actions('menu overlay'), [
+        defs.append(('pwField%dx%d' % (w, h), ui.component_definition(ui.control_actions('menu overlay'), [
             entry('box', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'),
                                          ('image', 'field-%dx%d.png' % (w, h))), '0 0 %d %d' % (w, h)),
             focus(w, h),
             value_label('14 0 %d %d' % (w - 40, h), 18.0 if h < 32 else 20.0, FIELD_TEXT, 'left verticallyCentred')], '0')))
-    defs.append(('toggle', ui.component_definition(ui.control_actions('menu overlay', False), [
+    defs.append(('pwToggle', ui.component_definition(ui.control_actions('menu overlay', False), [
         focus(58, 28), entry('toggle', 'Button', ui.button_data('toggle-on.png', 'toggle-off.png', 1, 1), '0 0 58 28')], '0')))
-    defs.append(('bar', ui.component_definition(ui.control_actions('knob overlay bipolar'), [
+    defs.append(('pwAmountBar', ui.component_definition(ui.control_actions('knob overlay bipolar'), [
         focus(BAR_W, BAR_H),
         entry('bar', 'Knob', ui.knob_filmstrip_data('amount-bar.png', FRAMES, 'Horizontal'), '0 0 %d %d' % (BAR_W, BAR_H)),
         value_label('0 0 %d %d' % (BAR_W, BAR_H), 18.0, 'ffeef3fb')], '0')))
-    defs.append(('master', ui.component_definition(ui.control_actions('knob overlay'), [
+    defs.append(('pwMaster', ui.component_definition(ui.control_actions('knob overlay'), [
         focus(122, 34),
         entry('knob', 'Knob', ui.knob_filmstrip_data('knob-small.png', FRAMES), '0 0 %d %d' % (SMALL, SMALL)),
         value_label('40 0 82 34', 18.0, VALUE_COL, 'left verticallyCentred')], '0')))

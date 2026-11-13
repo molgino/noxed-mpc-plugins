@@ -6,7 +6,7 @@
             "importFiles": [],
             "localComponentDefinitions": [
                 {
-                    "key": "knob",
+                    "key": "pwKnobUni",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -144,7 +144,7 @@
                     }
                 },
                 {
-                    "key": "knob_bi",
+                    "key": "pwKnobBi",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -282,7 +282,7 @@
                     }
                 },
                 {
-                    "key": "field_140x36",
+                    "key": "pwField140x36",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -418,7 +418,7 @@
                     }
                 },
                 {
-                    "key": "field_150x34",
+                    "key": "pwField150x34",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -554,7 +554,7 @@
                     }
                 },
                 {
-                    "key": "field_250x36",
+                    "key": "pwField250x36",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -690,7 +690,7 @@
                     }
                 },
                 {
-                    "key": "field_258x28",
+                    "key": "pwField258x28",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -826,7 +826,7 @@
                     }
                 },
                 {
-                    "key": "field_320x44",
+                    "key": "pwField320x44",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -962,7 +962,7 @@
                     }
                 },
                 {
-                    "key": "toggle",
+                    "key": "pwToggle",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -1057,7 +1057,7 @@
                     }
                 },
                 {
-                    "key": "bar",
+                    "key": "pwAmountBar",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -1196,7 +1196,7 @@
                     }
                 },
                 {
-                    "key": "master",
+                    "key": "pwMaster",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -1815,7 +1815,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p1",
-                                "type": "field_258x28",
+                                "type": "pwField258x28",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2288,7 +2288,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p2",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2317,7 +2317,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p4",
-                                "type": "knob_bi",
+                                "type": "pwKnobBi",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2346,7 +2346,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p3",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2375,7 +2375,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p5",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2404,7 +2404,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p6",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2433,7 +2433,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p14",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2462,7 +2462,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p15",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2491,7 +2491,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p7",
-                                "type": "field_258x28",
+                                "type": "pwField258x28",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2964,7 +2964,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p8",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2993,7 +2993,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p10",
-                                "type": "knob_bi",
+                                "type": "pwKnobBi",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3022,7 +3022,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p9",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3051,7 +3051,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p11",
-                                "type": "knob_bi",
+                                "type": "pwKnobBi",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3080,7 +3080,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p12",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3109,7 +3109,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p13",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3138,7 +3138,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p16",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3167,7 +3167,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "master",
-                                "type": "master",
+                                "type": "pwMaster",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3691,7 +3691,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p17",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3720,7 +3720,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p18",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3749,7 +3749,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p20",
-                                "type": "knob_bi",
+                                "type": "pwKnobBi",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3778,7 +3778,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p21",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3807,7 +3807,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p55",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3836,7 +3836,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p0",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3865,7 +3865,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p50",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3894,7 +3894,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p51",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3923,7 +3923,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p52",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3952,7 +3952,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p53",
-                                "type": "field_150x34",
+                                "type": "pwField150x34",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -3981,7 +3981,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p54",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4010,7 +4010,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "master",
-                                "type": "master",
+                                "type": "pwMaster",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4131,7 +4131,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p22",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4160,7 +4160,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p23",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4189,7 +4189,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p24",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4218,7 +4218,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p25",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4280,7 +4280,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p26",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4309,7 +4309,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p27",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4338,7 +4338,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p28",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4367,7 +4367,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p29",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4396,7 +4396,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "master",
-                                "type": "master",
+                                "type": "pwMaster",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4627,7 +4627,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p30",
-                                "type": "field_250x36",
+                                "type": "pwField250x36",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4656,7 +4656,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p31",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4688,7 +4688,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p33",
-                                "type": "field_140x36",
+                                "type": "pwField140x36",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4720,7 +4720,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p32",
-                                "type": "toggle",
+                                "type": "pwToggle",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4894,7 +4894,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p34",
-                                "type": "field_250x36",
+                                "type": "pwField250x36",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4923,7 +4923,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p35",
-                                "type": "knob",
+                                "type": "pwKnobUni",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4955,7 +4955,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p37",
-                                "type": "field_140x36",
+                                "type": "pwField140x36",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -4987,7 +4987,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p36",
-                                "type": "toggle",
+                                "type": "pwToggle",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5016,7 +5016,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "master",
-                                "type": "master",
+                                "type": "pwMaster",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5102,7 +5102,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p38",
-                                "type": "field_320x44",
+                                "type": "pwField320x44",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5131,7 +5131,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p40",
-                                "type": "bar",
+                                "type": "pwAmountBar",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5160,7 +5160,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p39",
-                                "type": "field_320x44",
+                                "type": "pwField320x44",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5189,7 +5189,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p41",
-                                "type": "field_320x44",
+                                "type": "pwField320x44",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5218,7 +5218,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p43",
-                                "type": "bar",
+                                "type": "pwAmountBar",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5247,7 +5247,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p42",
-                                "type": "field_320x44",
+                                "type": "pwField320x44",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5276,7 +5276,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p44",
-                                "type": "field_320x44",
+                                "type": "pwField320x44",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5305,7 +5305,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p46",
-                                "type": "bar",
+                                "type": "pwAmountBar",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5334,7 +5334,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p45",
-                                "type": "field_320x44",
+                                "type": "pwField320x44",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5363,7 +5363,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p47",
-                                "type": "field_320x44",
+                                "type": "pwField320x44",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5392,7 +5392,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p49",
-                                "type": "bar",
+                                "type": "pwAmountBar",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5421,7 +5421,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p48",
-                                "type": "field_320x44",
+                                "type": "pwField320x44",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -5450,7 +5450,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "master",
-                                "type": "master",
+                                "type": "pwMaster",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"

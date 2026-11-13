@@ -66,3 +66,5 @@ host_sim test (native):
 
 Audio: build/test.wav rendered by host_sim is byte-identical before and after the 0.1.1 change (cmp).
 Not done here: ARM32/ARM64 cross build (no cross toolchain in this environment), test on MPC hardware.
+
+Fix (2026-11-13): component definitions renamed (knob -> pwKnobUni etc.) after hardware report that plain knobs showed no value and did not move their parameter. validate.check_skins: 0 errors, 0 warnings; new built-in-name check flags the old TUI.json.

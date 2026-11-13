@@ -467,6 +467,18 @@ def check_skins(rep, skins_dir, nparams):
                         seen[key] = i
                         if not isinstance(t.get("tabName"), str):
                             rep.warn("TUI.json: tabs[%d] has no tabName" % i)
+                # A local component definition named like a built-in widget type (e.g. "knob")
+                # can be resolved to the bare widget on the MPC: the control then shows no value
+                # and does not move its parameter. Seen on hardware with Prism Wave 0.1.1.
+                builtin = {"slider", "knob", "label", "button", "focus", "image", "separator", "combobox",
+                           "knoboverlay", "menuoverlay", "numericoverlay", "texteditoverlay", "envelope",
+                           "envelopeoverlay", "xypad", "meter", "plotter", "halodisplay", "indicator", "path"}
+                cdefs = (page.get("componentDefinitions") or {}).get("localComponentDefinitions") or []
+                for d in cdefs:
+                    k = d.get("key") if isinstance(d, dict) else None
+                    if isinstance(k, str) and k.lower() in builtin:
+                        rep.error('TUI.json: component definition "%s" has the name of a built-in widget type; '
+                                  'rename it (e.g. "my%s")' % (k, k[:1].upper() + k[1:]))
                 # Every "Parameter N" handle in range, and every image referenced present.
                 bad = []
                 images = set()
