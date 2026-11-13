@@ -1,0 +1,17 @@
+{
+  "name": "MPC Overwitch Send",
+  "manufacturer": "NOXED",
+  "version": "0.3.0",
+  "format": "vst2",
+  "kind": "effect",
+  "uid": "NFpQ",
+  "numInputs": 2,
+  "numOutputs": 2,
+  "category": "Effect",
+  "file32": "VST/mpc-overwitch-send-arm32.so",
+  "file64": "VST/mpc-overwitch-send-arm64.so",
+  "description": "MPC Overwitch Send: sends the audio of an MPC track over Overbridge to an Elektron device input (Main, Delay, Reverb, Chorus on Digitone II). Shares the USB connection with MPC Overwitch.",
+  "author": "NOXED",
+  "url": "",
+  "license": "GPL-3.0-or-later"
+}

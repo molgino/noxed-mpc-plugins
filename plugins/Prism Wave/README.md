@@ -1,4 +1,4 @@
-# NOXED Prism Wave 0.1.0
+# NOXED Prism Wave 0.1.1
 
 Eigenstaendiger Wavetable-Synth fuer Akai MPC Standalone, inspiriert vom Workflow moderner Wavetable-Synthesizer. Keine vollstaendige Serum-2-Nachbildung. Kein Xfer-Code, keine mitgelieferten Serum-Wavetables, -Samples oder -Presets.
 
@@ -13,9 +13,29 @@ Eigenstaendiger Wavetable-Synth fuer Akai MPC Standalone, inspiriert vom Workflo
 - Drive, Stereo-Chorus und temposynchrones Ping-Pong-Delay. Kein Reverb, kein Sample-/Granular-Player, kein grafischer Wavetable-Editor, kein MPE und kein Serum-Presetimport.
 - Sustain-Pedal und Pitchbend. Acht eingebaute Programme einschliesslich **User 01 Scan**.
 
-## Bedienseiten
+## Oberfläche (ab 0.1.1)
 
-**OSC A / OSC B:** Table, Position, Level, Octave, Unison, Detune; B Semi, Width, Master, Sub Level und Noise Level. **TONE FX:** Cutoff, Resonance, Env>Filter, Key Track, Filter Mode, Drive, Chorus Mix, Delay Mix, Delay Div, Feedback und Bend Range. **ENVS:** beide ADSRs. **LFOS:** Shape, Rate, Sync und Division fuer beide LFOs. **MODS:** vier Source/Target/Amount-Gruppen. Sechs Seiten insgesamt.
+Eigener dunkler Skin im Stil moderner Software-Wavetable-Synths: Panels mit Kopfzeile, Bogen-Regler mit Cyan/Violett-Verlauf, Auswahlfelder und Anzeigen. Alle Grafiken sind neu gezeichnet; keine Logos, Grafiken oder Schriften von Xfer, Vital oder anderen Herstellern. Fünf Seiten:
+
+- **OSC:** OSC A und OSC B nebeneinander. Kopfzeile mit Wavetable-Auswahl; darunter eine 3D-Wavetable-Anzeige, die der **Position** folgt (wischen ändert die Position). Regler Position, Octave, Level; darunter Unison, Detune, Sub, Noise (A) bzw. Semi, Unison, Detune, Width (B).
+- **FILTER:** Filterkurve, die **Cutoff** und Modus (LP/BP/HP/NOTCH) folgt, Cutoff, Resonance, Env 2 Amt; VOICE mit Key Track, Bend Range, Master; Distortion (Drive), Chorus (Mix), Delay (Mix, Division, Feedback).
+- **ENV:** ENV 1 (Amplitude) und ENV 2 (Modulation) mit Kurvenanzeige (folgt dem Sustain-Pegel; die Zeiten stehen an den Reglern) und je vier Reglern A/D/S/R.
+- **LFO:** Pro LFO Formanzeige, Shape-Auswahl, Rate (frei) bzw. Division (bei SYNC an) an derselben Stelle und SYNC-Schalter.
+- **MATRIX:** Vier Zeilen Quelle → bipolarer Amount-Balken → Ziel.
+
+Der Master-Regler steht zusätzlich oben rechts auf jeder Seite. Auswahlfelder öffnen die Liste per Doppeltipp oder Encoder-Druck; Antippen eines Elements schaltet die passende Q-Link-Reihe ein. Q-Links arbeiten in Reihen zu vier (oberste Hardware-Reihe = obere Reglergruppe). Im Program-Modus liegen A/B Position, Cutoff, Resonance, Env 2 Amt, Drive, Chorus, Delay, A/B Level, Sub, Noise und die Amp-ADSR auf den 16 Q-Links.
+
+Die Anzeigen für User 02..08 zeigen eine neutrale Ebenen-Darstellung, weil importierte Tabellen erst auf der MPC geladen werden. User 01 zeigt die mitgelieferte Demotabelle; wer sie ersetzt, kann mit `tools/make_prismwave_skin.py` die Anzeige neu erzeugen.
+
+Die Anzeige-Grafiken sind Filmstreifen mit 21 Stufen; die Klangposition selbst bleibt stufenlos. Ladezeit und Speicherbedarf des größeren Skins sind noch auf der MPC zu prüfen.
+
+Die Skin-Dateien liegen in `skins/` und werden vom Build unverändert übernommen. Neu erzeugen (Pillow und numpy nötig):
+
+```text
+python tools/make_prismwave_skin.py --params "plugins/Prism Wave/build/params.json"
+```
+
+`ui.json` bleibt als einfache Rückfallvariante erhalten, wird aber nicht verwendet, solange `skins/` existiert.
 
 ## Eigene Wavetables importieren
 
@@ -48,7 +68,7 @@ Intern entstehen **Content/Wavetables/user01.wav** bis **user08.wav**. User 01 e
 
 MPC OS **3.10.1 oder neuer** und unter Preferences > Enhancements (Beta) sowohl **Enable Enhancements** als auch **External Plugin Support** einschalten. **NOXED - VST - Prism Wave** unveraendert nach **VST2 Plugins** im Stammverzeichnis des Datentraegers kopieren. Unter External Plugins als Instrument laden. ARM32/ARM64 sind enthalten; die MPC Live III verwendet ARM64.
 
-Erste Version 0.1.0. Der separate Testbericht dokumentiert Computerpruefungen. Noch kein Test auf echter MPC: CPU, Ladezeit, Bedienung und Projektwiederherstellung dort pruefen. Fuer viele Instanzen Unison reduzieren. Plugins laufen ohne Crashschutz; Projekte vor dem ersten Test sichern.
+Version 0.1.1 ändert nur die Oberfläche; Klang, Plugin-ID, Parameterreihenfolge und Presets sind unverändert (Hosttest-Audio bytegleich mit 0.1.0). Nach dem Ersetzen des Plugin-Ordners die MPC neu starten. Der separate Testbericht dokumentiert Computerpruefungen. Der neue Skin ist noch nicht auf echter MPC getestet: Darstellung, Touch/Q-Link-Bedienung, CPU, Ladezeit, Bedienung und Projektwiederherstellung dort pruefen. Fuer viele Instanzen Unison reduzieren. Plugins laufen ohne Crashschutz; Projekte vor dem ersten Test sichern.
 
 ## Lizenz
 

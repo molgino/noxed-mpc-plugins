@@ -1,0 +1,58 @@
+name: Build MPC plugins
+
+# Builds both NOXED plugins for the MPC (native + ARM32 + ARM64), runs the SDK
+# validator and host_sim test, and uploads the ready-to-copy plugin folders.
+on:
+  push:
+    paths:
+      - 'plugins/**'
+      - 'framework/**'
+      - 'tools/**'
+      - '.github/workflows/build-plugins.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        plugin: ['Prism Wave', 'Acidline', 'MPC Overwitch', 'MPC Overwitch Send']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Zig cross compiler
+        run: |
+          python -m pip install ziglang
+          echo "ZIG=$(which python)" >> "$GITHUB_ENV"
+
+      - name: Build (native + arm32 + arm64, validated)
+        run: python tools/build.py "plugins/${{ matrix.plugin }}"
+
+      - name: MPC Overwitch desktop tests (stream simulation, engine, two libraries)
+        if: matrix.plugin == 'MPC Overwitch'
+        working-directory: plugins/MPC Overwitch
+        run: sh tests/run_tests.sh
+
+      - name: Host simulator test
+        run: |
+          slug=$(python -c "import json,sys; p=json.load(open('plugins/${{ matrix.plugin }}/plugin.json')); print(p['file64'].split('/')[-1].replace('-arm64.so',''))")
+          .sdk-tools/host_sim "plugins/${{ matrix.plugin }}/build/native/$slug.so" test \
+            --wav "plugins/${{ matrix.plugin }}/build/test.wav" | tee "plugins/${{ matrix.plugin }}/build/host-test.txt"
+          grep -q "Result: PASS" "plugins/${{ matrix.plugin }}/build/host-test.txt"
+
+      - name: Collect plugin folder
+        run: |
+          mkdir -p out/"VST2 Plugins"
+          cp -r "plugins/${{ matrix.plugin }}/build/NOXED - VST - ${{ matrix.plugin }}" out/"VST2 Plugins"/
+          cp "plugins/${{ matrix.plugin }}/build/host-test.txt" out/
+          ls -R out | head -50
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NOXED - VST - ${{ matrix.plugin }}
+          path: out/
