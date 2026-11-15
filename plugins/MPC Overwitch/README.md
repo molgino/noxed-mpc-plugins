@@ -1,4 +1,4 @@
-# NOXED MPC Overwitch 0.3.1 – mehrere Spuren
+# NOXED MPC Overwitch 0.4.0 – Gruppen
 
 MPC Overwitch holt den Ton eines Elektron-Geräts per **Overbridge** direkt in die MPC. Zuerst getestet wird der Digitone II, die Tabelle enthält auch Digitakt II, Digitakt, Digitone (Keys), Syntakt, Analog Four/Rytm MKII und Analog Heat. Das Gerät liefert 48 kHz; das Plugin rechnet auf die Samplerate der MPC um (44,1 kHz) und gleicht dabei die kleine Taktabweichung zwischen beiden Geräten laufend aus. Damit fällt das Samplerate-Problem von USB-Audio weg.
 
@@ -14,6 +14,8 @@ Grundlage ist das Open-Source-Projekt [Overwitch](https://github.com/dagargo/ove
 - **STREAM:** gemessene Geräte-Samplerate, Puffer-Latenz und Taktabweichung in ppm.
 - **DROPOUTS:** Aussetzer im Puffer und USB-Fehler seit dem Laden.
 - **REPORT:** Details zum Durchblättern, auch in `MPC-Overwitch-Report.txt` im Plugin-Ordner.
+
+**Gruppen (ab 0.4):** Auf der zweiten Seite **GROUP** schaltest du Track 1–16, Delay, Reverb, Chorus und Input zu oder ab. Steht SOURCE auf **Group**, werden alle eingeschalteten Ausgänge zu einem Stereosignal summiert, zum Beispiel Track 1–4 als Drums auf Plugin-Spur 1 und Track 5–8 als Synths auf Spur 2 (je eine Instanz pro Gruppe). Die SOURCE-Anzeige zeigt die Gruppe, z. B. „Group: T1+T2+T3“. Auf der GROUP-Seite liegen die 16 Tracks auf den 16 Q-Links (obere Reihe Track 1–4). Pegel pro Spur in der Gruppe gibt es noch nicht.
 
 Mehrere Spuren: für jede gewünschte Geräte-Spur eine eigene Plugin-Spur mit MPC Overwitch anlegen und dort SOURCE wählen (bis zu 16 zusammen mit Send-Instanzen).
 
@@ -47,6 +49,7 @@ Q-Links: erste Reihe Source und Level, zweite Reihe Report. Im Program-Modus Q-L
 
 ## Verlauf
 
+- **0.4.0:** Gruppen: Source „Group“ summiert die auf der GROUP-Seite gewählten Ausgänge. Beide Overwitch-Plugins müssen 0.4.0 sein.
 - **0.3.1:** Pegelanzeige im Send-Plugin; beide Plugins müssen 0.3.1 sein.
 - **0.3.0:** Bis zu 16 Instanzen gleichzeitig mit eigener Quelle; gemeinsame USB-Verbindung mit dem neuen Effekt MPC Overwitch Send (Audio zum Gerät). Noch nicht auf Hardware getestet.
 - **0.2.1:** Die STREAM-Zeile aktualisiert sich, sobald die erste Ratenmessung vorliegt (vorher blieb „0.00 kHz“ stehen).

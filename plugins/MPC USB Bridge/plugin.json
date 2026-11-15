@@ -1,0 +1,17 @@
+{
+  "name": "MPC USB Bridge",
+  "manufacturer": "NOXED",
+  "version": "0.1.0",
+  "format": "vst2",
+  "kind": "instrument",
+  "uid": "NXbD",
+  "numInputs": 0,
+  "numOutputs": 2,
+  "category": "Generator",
+  "file32": "VST/mpc-usb-bridge-arm32.so",
+  "file64": "VST/mpc-usb-bridge-arm64.so",
+  "description": "MPC USB Bridge (probe): checks whether the MPC lets a plugin open class-compliant USB audio devices (Roland AIRA Compact S-1 etc.) that it cannot use as its interface. Makes no sound yet.",
+  "author": "NOXED",
+  "url": "",
+  "license": "GPL-3.0-or-later"
+}

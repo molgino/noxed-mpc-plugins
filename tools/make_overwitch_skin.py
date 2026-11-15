@@ -4,6 +4,7 @@
 Reuses the drawing helpers of make_prismwave_skin.py so the NOXED plugins look alike.
     python tools/make_overwitch_skin.py --params "plugins/MPC Overwitch/build/params.json"
     python tools/make_overwitch_skin.py --send --params "plugins/MPC Overwitch Send/build/params.json"
+    python tools/make_overwitch_skin.py --bridge --params "plugins/MPC USB Bridge/build/params.json"
 """
 import argparse, json
 from pathlib import Path
@@ -24,7 +25,7 @@ def build(params):
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC OVERWITCH', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (300, 22), 'NOXED · OVERBRIDGE FOR THE MPC · 0.3.1 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (300, 22), 'NOXED · OVERBRIDGE FOR THE MPC · 0.4 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
 
     children = []
     # Output panel: source and level.
@@ -84,23 +85,91 @@ def build(params):
     tab = ui.obj(('version', 1), ('tabName', 'STREAM'), ('fnKeyIndex', 0), ('fnKeySubIndex', 0),
                  ('componentDefinition', ui.component_definition([], [bg] + children, 'ff12141a')),
                  ('qlinkBoundsData', ['20 92 384 280', '432 488 828 120']))
+    group_tab, group_defs, group_qmap = build_group_tab()
+    defs += group_defs
     # Only the Source list is static (the menu needs it); every other text comes live from the plugin.
-    choices = next(p['choices'] for p in params['params'] if p['index'] == 1)
+    choices = list(next(p['choices'] for p in params['params'] if p['index'] == 1))
+    choices[-1] = 'Group'
     data = ui.obj(('pageData', ui.obj(
         ('version', 1),
         ('componentDefinitions', ui.obj(('version', 2), ('importFiles', []),
                                         ('localComponentDefinitions', [ui.obj(('key', k), ('value', v)) for k, v in defs]))),
-        ('replacementStrings', [ui.obj(('key', 'Parameter 1'), ('value', list(choices)))]),
+        ('replacementStrings', [ui.obj(('key', 'Parameter 1'), ('value', choices))]),
         ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
-        ('tabs', [tab]))))
+        ('tabs', [tab, group_tab]))))
     # Row 1 of the Q-Links: Source, Level; row 2: Report.
     qmap = ui.obj(('Tab', 1), ('SubTab', 1), ('Bank Direction', 'RowTopDown'),
                   ('Q-Links', ui.Obj(('Q-Link %d' % q, {13: 1, 14: 0, 9: 2}.get(q, -1)) for q in range(1, 17))))
     qlinks = ui.obj(('version', 4), ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
-                    ('Screen Mode Q-Links', ui.obj(('version', 4), ('map', [qmap]))),
+                    ('Screen Mode Q-Links', ui.obj(('version', 4), ('map', [qmap, group_qmap]))),
                     ('Program Mode Q-Links', ui.Obj(('Q-Link %d' % (q + 1), {0: 0, 1: 1}.get(q, -1)) for q in range(16))))
     (SKINS / 'TUI.json').write_text(ui.dump_json(data) + '\n')
     (SKINS / 'Q-Links.json').write_text(ui.dump_json(qlinks) + '\n')
+
+
+GROUP_FIRST = 8   # parameter index of "G Track 1"
+FX_NAMES = ['DELAY', 'REVERB', 'CHORUS', 'INPUT']
+
+
+def pad_img(on, w=150, h=100):
+    im, d = pw.canvas(w, h)
+    if on:
+        pw.rrect(d, (1, 1, w - 1, h - 1), '#173847', pw.ACCENT, 1.6, 8)
+        pw.rrect(d, (10, h - 14, w - 10, h - 9), pw.ACCENT, None, 0, 2)
+    else:
+        pw.rrect(d, (1, 1, w - 1, h - 1), '#161920', '#2c313c', 1.2, 8)
+        pw.rrect(d, (10, h - 14, w - 10, h - 9), '#2a2f3a', None, 0, 2)
+    return pw.finish(im, w, h)
+
+
+def build_group_tab():
+    """Second page: 16 track pads (Q-Link grid) plus Delay/Reverb/Chorus/Input; Source = Group sums them."""
+    im, d = pw.canvas(W, H, pw.hex_rgb(pw.BG))
+    pw.rrect(d, (0, 0, W, 42), '#0d0f14')
+    pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
+    pw.prism_logo(d, 22, 8)
+    pw.text(d, (76, 21), 'MPC OVERWITCH', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
+    pw.text(d, (300, 22), 'GROUP · SET SOURCE TO "GROUP" ON THE STREAM PAGE', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.panel_box(d, (12, 48, 668, 616), 'TRACKS', subtitle='TAP TO ADD / REMOVE')
+    pw.panel_box(d, (680, 48, 1268, 616), 'EFFECTS & INPUT', subtitle='ALSO SUMMABLE')
+    children = []
+    pad_w, pad_h = 150, 100
+    for i in range(16):
+        r, c = divmod(i, 4)
+        x, y = 28 + c * 160, 96 + r * 128
+        children.append(pw.entry('g%d' % i, 'owPad', ui.obj(('version', 1), ('handleName', 'Data')), '%d %d %d %d' % (x, y, pad_w, pad_h),
+                                 [('Data', 'Parameter %d' % (GROUP_FIRST + i))], 'Yes', None, 'Hide'))
+        children.append(pw.entry('gl%d' % i, 'Label', ui.label_data('Text', 'ffe4e9f2', 22.0, 'horizontallyCentred verticallyCentred',
+                                                                   'TRACK %d' % (i + 1)), '%d %d %d 70' % (x, y, pad_w)))
+    for i, name in enumerate(FX_NAMES):
+        x, y = 708 + (i % 2) * 280, 96 + (i // 2) * 128
+        children.append(pw.entry('gf%d' % i, 'owPadWide', ui.obj(('version', 1), ('handleName', 'Data')), '%d %d 260 %d' % (x, y, pad_h),
+                                 [('Data', 'Parameter %d' % (GROUP_FIRST + 16 + i))], 'Yes', None, 'Hide'))
+        children.append(pw.entry('gfl%d' % i, 'Label', ui.label_data('Text', 'ffe4e9f2', 22.0, 'horizontallyCentred verticallyCentred', name),
+                                 '%d %d 260 70' % (x, y)))
+    for i, t in enumerate(['All lit outputs are summed to this plugin track when', 'SOURCE = Group. Use one MPC Overwitch instance per',
+                           'group, e.g. Tracks 1-4 = drums, 5-8 = synths.', '',
+                           'Names are those of the Digitone II; other Overbridge', 'devices map the same positions onto their outputs.']):
+        pw.text(d, (708, 380 + i * 24), t, 13, 'medium', pw.MUTED if t else pw.DIM, 'lm')
+    pw.text(d, (708, 590), 'The current group also appears as the SOURCE text, e.g. "Group: T1+T2+T3".', 11, 'medium', pw.DIM, 'lm')
+    pad_img(True).save(SKINS / 'pad-on.png')
+    pad_img(False).save(SKINS / 'pad-off.png')
+    pad_img(True, 260).save(SKINS / 'padw-on.png')
+    pad_img(False, 260).save(SKINS / 'padw-off.png')
+    pw.finish(im, W, H).convert('RGB').save(SKINS / 'panel-group.png', optimize=True)
+    defs = []
+    for name, w, on, off in [('owPad', pad_w, 'pad-on.png', 'pad-off.png'), ('owPadWide', 260, 'padw-on.png', 'padw-off.png')]:
+        defs.append((name, ui.component_definition(ui.control_actions('menu overlay', False), [
+            pw.focus(w, pad_h),
+            pw.entry('pad', 'Button', ui.button_data(on, off, 1, 1), '0 0 %d %d' % (w, pad_h))], '0')))
+    bg = pw.entry('panel', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'panel-group.png')),
+                  '0 0 1280 628')
+    tab = ui.obj(('version', 1), ('tabName', 'GROUP'), ('fnKeyIndex', 1), ('fnKeySubIndex', 0),
+                 ('componentDefinition', ui.component_definition([], [bg] + children, 'ff12141a')),
+                 ('qlinkBoundsData', ['%d %d 628 112' % (22, 90 + r * 128) for r in range(4)]))
+    qmap = ui.obj(('Tab', 2), ('SubTab', 1), ('Bank Direction', 'RowTopDown'),
+                  ('Q-Links', ui.Obj(('Q-Link %d' % q, GROUP_FIRST + (3 - (q - 1) // 4) * 4 + (q - 1) % 4) for q in range(1, 17))))
+    return tab, defs, qmap
 
 
 SEND_SKINS = ROOT / 'plugins' / 'MPC Overwitch Send' / 'skins'
@@ -115,7 +184,7 @@ def build_send(params):
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC OVERWITCH SEND', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (372, 22), 'NOXED · TRACK AUDIO TO THE ELEKTRON DEVICE · 0.3.1 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (372, 22), 'NOXED · TRACK AUDIO TO THE ELEKTRON DEVICE · 0.4 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
     children = []
     pw.panel_box(d, (12, 48, 412, 616), 'SEND', subtitle='MPC TRACK TO DEVICE')
     pw.text(d, (36, 104), 'DESTINATION', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
@@ -189,14 +258,76 @@ def build_send(params):
     return out
 
 
+BRIDGE_SKINS = ROOT / 'plugins' / 'MPC USB Bridge' / 'skins'
+BRIDGE_ROWS = [(1, 'STATUS'), (2, 'DEVICE'), (3, 'AUDIO'), (4, 'ACCESS'), (5, 'SYSTEM')]
+
+
+def build_bridge(params):
+    """MPC USB Bridge probe: status rows + REPORT knob (param 0)."""
+    out = BRIDGE_SKINS
+    out.mkdir(parents=True, exist_ok=True)
+    im, d = pw.canvas(W, H, pw.hex_rgb(pw.BG))
+    pw.rrect(d, (0, 0, W, 42), '#0d0f14')
+    pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
+    pw.prism_logo(d, 22, 8)
+    pw.text(d, (76, 21), 'MPC USB BRIDGE', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
+    pw.text(d, (290, 22), 'NOXED · CLASS-COMPLIANT USB AUDIO TEST (ROLAND S-1 ...) · NO SOUND YET', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    children = []
+    pw.panel_box(d, (12, 48, 1268, 436), 'USB AUDIO', subtitle='RESCANS EVERY 2 S · SET AIRA LINK TO OFF')
+    for i, (prm, name) in enumerate(BRIDGE_ROWS):
+        y = 100 + i * 64
+        if i:
+            pw.line(d, [(28, y - 10), (1252, y - 10)], '#232835', 1)
+        pw.text(d, (40, y + 22), name, 13, 'bold', pw.MUTED, 'lm', spacing=1.4)
+        children.append(pw.entry('row %d' % prm, 'Label',
+                                 ui.label_data('Value', 'ff46c8f0' if prm == 1 else 'ffe4e9f2', 28.0 if prm == 1 else 22.0,
+                                               'left verticallyCentred'), '220 %d 1030 44' % y, [('Data', 'Parameter %d' % prm)]))
+    pw.panel_box(d, (12, 448, 1268, 616), 'REPORT', subtitle='TURN THE FIRST Q-LINK OR DRAG TO SCROLL · FULL TEXT IN MPC-USB-Bridge-Report.txt')
+    children.append(pw.entry('p0', 'ubReport', ui.obj(('version', 1), ('handleName', 'Data')), '28 496 1224 104',
+                             [('Data', 'Parameter 0')], 'Yes', None, 'Hide'))
+    pw.strip(lambda v: pw.knob_frame(v, pw.KN, False), pw.FRAMES, pw.KN, pw.KN, out / 'knob.png')
+    pw.finish(im, W, H).convert('RGB').save(out / 'panel.png', optimize=True)
+    defs = [
+        ('ubReport', ui.component_definition(ui.control_actions('knob overlay', False), [
+            pw.focus(1224, 104),
+            pw.entry('knob', 'Knob', ui.knob_filmstrip_data('knob.png', pw.FRAMES), '20 20 %d %d' % (pw.KN, pw.KN)),
+            pw.entry('value', 'Label', ui.label_data('Value', 'ffe4e9f2', 26.0, 'left verticallyCentred'), '110 20 1100 64')], '0')),
+        ('knob overlay', ui.overlay_component('KnobOverlay', ui.knob_overlay_data(False), 'ff12141a')),
+    ]
+    bg = pw.entry('panel', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'panel.png')),
+                  '0 0 1280 628')
+    tab = ui.obj(('version', 1), ('tabName', 'USB'), ('fnKeyIndex', 0), ('fnKeySubIndex', 0),
+                 ('componentDefinition', ui.component_definition([], [bg] + children, 'ff12141a')),
+                 ('qlinkBoundsData', ['20 488 1240 120']))
+    data = ui.obj(('pageData', ui.obj(
+        ('version', 1),
+        ('componentDefinitions', ui.obj(('version', 2), ('importFiles', []),
+                                        ('localComponentDefinitions', [ui.obj(('key', k), ('value', v)) for k, v in defs]))),
+        ('replacementStrings', []),
+        ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
+        ('tabs', [tab]))))
+    qmap = ui.obj(('Tab', 1), ('SubTab', 1), ('Bank Direction', 'RowTopDown'),
+                  ('Q-Links', ui.Obj(('Q-Link %d' % q, 0 if q == 13 else -1) for q in range(1, 17))))
+    qlinks = ui.obj(('version', 4), ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
+                    ('Screen Mode Q-Links', ui.obj(('version', 4), ('map', [qmap]))),
+                    ('Program Mode Q-Links', ui.Obj(('Q-Link %d' % (q + 1), 0 if q == 0 else -1) for q in range(16))))
+    (out / 'TUI.json').write_text(ui.dump_json(data) + '\n')
+    (out / 'Q-Links.json').write_text(ui.dump_json(qlinks) + '\n')
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--params', type=Path, required=True)
     ap.add_argument('--send', action='store_true', help='build the MPC Overwitch Send skin')
+    ap.add_argument('--bridge', action='store_true', help='build the MPC USB Bridge skin')
     ap.add_argument('--preview', type=Path, default=ROOT / 'docs' / 'screenshots')
     args = ap.parse_args()
     params = json.loads(args.params.read_text())
-    if args.send:
+    if args.bridge:
+        pw.SKINS = build_bridge(params)
+        name = 'mpc-usb-bridge.png'
+    elif args.send:
         pw.SKINS = build_send(params)
         name = 'mpc-overwitch-send.png'
     else:
@@ -204,8 +335,8 @@ def main():
         pw.SKINS = SKINS
         name = 'mpc-overwitch.png'
     args.preview.mkdir(parents=True, exist_ok=True)
-    for f in pw.render_preview(params, args.preview):
-        target = f.with_name(name)
+    for i, f in enumerate(pw.render_preview(params, args.preview)):
+        target = f.with_name(name if i == 0 else name.replace('.png', '-%s.png' % f.stem.split('-')[-1]))
         f.replace(target)
         print('preview', target)
 

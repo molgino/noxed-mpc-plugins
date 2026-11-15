@@ -28,7 +28,7 @@
 
 namespace ob {
 
-constexpr uint32_t kAbi = 0x4f420004;   // "OB" v4 (0.3.1: send peak meter in Slot)
+constexpr uint32_t kAbi = 0x4f420005;   // "OB" v5 (0.4.0: group mask in Slot)
 
 struct Shared
 {

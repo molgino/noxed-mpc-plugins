@@ -16,6 +16,8 @@
 //              names; other devices map the same indices onto their own outputs)
 //   2 Report   scrolls the diagnostic report one line at a time
 //   3..7       read-only status rows: Status, Device, Stream, Dropouts, System
+//   8..27      GROUP page: which outputs are summed when Source = Group (Track 1-16, Delay, Reverb,
+//              Chorus, Input on Digitone II; other devices map the same positions onto their outputs)
 //
 // Protocol from Overwitch (https://github.com/dagargo/overwitch): engine.c MIT (Stefan Rehm, David
 // Garcia Goni), device table GPL-3. This plugin: GPL-3.0-or-later.
@@ -39,17 +41,19 @@
 
 namespace {
 
-enum ParamIndex { kLevel = 0, kSource, kLine, kStatus, kDevice, kStream, kDropouts, kSystem, kNumParams };
+enum ParamIndex { kLevel = 0, kSource, kLine, kStatus, kDevice, kStream, kDropouts, kSystem, kGroupFirst, kNumParams = kGroupFirst + 20 };
 constexpr int kMaxLines = 64;
-const char* const kVersion = "0.3.1";
+const char* const kVersion = "0.4.0";
 
 std::vector<std::string> sourceNames()
 {
     std::vector<std::string> v = {"Main"};
     for (int i = 1; i <= 16; ++i) v.push_back("Track " + std::to_string(i));
     for (const char* s : {"Delay", "Reverb", "Chorus", "Input"}) v.push_back(s);
+    v.push_back("Group");
     return v;
 }
+constexpr int kGroupChoice = 21;   // "Group" in the Source list
 
 } // namespace
 
@@ -69,6 +73,9 @@ public:
             p.automatable = false;
             addParam(p);
         }
+        std::vector<std::string> src = sourceNames();
+        for (int i = 0; i < 20; ++i)
+            addParam(mpc::boolParam(("group_" + std::to_string(i + 1)).c_str(), ("G " + src[(size_t)i + 1]).c_str(), false));
 
         utsname u{};
         uname(&u);
@@ -111,8 +118,15 @@ public:
             return;
         }
         ob::Slot& sl = shared_->slots[slot_];
-        const int src = (int)std::lround(get(kSource));
-        if (sl.route.load(std::memory_order_relaxed) != src) sl.route.store(src, std::memory_order_relaxed);
+        const int choice = (int)std::lround(get(kSource));
+        const int route = choice == kGroupChoice ? ob::kRouteGroup : choice;
+        if (route == ob::kRouteGroup)
+        {
+            uint32_t mask = 0;
+            for (int i = 0; i < 20; ++i) if (getBool(kGroupFirst + i)) mask |= 1u << i;
+            if (sl.groupMask.load(std::memory_order_relaxed) != mask) sl.groupMask.store(mask, std::memory_order_relaxed);
+        }
+        if (sl.route.load(std::memory_order_relaxed) != route) sl.route.store(route, std::memory_order_relaxed);
         reader_.read(sl.ring, l, r, n);
         // Level: perceptual (squared) curve, smoothed per sample to avoid zipper noise.
         const float lv = get(kLevel);
@@ -142,6 +156,7 @@ public:
             case kSource:
             {
                 int i = (int)std::lround(plain);
+                if (i == kGroupChoice) { out = groupLabel_; return true; }
                 if (!devSources_.empty())
                     out = i < (int)devSources_.size() ? devSources_[(size_t)i].name : "(not on this device)";
                 else
@@ -163,7 +178,13 @@ public:
             case kStream:   out = stream_;   return true;
             case kDropouts: out = dropouts_; return true;
             case kSystem:   out = system_;   return true;
-            default: return false;
+            default:
+                if (index >= kGroupFirst && index < kGroupFirst + 20)
+                {
+                    out = plain >= 0.5f ? "On" : "Off";
+                    return true;
+                }
+                return false;
         }
     }
 
@@ -238,7 +259,9 @@ private:
             lines.push_back(diag::fmt("slot %d; %d receive, %d send", slot_ + 1,
                                       ob::slotsInUse(shared_, ob::Slot::kReceive), ob::slotsInUse(shared_, ob::Slot::kSend)));
             int si = (int)std::lround(get(kSource));
-            if (si >= 0 && si < (int)sources.size())
+            if (si == kGroupChoice)
+                lines.push_back(diag::clip("group: " + groupSummary(sources)));
+            else if (si >= 0 && si < (int)sources.size())
                 lines.push_back(diag::clip(diag::fmt("source %s = out %d/%d", sources[(size_t)si].name.c_str(),
                                                      sources[(size_t)si].left + 1, sources[(size_t)si].right + 1)));
             if (st != ob::Engine::kStreaming && runDiag)
@@ -250,7 +273,8 @@ private:
 
         // Also redraw once when the first rate measurement arrives (the STREAM row showed 0.00 kHz until reopened).
         const bool rateKnown = engine_ && slot_ >= 0 && engine_->measuredRate() > 1000.0;
-        std::string key = status + "|" + device + "|" + dropouts + (rateKnown ? "|rate" : "");
+        const std::string group = "Group: " + groupSummary(sources);
+        std::string key = status + "|" + device + "|" + dropouts + (rateKnown ? "|rate" : "") + "|" + group;
         bool changed;
         std::string report;
         {
@@ -258,12 +282,28 @@ private:
             changed = key != visibleKey_;
             visibleKey_ = key;
             status_ = status; device_ = device; stream_ = stream; dropouts_ = dropouts;
+            groupLabel_ = diag::clip(group);
             lines_ = lines;
             devSources_ = sources;
             for (const std::string& s : lines) report += s + "\n";
         }
         if (changed) writeReport(report);
         return changed;
+    }
+
+    // "T1+T2+T5" style summary of the group members, or "empty".
+    std::string groupSummary(const std::vector<ob::Source>& sources)
+    {
+        std::string out;
+        int n = 0;
+        for (int i = 0; i < 20; ++i)
+        {
+            if (!getBool(kGroupFirst + i)) continue;
+            std::string name = (size_t)i + 1 < sources.size() ? sources[(size_t)i + 1].name : sourceNames()[(size_t)i + 1];
+            if (name.compare(0, 6, "Track ") == 0) name = "T" + name.substr(6);
+            out += (n++ ? "+" : "") + name;
+        }
+        return n ? out : "empty";
     }
 
     // Averages the resampler's drift estimate (it jitters with block timing) for display.
@@ -289,7 +329,7 @@ private:
         info.name         = "MPC Overwitch";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 301;            // 0.3.1
+        info.version      = 400;            // 0.4.0
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;
@@ -309,7 +349,7 @@ private:
     std::thread monitor_;
     std::atomic<bool> stop_{false}, dirty_{false};
     std::mutex mutex_;
-    std::string status_, device_, stream_, dropouts_, system_, visibleKey_;
+    std::string status_, device_, stream_, dropouts_, system_, visibleKey_, groupLabel_ = "Group: empty";
     std::vector<std::string> lines_, diagLines_;
     std::vector<ob::Source> devSources_;
     double driftAvg_ = 0.0;

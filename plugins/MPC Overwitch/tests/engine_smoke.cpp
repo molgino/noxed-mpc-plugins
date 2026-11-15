@@ -52,6 +52,42 @@ int main()
     ob::Engine& e = a->engine;
     std::printf("     state %d, device '%s', message '%s'\n", e.state(), e.deviceName().c_str(), e.message().c_str());
     check(e.state() == ob::Engine::kError && e.message().find("open") == 0, "fake DN2 without device node -> open error");
+    // Group decoding: one fake transfer where Track 1 L/R = 0.25 and Track 2 L/R = 0.125.
+    {
+        const ob::Device* d = dn2;
+        size_t frame = 0;
+        for (int i = 0; i < d->numOutputs; ++i) frame += d->outputs[i].size;
+        size_t blk = 32 + 7 * frame;
+        std::vector<uint8_t> xfer(24 * blk, 0);
+        auto put = [&](uint8_t* p, int size, float v) {   // inverse of decodeSample for 2.1 4-byte slots
+            int32_t raw = (int32_t)(v * 2147483647.0f);
+            uint8_t be[4] = {(uint8_t)(raw >> 24), (uint8_t)(raw >> 16), (uint8_t)(raw >> 8), (uint8_t)raw};
+            if (size == 4) { p[0] = 0; p[1] = be[0]; p[2] = be[1]; p[3] = be[2]; } else std::memcpy(p, be, 3);
+        };
+        for (size_t b = 0; b < 24; ++b)
+            for (size_t f = 0; f < 7; ++f)
+            {
+                uint8_t* fr = &xfer[b * blk + 32 + f * frame];
+                size_t off = 0;
+                for (int t = 0; t < d->numOutputs; ++t)
+                {
+                    float v = (t == 2 || t == 3) ? 0.25f : (t == 4 || t == 5) ? 0.125f : 0.0f;
+                    put(fr + off, d->outputs[t].size, v);
+                    off += d->outputs[t].size;
+                }
+            }
+        ob::Slot* g = &a->slots[0];
+        g->route.store(ob::kRouteGroup);
+        g->groupMask.store(0x3);                       // Track 1 + Track 2
+        ob::Slot* one = &a->slots[2];
+        one->route.store(2);                           // Track 2 only
+        uint64_t w0 = g->ring.written(), w1 = one->ring.written();
+        a->engine.testDecode(d, xfer);
+        bool okG = g->ring.written() - w0 == 168 && std::fabs(g->ring.l(w0 + 5) - 0.375f) < 1e-4f && std::fabs(g->ring.r(w0 + 100) - 0.375f) < 1e-4f;
+        bool okS = std::fabs(one->ring.l(w1 + 5) - 0.125f) < 1e-4f;
+        std::printf("     group sum %.4f (expect 0.375), single %.4f (expect 0.125)\n", g->ring.l(w0 + 5), one->ring.l(w1 + 5));
+        check(okG && okS, "group = sum of selected tracks, single source unaffected");
+    }
     ob::releaseShared(b);
     ob::releaseShared(a);
     check(access(ob::anchorPath().c_str(), F_OK) != 0, "last release removes the anchor");

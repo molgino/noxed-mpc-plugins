@@ -18,7 +18,8 @@ Weitere Prism-Wave-Seiten: [Filter/FX](docs/screenshots/prism-wave-filter.png) �
 | --- | --- |
 | **Acidline** | Monophoner, TB-303-inspirierter Acid-Synth mit Saw/Square, nichtlinearem resonantem Filter, Velocity-Accent, Legato-Slide, Drive und sechs Presets. |
 | **Prism Wave** | Eigenständiger, Serum-inspirierter Wavetable-Synth mit acht Stimmen, zwei Oszillatoren, je bis zu drei Unison-Stimmen, Sub/Noise, Filter, zwei ADSRs, zwei LFOs, vier Modulationsrouten, Chorus, Delay und acht Presets. |
-| **MPC Overwitch** *(Vorschau)* | Overbridge für Elektron-Geräte (getestet mit Digitone II) direkt in der MPC, auf Basis von Overwitch (GPL-3): Geräte-Spuren als Plugin-Spuren, bis zu 16 gleichzeitig, 48 → 44,1 kHz mit Drift-Ausgleich. [README](plugins/MPC%20Overwitch/README.md) |
+| **MPC Overwitch** *(Vorschau)* | Overbridge für Elektron-Geräte (getestet mit Digitone II) direkt in der MPC, auf Basis von Overwitch (GPL-3): Geräte-Spuren als Plugin-Spuren, bis zu 16 gleichzeitig, Gruppen aus mehreren Spuren, 48 → 44,1 kHz mit Drift-Ausgleich. [README](plugins/MPC%20Overwitch/README.md) |
+| **MPC USB Bridge** *(Test)* | Für class-compliant USB-Audiogeräte, die an der Samplerate der MPC scheitern (zuerst Roland S-1). Version 0.1 prüft nur den Zugriff, siehe [README](plugins/MPC%20USB%20Bridge/README.md). |
 | **MPC Overwitch Send** *(Vorschau, Effekt)* | Schickt MPC-Spuren per Overbridge an die Eingänge des Elektron-Geräts (Digitone II: Main, Delay, Reverb, Chorus). [README](plugins/MPC%20Overwitch%20Send/README.md) |
 
 Keine originalgetreue TB-303-Schaltungsemulation und keine vollständige Serum-2-Nachbildung.

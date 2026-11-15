@@ -1,4 +1,4 @@
-# NOXED MPC Overwitch Send 0.3.1 – MPC-Audio zum Elektron-Gerät (Vorschau)
+# NOXED MPC Overwitch Send 0.4.0 – MPC-Audio zum Elektron-Gerät (Vorschau)
 
 Effekt-Plugin zu [MPC Overwitch](../MPC%20Overwitch/README.md). Als Insert auf einer beliebigen MPC-Spur schickt es deren Audio per Overbridge an einen Eingang des Elektron-Geräts. Beim Digitone II sind das Main, Delay, Reverb oder Chorus, also auch die Effekt-Sends des Digitone. Die Umrechnung von der MPC-Rate auf 48 kHz folgt dabei der Taktabweichung, genau wie beim Empfang.
 

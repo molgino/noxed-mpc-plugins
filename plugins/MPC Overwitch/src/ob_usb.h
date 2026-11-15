@@ -134,11 +134,14 @@ inline std::vector<Source> destinationsFor(const Device* d) { return d ? routesF
 // their ring by the engine; send slots get host audio written into their ring by the plugin, which
 // the engine resamples to 48 kHz and mixes into the chosen device input.
 constexpr int kMaxSlots = 16;
+constexpr int kRouteGroup = 1000;      // receive route: sum of the sources in groupMask
+constexpr int kGroupBits = 20;         // bit i = source index i + 1 (Digitone II: Track 1-16, Delay, Reverb, Chorus, Input)
 struct Slot
 {
     enum Kind { kFree = 0, kReceive = 1, kSend = 2 };
     std::atomic<int> kind{kFree};
-    std::atomic<int> route{0};               // receive: source index; send: destination index
+    std::atomic<int> route{0};               // receive: source index or kRouteGroup; send: destination index
+    std::atomic<uint32_t> groupMask{0};      // receive with kRouteGroup: which sources are summed
     std::atomic<double> hostRate{44100.0};   // send slots: the host rate and block size of the writer
     std::atomic<int> hostBlock{512};
     std::atomic<uint32_t> epoch{0};          // bumped by the plugin on (re)start; the engine resets its reader
@@ -450,30 +453,41 @@ private:
         outDirty_ = any;
     }
 
-    // Decodes one device->host transfer into the ring of every receive slot (each with its own source).
+    // Decodes one device->host transfer into the ring of every receive slot (each with its own source,
+    // or the sum of a group of sources).
     void decodeIn(const Device* dev, int actual)
     {
         const int blocks = actual / (int)inBlk_;
+        const int nSrc = (int)srcOff_.size();
         for (int k = 0; k < kMaxSlots; ++k)
         {
             Slot& sl = slots_[k];
             if (sl.kind.load(std::memory_order_acquire) != Slot::kReceive) continue;
-            const int si = sl.route.load(std::memory_order_relaxed);
-            int offL = -1, offR = -1, szL = 0, szR = 0;
-            if (si >= 0 && si < (int)sourcesLocal_.size())
+            const int route = sl.route.load(std::memory_order_relaxed);
+            int pick[kGroupBits + 1];
+            int nPick = 0;
+            if (route == kRouteGroup)
             {
-                const int tl = sourcesLocal_[(size_t)si].left, tr = sourcesLocal_[(size_t)si].right;
-                offL = trackOffset_[(size_t)tl]; szL = dev->outputs[tl].size;
-                offR = trackOffset_[(size_t)tr]; szR = dev->outputs[tr].size;
+                const uint32_t mask = sl.groupMask.load(std::memory_order_relaxed);
+                for (int b = 0; b < kGroupBits; ++b)
+                    if ((mask >> b) & 1u && b + 1 < nSrc) pick[nPick++] = b + 1;
             }
+            else if (route >= 0 && route < nSrc)
+                pick[nPick++] = route;
             for (int b = 0; b < blocks; ++b)
             {
                 const uint8_t* data = &inBuf_[b * inBlk_ + kBlockHeader];
                 for (int f = 0; f < kFramesPerBlock; ++f)
                 {
                     const uint8_t* fr = data + f * inFrame_;
-                    sl.ring.push(offL >= 0 ? decodeSample(fr + offL, szL, dev->v21) : 0.0f,
-                                 offR >= 0 ? decodeSample(fr + offR, szR, dev->v21) : 0.0f);
+                    float l = 0.0f, r = 0.0f;
+                    for (int i = 0; i < nPick; ++i)
+                    {
+                        const SrcOff& o = srcOff_[(size_t)pick[i]];
+                        l += decodeSample(fr + o.offL, o.szL, dev->v21);
+                        r += decodeSample(fr + o.offR, o.szR, dev->v21);
+                    }
+                    sl.ring.push(l, r);
                 }
             }
             sl.ring.publish();
@@ -481,17 +495,41 @@ private:
         framesIn_ += (uint64_t)blocks * kFramesPerBlock;
     }
 
-    void stream(const Device* dev)
+    // Per-device layout used by the decoder and the send mixer (also used by the desktop tests).
+    void setupLayout(const Device* dev)
     {
+        inFrame_ = frameBytes(dev->outputs, dev->numOutputs);
+        outFrame_ = frameBytes(dev->inputs, dev->numInputs);
+        inBlk_ = kBlockHeader + kFramesPerBlock * inFrame_;
+        outBlk_ = kBlockHeader + kFramesPerBlock * outFrame_;
         sourcesLocal_ = sourcesFor(dev);
         destsLocal_ = destinationsFor(dev);
         trackOffset_.assign((size_t)dev->numOutputs, 0);
         for (int t = 1; t < dev->numOutputs; ++t) trackOffset_[(size_t)t] = trackOffset_[(size_t)t - 1] + dev->outputs[t - 1].size;
+        srcOff_.clear();
+        for (const Source& src : sourcesLocal_)
+            srcOff_.push_back({trackOffset_[(size_t)src.left], dev->outputs[src.left].size,
+                               trackOffset_[(size_t)src.right], dev->outputs[src.right].size});
         mix_.assign((size_t)(kFramesPerBlock * kBlocksPerTransfer * dev->numInputs), 0.0f);
         tmpL_.assign(kFramesPerBlock * kBlocksPerTransfer, 0.0f);
         tmpR_.assign(kFramesPerBlock * kBlocksPerTransfer, 0.0f);
         for (bool& a : sendActive_) a = false;
         outDirty_ = true;
+    }
+
+public:
+    // Desktop tests: feed one raw device->host transfer through the decoder without USB.
+    void testDecode(const Device* dev, const std::vector<uint8_t>& transfer)
+    {
+        setupLayout(dev);
+        inBuf_ = transfer;
+        decodeIn(dev, (int)transfer.size());
+    }
+
+private:
+    void stream(const Device* dev)
+    {
+        setupLayout(dev);
         usbdevfs_urb in{}, out{};
         in.type = USBDEVFS_URB_TYPE_INTERRUPT; in.endpoint = kEpIn;
         in.buffer = inBuf_.data(); in.buffer_length = (int)inBuf_.size(); in.usercontext = &in;
@@ -587,6 +625,8 @@ private:
     Slot* slots_;
     std::vector<Source> sources_, dests_, sourcesLocal_, destsLocal_;
     std::vector<int> trackOffset_;
+    struct SrcOff { int offL, szL, offR, szR; };
+    std::vector<SrcOff> srcOff_;
     std::vector<float> mix_, tmpL_, tmpR_;
     DriftReader sendRd_[kMaxSlots];
     uint32_t sendEpoch_[kMaxSlots] = {};

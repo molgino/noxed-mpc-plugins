@@ -1,5 +1,14 @@
 # Änderungen
 
+## MPC Overwitch 0.4.0 / MPC Overwitch Send 0.4.0 – Gruppen
+
+- Neue Seite GROUP: Track 1–16, Delay, Reverb, Chorus, Input zuschaltbar; SOURCE „Group“ summiert sie zu einem Stereosignal (je Instanz eine Gruppe). Die Gruppe steht in der SOURCE-Anzeige („Group: T1+T2“).
+- Engine summiert pro Slot; Test mit synthetischem Overbridge-Transfer prüft die Summe. Gemeinsames Layout v5: beide Plugins müssen 0.4.0 sein.
+
+## MPC USB Bridge 0.1.0 – Test (neu)
+
+- Neues Test-Plugin für class-compliant USB-Audiogeräte (zuerst Roland S-1): zeigt USB-Geräte, ALSA-Karten mit Raten/Formaten, ob Aufnahme/Wiedergabe geöffnet werden können und ob libasound verfügbar ist; erkennt einen Roland ohne Audio-Schnittstelle (AIRA LINK an). Macht keinen Ton.
+
 ## MPC Overwitch / MPC Overwitch Send 0.3.1
 
 - Send: neue Zeile LEVELS mit zwei Pegeln. IN zeigt, was am Plugin ankommt (nach SEND), USB zeigt, was die Engine tatsächlich zum Gerät mischt. Beides als Diagnose, weil ein Reverb-Send im ersten Test nicht ankam (auf der Spur lag dabei kein Signal an).
