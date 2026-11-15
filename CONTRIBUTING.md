@@ -1,28 +1,30 @@
-# Mitmachen bei den NOXED MPC Plugins
+# Contributing to the NOXED MPC Plugins
 
-Danke, dass du helfen willst! Deutsch oder Englisch – beides ist willkommen.
+Thanks for wanting to help! English or German – both are welcome.
 
-## Fehler melden
-[Issue anlegen](https://github.com/molgino/noxed-mpc-plugins/issues/new/choose) und angeben: MPC-Modell, MPC-OS-Version, Plugin und Version, angeschlossenes Gerät (bei Overwitch/USB Bridge), was du erwartet hast und was passiert ist. Bei Overwitch und USB Bridge hilft ein Foto der Statuszeilen (STATUS, DEVICE, STREAM …) oder die Berichtsdatei aus dem Plugin-Ordner (`MPC-Overwitch-Report.txt`, `MPC-USB-Bridge-Report.txt`).
+## Reporting bugs
+[Open an issue](https://github.com/molgino/noxed-mpc-plugins/issues/new/choose) and include: MPC model, MPC OS version, plugin and version, connected device (for Overwitch/USB Bridge), what you expected and what happened. For Overwitch and USB Bridge a photo of the status rows (STATUS, DEVICE, STREAM …) or the report file from the plugin folder (`MPC-Overwitch-Report.txt`, `MPC-USB-Bridge-Report.txt`) helps a lot.
 
-## Code beitragen
-1. Fork anlegen, einen Branch erstellen.
-2. Bauen und testen:
+## Contributing code
+1. Fork the repository and create a branch.
+2. Build and test:
    ```sh
-   python tools/build.py "plugins/<Name>"           # native + ARM32 + ARM64, inkl. Validator
+   python tools/build.py "plugins/<Name>"           # native + ARM32 + ARM64, including the validator
    .sdk-tools/host_sim "plugins/<Name>/build/native/<slug>.so" test
-   (cd "plugins/MPC Overwitch" && sh tests/run_tests.sh)   # falls Overwitch-Code betroffen
-   (cd "plugins/MPC USB Bridge" && sh tests/run_tests.sh)  # falls USB-Bridge-Code betroffen (Linux, libasound)
+   (cd "plugins/MPC Overwitch" && sh tests/run_tests.sh)   # if Overwitch code is affected
+   (cd "plugins/MPC USB Bridge" && sh tests/run_tests.sh)  # if USB Bridge code is affected (Linux, libasound)
    ```
-3. Pull Request gegen `main`. GitHub Actions baut alle Plugins und führt die Tests aus. Schreib in den PR, auf welcher MPC (falls überhaupt) du getestet hast.
+3. Open a pull request against `main`. GitHub Actions builds all plugins and runs the tests. Say in the PR which MPC (if any) you tested on.
 
-## Regeln, die die Plugins auf der MPC heil halten
-- **Echtzeit:** in `process()` keine Speicheranforderung, keine Sperren, keine Ausgaben, keine Datei- oder USB-Zugriffe.
-- **Identität ist dauerhaft:** `uid`, Parameter-IDs und Parameter-Reihenfolge nie ändern; neue Parameter nur hinten anfügen. Sonst gehen Projekte der Nutzer kaputt.
-- **MPC Overwitch und Send teilen sich eine Engine** (`plugins/MPC Overwitch/src/ob_shared.h`): wer das gemeinsame Layout ändert, erhöht `kAbi`.
-- **Skins:** `python tools/validate.py "plugins/<Name>"` muss ohne Fehler laufen. Auf der MPC reagieren Knöpfe direkt in einem Tab nicht, und feste Textbeschriftungen direkt in einem Tab werden nicht gezeichnet; der Validator warnt davor.
-- **Keine fremden Dateien:** kein Code aus dem Steinberg-VST-SDK, nichts aus MPC-Firmware, keine Herstellergrafiken. Keine Änderungen am MPC-System.
-- **Lizenz:** Beiträge zu `plugins/MPC Overwitch`, `plugins/MPC Overwitch Send` und `plugins/MPC USB Bridge` stehen unter GPL-3.0-or-later, alle anderen NOXED-Teile unter MIT, Beiträge zu `framework/`, `tools/`, `templates/`, `docs/` unter MIT (siehe unten). Mit dem Pull Request stimmst du dem zu.
+The project is vibecoded (built with an AI coding assistant and tested on hardware), so careful reviews of existing code are just as welcome as new features.
+
+## Rules that keep the plugins safe on the MPC
+- **Real time:** no memory allocation, no locks, no logging, no file or USB access in `process()`.
+- **Identity is permanent:** never change `uid`, parameter IDs or parameter order; only add new parameters at the end. Otherwise users' projects break.
+- **MPC Overwitch and Send share one engine** (`plugins/MPC Overwitch/src/ob_shared.h`): if you change the shared layout, increase `kAbi`.
+- **Skins:** `python tools/validate.py "plugins/<Name>"` must run without errors. On the MPC, buttons placed directly in a tab do not respond, and fixed-text labels placed directly in a tab are not drawn; the validator warns about both.
+- **No third-party files:** no code from the Steinberg VST SDK, nothing from MPC firmware, no manufacturer graphics. No changes to the MPC system.
+- **Licence:** contributions to `plugins/MPC Overwitch`, `plugins/MPC Overwitch Send` and `plugins/MPC USB Bridge` are GPL-3.0-or-later; all other NOXED parts are MIT, and contributions to `framework/`, `tools/`, `templates/`, `docs/` are MIT (see below). By opening a pull request you agree to this.
 
 ---
 

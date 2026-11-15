@@ -1,75 +1,75 @@
 # NOXED Prism Wave 0.1.2
 
-Eigenstaendiger Wavetable-Synth fuer Akai MPC Standalone, inspiriert vom Workflow moderner Wavetable-Synthesizer. Keine vollstaendige Serum-2-Nachbildung. Kein Xfer-Code, keine mitgelieferten Serum-Wavetables, -Samples oder -Presets.
+Original wavetable synth for Akai MPC standalone, inspired by the workflow of modern wavetable synthesizers. Not a full Serum 2 clone. No Xfer code and no bundled Serum wavetables, samples or presets.
 
-## Klangerzeugung
+## Sound engine
 
-- Acht polyphone Stimmen, je zwei Wavetable-Oszillatoren mit jeweils 1..3 Unison-Stimmen, Detune, Oktave, Pegel und Frame-Morphing.
-- Vier eigene Grundbaenke: Basic Morph, Spectral FM, Formants, Digital; acht WAV-Importslots.
-- Frame- und Phaseninterpolation; zehn FFT-gefilterte Mip-Stufen begrenzen hohe Harmonische. Keine Garantie voellig aliasfreier Ausgabe bei allen Modulationen.
-- Sinus-Sub, weisses Rauschen, Stereo-SVF mit LP/BP/HP/Notch und Keytracking.
-- Amp-ADSR und Env2, zwei globale LFOs mit Tempo-Sync, vier Modulationsrouten.
-- Modulationsquellen: LFO1, LFO2, Env2, Velocity, Modwheel, Channel Aftertouch. Ziele: A/B Position, Cutoff, Pitch, Pan, Level. Amount ist bipolar. Env2 moduliert zusaetzlich den Filter ueber Env>Filter.
-- Drive, Stereo-Chorus und temposynchrones Ping-Pong-Delay. Kein Reverb, kein Sample-/Granular-Player, kein grafischer Wavetable-Editor, kein MPE und kein Serum-Presetimport.
-- Sustain-Pedal und Pitchbend. Acht eingebaute Programme einschliesslich **User 01 Scan**.
+- Eight polyphonic voices, each with two wavetable oscillators of 1–3 unison voices, detune, octave, level and frame morphing.
+- Four built-in banks: Basic Morph, Spectral FM, Formants, Digital; eight WAV import slots.
+- Frame and phase interpolation; ten FFT-filtered mip levels limit high harmonics. Fully alias-free output under every modulation is not guaranteed.
+- Sine sub, white noise, stereo SVF with LP/BP/HP/notch and key tracking.
+- Amp ADSR and Env2, two global LFOs with tempo sync, four modulation routes.
+- Modulation sources: LFO1, LFO2, Env2, velocity, mod wheel, channel aftertouch. Destinations: A/B position, cutoff, pitch, pan, level. Amount is bipolar. Env2 also modulates the filter via Env>Filter.
+- Drive, stereo chorus and tempo-synced ping-pong delay. No reverb, no sample/granular player, no graphical wavetable editor, no MPE and no Serum preset import.
+- Sustain pedal and pitch bend. Eight built-in programs including **User 01 Scan**.
 
-## Oberfläche (ab 0.1.1)
+## Interface (since 0.1.1)
 
-Eigener dunkler Skin im Stil moderner Software-Wavetable-Synths: Panels mit Kopfzeile, Bogen-Regler mit Cyan/Violett-Verlauf, Auswahlfelder und Anzeigen. Alle Grafiken sind neu gezeichnet; keine Logos, Grafiken oder Schriften von Xfer, Vital oder anderen Herstellern. Fünf Seiten:
+Own dark skin in the style of modern software wavetable synths: panels with header bars, arc knobs with a cyan/violet gradient, selector fields and displays. All graphics are drawn from scratch; no logos, graphics or fonts from Xfer, Vital or other manufacturers. Five pages:
 
-- **OSC:** OSC A und OSC B nebeneinander. Kopfzeile mit Wavetable-Auswahl; darunter eine 3D-Wavetable-Anzeige, die der **Position** folgt (wischen ändert die Position). Regler Position, Octave, Level; darunter Unison, Detune, Sub, Noise (A) bzw. Semi, Unison, Detune, Width (B).
-- **FILTER:** Filterkurve, die **Cutoff** und Modus (LP/BP/HP/NOTCH) folgt, Cutoff, Resonance, Env 2 Amt; VOICE mit Key Track, Bend Range, Master; Distortion (Drive), Chorus (Mix), Delay (Mix, Division, Feedback).
-- **ENV:** ENV 1 (Amplitude) und ENV 2 (Modulation) mit Kurvenanzeige (folgt dem Sustain-Pegel; die Zeiten stehen an den Reglern) und je vier Reglern A/D/S/R.
-- **LFO:** Pro LFO Formanzeige, Shape-Auswahl, Rate (frei) bzw. Division (bei SYNC an) an derselben Stelle und SYNC-Schalter.
-- **MATRIX:** Vier Zeilen Quelle → bipolarer Amount-Balken → Ziel.
+- **OSC:** OSC A and OSC B side by side. Header with wavetable selector; below it a 3D wavetable display that follows **Position** (swipe to change the position). Knobs Position, Octave, Level; below them Unison, Detune, Sub, Noise (A) or Semi, Unison, Detune, Width (B).
+- **FILTER:** filter curve that follows **Cutoff** and mode (LP/BP/HP/NOTCH buttons), Cutoff, Resonance, Env 2 Amt; VOICE with Key Track, Bend Range, Master; Distortion (Drive), Chorus (Mix), Delay (Mix, Division, Feedback).
+- **ENV:** ENV 1 (amplitude) and ENV 2 (modulation) with a curve display (follows the sustain level; times are shown on the knobs) and four A/D/S/R knobs each.
+- **LFO:** per LFO a shape display, shape selector, Rate (free) or Division (with SYNC on) in the same place, and a SYNC switch.
+- **MATRIX:** four rows of source → bipolar amount bar → destination.
 
-Der Master-Regler steht zusätzlich oben rechts auf jeder Seite. Auswahlfelder öffnen die Liste per Doppeltipp oder Encoder-Druck; Antippen eines Elements schaltet die passende Q-Link-Reihe ein. Q-Links arbeiten in Reihen zu vier (oberste Hardware-Reihe = obere Reglergruppe). Im Program-Modus liegen A/B Position, Cutoff, Resonance, Env 2 Amt, Drive, Chorus, Delay, A/B Level, Sub, Noise und die Amp-ADSR auf den 16 Q-Links.
+The Master knob is also at the top right of every page. Selector fields open their list on double-tap or encoder press; tapping an element activates the matching Q-Link row. Q-Links work in rows of four (top hardware row = upper knob group). In Program mode A/B Position, Cutoff, Resonance, Env 2 Amt, Drive, Chorus, Delay, A/B Level, Sub, Noise and the amp ADSR sit on the 16 Q-Links.
 
-Die Anzeigen für User 02..08 zeigen eine neutrale Ebenen-Darstellung, weil importierte Tabellen erst auf der MPC geladen werden. User 01 zeigt die mitgelieferte Demotabelle; wer sie ersetzt, kann mit `tools/make_prismwave_skin.py` die Anzeige neu erzeugen.
+The displays for User 02–08 show a neutral layered picture because imported tables are only loaded on the MPC. User 01 shows the bundled demo table; if you replace it, regenerate the display with `tools/make_prismwave_skin.py`.
 
-Die Anzeige-Grafiken sind Filmstreifen mit 21 Stufen; die Klangposition selbst bleibt stufenlos. Ladezeit und Speicherbedarf des größeren Skins sind noch auf der MPC zu prüfen.
+The displays are film strips with 21 steps; the sound position itself is continuous.
 
-Die Skin-Dateien liegen in `skins/` und werden vom Build unverändert übernommen. Neu erzeugen (Pillow und numpy nötig):
+The skin files live in `skins/` and are copied unchanged by the build. To regenerate them (needs Pillow and numpy):
 
 ```text
 python tools/make_prismwave_skin.py --params "plugins/Prism Wave/build/params.json"
 ```
 
-`ui.json` bleibt als einfache Rückfallvariante erhalten, wird aber nicht verwendet, solange `skins/` existiert.
+`ui.json` is kept as a simple fallback but is not used as long as `skins/` exists.
 
-## Eigene Wavetables importieren
+## Importing your own wavetables
 
-Der Import wird **am Computer vorbereitet**; auf der MPC gibt es keinen Dateiauswahldialog. Das Plugin liest Slots beim Erzeugen einer Instanz ein. Bestehende Instanzen nach Dateiaenderungen entfernen und neu hinzufuegen, bei Bedarf MPC neu starten.
+The import is **prepared on your computer**; there is no file picker on the MPC. The plugin reads the slots when an instance is created. After changing files, remove and re-add existing instances, and restart the MPC if needed.
 
-1. Eine WAV-Wavetable bereitstellen, deren hintereinander angeordnete Frames jeweils einen Wellenzyklus enthalten. Typischerweise 2048 Samples je Frame. Normale Songs oder One-Shot-Samples werden nicht automatisch in Zyklen zerlegt.
-2. Unter **Windows 64 Bit** die beiliegende **import_wavetable.exe** doppelklicken. Das Werkzeug fragt nach WAV-Pfad, Slot, Frame-Laenge und dem entpackten Plugin-Ordner auf dem Datentraeger. Dafuer ist keine Python-Installation noetig. Alternativ im Terminal (auch skriptbar):
-
-```text
-import_wavetable.exe "MeineTabelle.wav" --slot 2 --frame-size 2048 --plugin-folder "E:/VST2 Plugins/NOXED - VST - Prism Wave"
-```
-
-Auf macOS/Linux oder mit Python 3.9+ das plattformuebergreifende Werkzeug verwenden:
+1. Prepare a WAV wavetable whose consecutive frames each contain one wave cycle, typically 2048 samples per frame. Ordinary songs or one-shot samples are not split into cycles automatically.
+2. On **64-bit Windows**, double-click the included **import_wavetable.exe**. It asks for the WAV path, slot, frame length and the unzipped plugin folder on the drive. No Python installation needed. Or from a terminal (scriptable):
 
 ```text
-python import_wavetable.py "MeineTabelle.wav" --slot 2 --frame-size 2048 --plugin-folder "E:/VST2 Plugins/NOXED - VST - Prism Wave"
+import_wavetable.exe "MyTable.wav" --slot 2 --frame-size 2048 --plugin-folder "E:/VST2 Plugins/NOXED - VST - Prism Wave"
 ```
 
-Der Laufwerksbuchstabe ist ein Beispiel. Der Zielpfad muss auf den entpackten Plugin-Ordner zeigen, nicht auf VST/ oder Content/. Bei bereits belegten Slots ist zum Ersetzen zusaetzlich **--replace** erforderlich.
+On macOS/Linux, or with Python 3.9+, use the cross-platform tool:
 
-3. Den Plugin-Ordner auf der MPC laden bzw. neu laden. In **A Table** oder **B Table** **User 02** auswaehlen und **Position** bewegen.
+```text
+python import_wavetable.py "MyTable.wav" --slot 2 --frame-size 2048 --plugin-folder "E:/VST2 Plugins/NOXED - VST - Prism Wave"
+```
 
-Akzeptierte Eingaben: Mono/Stereo PCM-WAV (8/16/24/32 Bit) oder Float32-WAV. Stereo wird mono gemischt. Die Frame-Laenge ist mit --frame-size anzugeben (32..16384); keine automatische Erkennung. Das Werkzeug entfernt DC, normalisiert pro Frame und resampelt auf 2048 Samples. Bis 64 Frames bleiben erhalten; bei 65..1024 Eingabeframes werden 64 gleichmaessig verteilte Frames ausgewaehlt. Einzelzyklus-WAVs funktionieren mit ihrer entsprechenden Frame-Laenge. WAV-Wavetables aus anderen Synthesizern funktionieren nur, wenn sie dieses zyklische Format verwenden und du sie verwenden darfst. Keine .SerumPreset/.fxp/.vstpreset-Dateien.
+The drive letter is an example. The target path must point at the unzipped plugin folder, not at VST/ or Content/. To overwrite a slot that is already in use, add **--replace**.
 
-Intern entstehen **Content/Wavetables/user01.wav** bis **user08.wav**. User 01 enthaelt eine originale NOXED-Demotabelle; User 02..08 sind anfangs leer. Fehlende oder ungueltige Slots spielen Basic Morph; die Parameteranzeige meldet **Basic fallback**. Importierte Dateien werden beim Laden in bandbegrenzte Tabellen umgerechnet. Das kostet Ladezeit und bei acht voll belegten Slots ungefaehr 40 MB Tabellen-RAM je Instanz, zuzüglich Arbeitsdaten.
+3. Load or reload the plugin on the MPC. Choose **User 02** in **A Table** or **B Table** and move **Position**.
 
-**Projekte speichern die Slot-Nummer und Position, nicht die WAV-Datei.** Slotdateien zusammen mit dem Projekt sichern. Spaeteres Ersetzen eines Slots aendert den Klang bestehender Projekte. Eigene Content-Dateien bei Updates erhalten. Ohne Computerwerkzeug duerfen nur fertig vorbereitete Mono-WAVs mit 2048 Samples pro Frame und hoechstens 64 Frames direkt in die Slots kopiert werden.
+Accepted input: mono/stereo PCM WAV (8/16/24/32 bit) or float32 WAV. Stereo is mixed to mono. Give the frame length with --frame-size (32–16384); there is no automatic detection. The tool removes DC, normalises each frame and resamples it to 2048 samples. Up to 64 frames are kept; with 65–1024 input frames, 64 evenly spaced frames are chosen. Single-cycle WAVs work with their matching frame length. WAV wavetables from other synths only work if they use this cyclic format and you are allowed to use them. No .SerumPreset/.fxp/.vstpreset files.
 
-## Installation und Teststand
+Internally this produces **Content/Wavetables/user01.wav** to **user08.wav**. User 01 holds an original NOXED demo table; User 02–08 start empty. Missing or invalid slots play Basic Morph, and the parameter display shows **Basic fallback**. Imported files are converted to band-limited tables on load. That costs load time and, with all eight slots filled, about 40 MB of table RAM per instance plus working data.
 
-MPC OS **3.10.1 oder neuer** und unter Preferences > Enhancements (Beta) sowohl **Enable Enhancements** als auch **External Plugin Support** einschalten. **NOXED - VST - Prism Wave** unveraendert nach **VST2 Plugins** im Stammverzeichnis des Datentraegers kopieren. Unter External Plugins als Instrument laden. ARM32/ARM64 sind enthalten; die MPC Live III verwendet ARM64.
+**Projects store the slot number and position, not the WAV file.** Back up the slot files together with your projects. Replacing a slot later changes the sound of existing projects. Keep your own content files when updating. Without the computer tool, only ready-made mono WAVs with 2048 samples per frame and at most 64 frames may be copied into the slots directly.
 
-Version 0.1.1 ändert nur die Oberfläche; Klang, Plugin-ID, Parameterreihenfolge und Presets sind unverändert (Hosttest-Audio bytegleich mit 0.1.0). Nach dem Ersetzen des Plugin-Ordners die MPC neu starten. Der separate Testbericht dokumentiert Computerpruefungen. Der neue Skin ist noch nicht auf echter MPC getestet: Darstellung, Touch/Q-Link-Bedienung, CPU, Ladezeit, Bedienung und Projektwiederherstellung dort pruefen. Fuer viele Instanzen Unison reduzieren. Plugins laufen ohne Crashschutz; Projekte vor dem ersten Test sichern.
+## Installation and test status
 
-## Lizenz
+MPC OS **3.10.1 or newer**, with **Enable Enhancements** and **External Plugin Support** switched on under Preferences > Enhancements (Beta). Copy **NOXED - VST - Prism Wave** unchanged into **VST2 Plugins** at the root of the drive. Load it as an instrument under External Plugins. ARM32/ARM64 are included; the MPC Live III uses ARM64.
 
-Originaler NOXED-Code und Demo-Wavetable: MIT. Nutzt das MIT-lizenzierte inMusic MPC Plugin Builder SDK; dessen LICENSE liegt im Quellpaket. Serum/Xfer gehoeren ihren jeweiligen Inhabern; keine Verbindung oder Freigabe.
+Versions 0.1.1 and 0.1.2 only change the interface; sound, plugin ID, parameter order and presets are unchanged (host test audio byte-identical to 0.1.0). Restart the MPC after replacing the plugin folder. The skin was checked on an MPC Live III: the OSC, ENV, LFO and MATRIX pages show all values and the SYNC switches toggle. 0.1.2 fixes the filter mode buttons, which had no captions and did not respond; that fix has not been checked on hardware yet. CPU load and load time on the MPC have not been measured. Reduce unison when running many instances. Plugins run without crash protection; back up your projects before the first test.
+
+## Licence
+
+Original NOXED code and demo wavetable: MIT. Uses the MIT-licensed inMusic MPC Plugin Builder SDK; its LICENSE is in the source package. Serum/Xfer belong to their respective owners; no affiliation or endorsement.

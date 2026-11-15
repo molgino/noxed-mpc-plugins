@@ -1,38 +1,38 @@
 # NOXED Acidline 0.1.1
 
-Monophoner Acid-Synth fuer Akai MPC Standalone. Eigenstaendige TB-303-inspirierte Klangerzeugung; keine originalgetreue Schaltungsemulation, keine Roland-Software oder Original-Samples.
+Monophonic acid synth for Akai MPC standalone. Original TB-303-inspired sound engine; not a circuit-accurate emulation, no Roland software and no original samples.
 
-## Spielen
+## Playing
 
-- Die Noten kommen vom MPC-Sequencer, Pads oder Keyboard. Kein eingebauter 303-Step-Sequencer.
-- Velocity ab **Accent Vel** (Standard 100) aktiviert Accent auf einer neu angeschlagenen Note. Accent hebt VCA und Filterhuellkurve an.
-- Fuer **Slide** die MIDI-Noten ueberlappen lassen und **Legato Slide** einschalten. Die Huellkurven werden dabei nicht erneut gestartet; Accent bleibt vom vorherigen Anschlag erhalten.
-- Nach Loslassen der neuesten Note kehrt das Instrument zur zuletzt noch gehaltenen Note zurueck. Pitchbend ist einstellbar. Kein Sustain-Pedal.
+- Notes come from the MPC sequencer, pads or a keyboard. There is no built-in 303 step sequencer.
+- Velocity at or above **Accent Vel** (default 100) turns on accent for a newly struck note. Accent lifts the VCA and the filter envelope.
+- For **slide**, let MIDI notes overlap and switch on **Legato Slide**. The envelopes are not retriggered; accent is kept from the previous note.
+- When you release the newest note, the instrument returns to the last note still held. Pitch bend range is adjustable. No sustain pedal.
 
-## Bedienung
+## Controls
 
-**BASSLINE:** Silbernes Hardware-Panel mit sechs klassischen Tone-Reglern: Tuning, Cut Off Freq, Resonance, Env Mod, Decay, Accent. Darunter Volume, Drive, Slide Time, Release sowie Waveform-Tasten (Saw/Square) und ein Legato-Schalter mit Status-LED. Regler und Wertfelder reagieren auf Touch und Q-Links; Doppeltippen oeffnet den grossen Werteditor.
+**BASSLINE:** silver hardware-style panel with the six classic tone controls: Tuning, Cut Off Freq, Resonance, Env Mod, Decay, Accent. Below them Volume, Drive, Slide Time, Release, waveform buttons (saw/square) and a legato switch with status LED. Knobs and value fields respond to touch and Q-Links; double-tap opens the large value editor.
 
-**SETUP:** Pulse Width, Accent Velocity, Key Track, Bend Range. Release ist jetzt direkt auf der Hauptseite erreichbar.
+**SETUP:** Pulse Width, Accent Velocity, Key Track, Bend Range. Release is directly on the main page.
 
-Seit 0.1.1: eigene silberne Panelgrafik, geriffelte schwarze Filmstrip-Knoepfe, elfenbeinfarbene Taster und orange Akzente. Alle Grafiken sind neu gezeichnet; keine Herstellerbilder. Auf der Hauptseite steuert die erste Q-Link-Gruppe Tuning/Cutoff/Resonance/Env Mod, die zweite Decay/Accent/Waveform/Legato und die dritte Volume/Drive/Slide/Release. Klang, Presets, Parameterreihenfolge und Plugin-ID sind gegenueber 0.1.0 unveraendert, bestehende Projekte bleiben zugeordnet.
+Since 0.1.1: own silver panel graphics, knurled black film-strip knobs, ivory buttons and orange accents. All graphics are drawn from scratch; no manufacturer images. On the main page the first Q-Link group controls Tuning/Cutoff/Resonance/Env Mod, the second Decay/Accent/Waveform/Legato and the third Volume/Drive/Slide/Release. Sound, presets, parameter order and plugin ID are unchanged from 0.1.0, so existing projects keep working.
 
-Die normalen Builds kopieren **skins/**; ui.json bleibt nur als einfacher Alternativentwurf erhalten. Zur Grafikregeneration: `python tools/make_acidline_skin.py --params plugins/Acidline/build/params.json` (Pillow erforderlich). Die Vorschau wird aus dem erzeugten TUI-Komponentenbaum und denselben PNGs gerendert; sie ist kein Screenshot vom Geraet.
+Normal builds copy **skins/**; ui.json is kept only as a simple alternative layout. To regenerate the graphics: `python tools/make_acidline_skin.py --params plugins/Acidline/build/params.json` (needs Pillow). The preview is rendered from the generated TUI component tree and the same PNGs; it is not a screenshot from the device.
 
-Signalweg: PolyBLEP-Oszillator -> nichtlinearer resonanter Dreipol-Tiefpass (2x Abtastrate) -> VCA/Accent -> Drive/DC-Filter -> Master. Sechs eingebaute Presets: NOXED Acid, Rubber Square, Warehouse, Clean Sub, Sharp Screamer, Liquid.
+Signal flow: PolyBLEP oscillator → non-linear resonant three-pole low-pass (2× oversampled) → VCA/accent → drive/DC filter → master. Six built-in presets: NOXED Acid, Rubber Square, Warehouse, Clean Sub, Sharp Screamer, Liquid.
 
 ## Installation
 
-MPC OS **3.10.1 oder neuer**. Ordner **NOXED - VST - Acidline** unveraendert nach **VST2 Plugins** im Stammverzeichnis des Datentraegers kopieren. Unter Preferences > Enhancements (Beta) **Enable Enhancements** und **External Plugin Support** einschalten. Instrument unter External Plugins laden. Enthalten sind ARM32 und ARM64; MPC Live III verwendet ARM64.
+MPC OS **3.10.1 or newer**. Copy the folder **NOXED - VST - Acidline** unchanged into **VST2 Plugins** at the root of the drive. Switch on **Enable Enhancements** and **External Plugin Support** under Preferences > Enhancements (Beta). Load the instrument under External Plugins. ARM32 and ARM64 are included; the MPC Live III uses ARM64.
 
-## Stand und Grenzen
+## Status and limits
 
-Die urspruengliche Version 0.1.0 wurde vom Auftraggeber auf seiner MPC ausprobiert. Der neue Skin 0.1.1 ist am Computer validiert; die Touch-/Q-Link-Bedienung muss noch auf der MPC geprueft werden. Host-Simulator- und Funktionstests werden im Testbericht ausgewiesen. Klangtreue zur TB-303 und Hardware-CPU sind nicht vermessen. Hohe Resonanz ist absichtlich markant. Erst mit niedrigem Pegel auf der MPC testen; ein Pluginfehler kann die MPC-Anwendung beenden. Projekt speichern und neu laden, bevor du das Instrument produktiv nutzt.
+Version 0.1.0 was tried on an MPC by the author. The 0.1.1 skin is validated on the computer; touch and Q-Link operation still need checking on the MPC. Host simulator and function tests are listed in the test report. Faithfulness to the TB-303 and CPU load on hardware have not been measured. High resonance is deliberately aggressive. Start at a low level on the MPC; a plugin error can close the MPC application. Save and reload a project before using the instrument for real work.
 
-## Update von 0.1.0
+## Updating from 0.1.0
 
-Den Ordner **NOXED - VST - Acidline** durch die neue Version ersetzen. Danach die MPC neu starten, damit die geaenderten Skins neu geladen werden. Kein neuer Plugin-Name und keine neue ID; alte Projekte verwenden weiterhin Acidline. MPC OS 3.10.1+ und Enable Enhancements / External Plugin Support muessen aktiviert bleiben.
+Replace the folder **NOXED - VST - Acidline** with the new version, then restart the MPC so the changed skins are loaded. Same plugin name and ID; old projects keep using Acidline. MPC OS 3.10.1+ with Enable Enhancements / External Plugin Support must stay switched on.
 
-## Quellcode und Lizenz
+## Source and licence
 
-Originaler NOXED-Code, MIT. Nutzt das MIT-lizenzierte inMusic MPC Plugin Builder SDK (separate LICENSE im Quellpaket). Roland und TB-303 sind Marken ihrer jeweiligen Inhaber; keine Verbindung oder Freigabe.
+Original NOXED code, MIT. Uses the MIT-licensed inMusic MPC Plugin Builder SDK (separate LICENSE in the source package). Roland and TB-303 are trademarks of their respective owners; no affiliation or endorsement.

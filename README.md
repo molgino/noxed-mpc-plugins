@@ -2,124 +2,125 @@
 
 [![Build](https://github.com/molgino/noxed-mpc-plugins/actions/workflows/build-plugins.yml/badge.svg)](https://github.com/molgino/noxed-mpc-plugins/actions/workflows/build-plugins.yml) [![Ko-fi](https://img.shields.io/badge/Ko--fi-noxend-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/noxend)
 
-Open-Source-Plugins für Akai MPC Standalone (MPC Live/X/One/Key/Force, MPC OS 3.10.1+), gebaut mit dem
+Open-source plugins for Akai MPC standalone (MPC Live/X/One/Key/Force, MPC OS 3.10.1+), built with the
 [inMusic MPC Plugin Builder SDK](https://github.com/inmusic-software/mpc-plugin-builder-sdk):
-zwei Instrumente und drei Brücken zu externer Hardware. **Mitentwickeln ist ausdrücklich erwünscht**, siehe [Mitmachen](#mitmachen).
+two instruments and three bridges to external hardware. **Contributions are very welcome**, see [Contributing](#contributing).
 
 **Acidline 0.1.1 · Prism Wave 0.1.2 · MPC Overwitch 0.5.0 · MPC Overwitch Send 0.4.0 · MPC USB Bridge 0.2.1.**
-Acidline, Prism Wave und MPC Overwitch wurden auf einer MPC Live III ausprobiert; die als *Vorschau* markierten Plugins sind noch nicht in allen Funktionen auf Hardware geprüft (Details in den jeweiligen READMEs).
+Acidline, Prism Wave and MPC Overwitch have been tried on an MPC Live III; plugins marked *preview* have not had every feature checked on hardware yet (details in each plugin's README).
 
-![Acidline 0.1.1 – silbernes Bass-Line-Panel](docs/screenshots/acidline-bassline.png)
+> **How this was made:** these plugins are vibecoded. They were built with an AI coding assistant (Claude) and tested on real hardware by the author. The code is all here; reviews and fixes from people who know DSP, USB audio or C++ are very welcome.
 
-![Prism Wave 0.1.1 – Oszillatorseite mit Wavetable-Anzeigen](docs/screenshots/prism-wave-osc.png)
+![Acidline 0.1.1 – silver bass-line panel](docs/screenshots/acidline-bassline.png)
 
-Vorschauen aus den echten Skin-Dateien und Reglergrafiken, kein Foto vom MPC-Bildschirm.
-Weitere Prism-Wave-Seiten: [Filter/FX](docs/screenshots/prism-wave-filter.png) · [Envelopes](docs/screenshots/prism-wave-env.png) · [LFOs](docs/screenshots/prism-wave-lfo.png) · [Matrix](docs/screenshots/prism-wave-matrix.png).
+![Prism Wave – oscillator page with wavetable displays](docs/screenshots/prism-wave-osc.png)
 
-## Instrumente
+Previews rendered from the actual skin files and knob graphics, not photos of the MPC screen.
+More Prism Wave pages: [Filter/FX](docs/screenshots/prism-wave-filter.png) · [Envelopes](docs/screenshots/prism-wave-env.png) · [LFOs](docs/screenshots/prism-wave-lfo.png) · [Matrix](docs/screenshots/prism-wave-matrix.png).
 
-| Instrument | Funktionen |
+## Plugins
+
+| Plugin | What it does |
 | --- | --- |
-| **Acidline** | Monophoner, TB-303-inspirierter Acid-Synth mit Saw/Square, nichtlinearem resonantem Filter, Velocity-Accent, Legato-Slide, Drive und sechs Presets. |
-| **Prism Wave** | Eigenständiger, Serum-inspirierter Wavetable-Synth mit acht Stimmen, zwei Oszillatoren, je bis zu drei Unison-Stimmen, Sub/Noise, Filter, zwei ADSRs, zwei LFOs, vier Modulationsrouten, Chorus, Delay und acht Presets. |
-| **MPC Overwitch** *(Vorschau)* | Overbridge für Elektron-Geräte (getestet mit Digitone II) direkt in der MPC, auf Basis von Overwitch (GPL-3): Geräte-Spuren als Plugin-Spuren, bis zu 16 gleichzeitig, Gruppen aus mehreren Spuren, 48 → 44,1 kHz mit Drift-Ausgleich. [README](plugins/MPC%20Overwitch/README.md) |
-| **MPC USB Bridge** *(Vorschau)* | Holt ein class-compliant USB-Audiogerät, das die MPC nicht als Interface nutzt (zuerst Roland S-1), als Plugin-Spur in die MPC, mit Drift-Ausgleich. Version 0.2, siehe [README](plugins/MPC%20USB%20Bridge/README.md). |
-| **MPC Overwitch Send** *(Vorschau, Effekt)* | Schickt MPC-Spuren per Overbridge an die Eingänge des Elektron-Geräts (Digitone II: Main, Delay, Reverb, Chorus). [README](plugins/MPC%20Overwitch%20Send/README.md) |
+| **Acidline** | Monophonic, TB-303-inspired acid synth with saw/square, non-linear resonant filter, velocity accent, legato slide, drive and six presets. [README](plugins/Acidline/README.md) |
+| **Prism Wave** | Original, Serum-inspired wavetable synth: eight voices, two oscillators with up to three unison voices each, sub/noise, filter, two ADSRs, two LFOs, four modulation routes, chorus, delay and eight presets. [README](plugins/Prism%20Wave/README.md) |
+| **MPC Overwitch** *(preview)* | Overbridge for Elektron devices (tested with Digitone II) directly on the MPC, based on Overwitch (GPL-3): device tracks as plugin tracks, up to 16 at once, groups of several outputs, MIDI to the device, 48 → 44.1 kHz with drift correction. [README](plugins/MPC%20Overwitch/README.md) |
+| **MPC Overwitch Send** *(preview, effect)* | Sends MPC tracks over Overbridge into the Elektron device's inputs (Digitone II: Main, Delay, Reverb, Chorus). [README](plugins/MPC%20Overwitch%20Send/README.md) |
+| **MPC USB Bridge** *(preview)* | Brings a class-compliant USB audio device that the MPC does not use as its interface (Roland S-1 first) in as a plugin track, with drift correction and MIDI to the device. [README](plugins/MPC%20USB%20Bridge/README.md) |
 
-Keine originalgetreue TB-303-Schaltungsemulation und keine vollständige Serum-2-Nachbildung.
-Es sind keine proprietären Roland-/Xfer-Codebestandteile, Samples oder Presets enthalten.
-Prism Wave hat keinen Serum-Presetimport, Sample-/Granular-Modus, MPE oder grafischen Wavetable-Editor.
+Acidline is not a circuit-accurate TB-303 emulation and Prism Wave is not a full Serum 2 clone.
+No proprietary Roland or Xfer code, samples or presets are included.
+Prism Wave has no Serum preset import, sample/granular mode, MPE or graphical wavetable editor.
 
-## Download und Installation
+## Download and installation
 
-Die fertigen Pakete stehen unter **[Releases](../../releases/latest)**: je Plugin ein ZIP (`<plugin>-<version>-mpc.zip`) und ein Gesamtpaket `NOXED-MPC-Plugins-<version>.zip`. Jeder Push baut die Plugins außerdem in [GitHub Actions](../../actions) (Downloads unter *Artifacts*).
+Ready-made packages are under **[Releases](../../releases/latest)**: one zip per plugin (`<plugin>-<version>-mpc.zip`) and a combined package `NOXED-MPC-Plugins-<version>.zip`. Every push also builds the plugins in [GitHub Actions](../../actions) (downloads under *Artifacts*).
 
-1. ZIP am Computer entpacken.
-2. Den enthaltenen Plugin-Ordner (`NOXED - VST - …`) in den Ordner `VST2 Plugins` im Stammverzeichnis eines MPC-Datenträgers kopieren (Ordner anlegen, falls es ihn nicht gibt). Ordnernamen unverändert lassen.
-3. **MPC OS 3.10.1 oder neuer** verwenden und unter Preferences → Enhancements (Beta)
-   **Enable Enhancements** und **External Plugin Support** einschalten.
-4. MPC neu starten und das Plugin unter **External Plugins** auswählen.
+1. Unzip on your computer.
+2. Copy the plugin folder (`NOXED - VST - …`) into the `VST2 Plugins` folder at the root of an MPC drive (create it if it does not exist). Do not rename the folder.
+3. Use **MPC OS 3.10.1 or newer** and switch on **Enable Enhancements** and **External Plugin Support** under Preferences → Enhancements (Beta).
+4. Restart the MPC and pick the plugin under **External Plugins**.
 
-**Updates:** Den bisherigen Plugin-Ordner ersetzen und die MPC neu starten. Plugin-IDs und Parameter bleiben erhalten, neue Parameter werden nur hinten angefügt. MPC Overwitch und MPC Overwitch Send immer zusammen aktualisieren. Details im [Changelog](CHANGELOG.md).
+**Updating:** replace the old plugin folder and restart the MPC. Plugin IDs and parameters are kept; new parameters are only ever added at the end. Always update MPC Overwitch and MPC Overwitch Send together. Details in the [changelog](CHANGELOG.md).
 
-ARM32- und ARM64-Binaries liegen bei; die MPC Live III verwendet ARM64.
-Die Release-Binaries benötigen glibc ≥ 2.38; laut SDK verwendet MPC OS 3 glibc 2.39.
+ARM32 and ARM64 binaries are included; the MPC Live III uses ARM64.
+The release binaries need glibc ≥ 2.38; according to the SDK, MPC OS 3 ships glibc 2.39.
 
-## Wavetable-Import
+## Wavetable import
 
-Prism Wave bietet acht User-Slots für WAV-Wavetables. User 01 enthält eine originale
-NOXED-Demotabelle. Auf Windows 64 Bit kann das beiliegende `import_wavetable.exe`
-ohne Python gestartet werden; für andere Systeme liegt `import_wavetable.py` bei.
+Prism Wave has eight user slots for WAV wavetables. User 01 holds an original
+NOXED demo table. On 64-bit Windows the included `import_wavetable.exe` runs
+without Python; for other systems use `import_wavetable.py`.
 
-Der Import wird **am Computer vorbereitet**, nicht über einen Dateidialog auf der MPC.
-Er unterstützt zyklische Mono-/Stereo-PCM- oder Float32-WAVs mit bekannter Frame-Länge.
-Das Werkzeug erzeugt 2048 Samples pro Frame und höchstens 64 Frames. Bei größeren
-Tabellen bis 1024 Frames werden 64 gleichmäßig verteilte Frames ausgewählt.
-Nach dem Kopieren alle Plugin-Instanzen neu laden.
+The import is **prepared on your computer**, not through a file dialog on the MPC.
+It accepts cyclic mono/stereo PCM or float32 WAVs with a known frame length.
+The tool writes 2048 samples per frame and at most 64 frames. Larger tables of up to
+1024 frames are reduced to 64 evenly spaced frames.
+Reload all plugin instances after copying.
 
-**Projekte speichern Slotnummern, keine WAV-Audiodaten.** Die Content-Dateien mitsichern;
-das Ersetzen eines Slots verändert den Klang bestehender Projekte.
+**Projects store slot numbers, not the WAV audio.** Back up the content files too;
+replacing a slot changes the sound of existing projects.
 
-Details: [Prism-Wave-Anleitung](plugins/Prism%20Wave/README.md) ·
-[Acidline-Anleitung](plugins/Acidline/README.md) · [Installation](docs/NOXED-Anleitung.txt).
+Details: [Prism Wave manual](plugins/Prism%20Wave/README.md) ·
+[Acidline manual](plugins/Acidline/README.md) · [Installation (German)](docs/NOXED-Anleitung.txt).
 
-## Teststand
+## Testing
 
-- Je Instrument 19 SDK-Hostprüfungen: keine Warnungen oder Fehler.
-- 33 zusätzliche Audio-/Funktionstests, einschließlich aller Presets, Accent/Slide,
-  Wavetable-Import und -Morphing, Modulationsmatrix, Sustain und Unison-Stresstest.
-- Python-Importer: vier Tests; Windows-Importer: Import, Überschreibschutz,
-  explizites Ersetzen und Ablehnung nicht endlicher Audiodaten geprüft.
-- ARM32/ARM64-Paketvalidator: keine Fehler; je zwei Kompatibilitätshinweise zu glibc ≥ 2.38.
+- 19 SDK host checks per instrument: no warnings or errors.
+- 33 additional audio/function tests, including all presets, accent/slide,
+  wavetable import and morphing, modulation matrix, sustain and a unison stress test.
+- Python importer: four tests; Windows importer: import, overwrite protection,
+  explicit replace and rejection of non-finite audio checked.
+- ARM32/ARM64 package validator: no errors; two compatibility notes each about glibc ≥ 2.38.
+- MPC Overwitch and MPC USB Bridge: desktop tests without hardware (stream simulation in both directions, shared engine across libraries, MIDI forwarding, ALSA capture of a test tone), run in CI on every push.
 
-[Testzusammenfassung](tests/reports/summary.json) und vollständige Logs liegen bei.
-Der [Skin-Testbericht für Prism Wave 0.1.1](tests/reports/prism-wave-0.1.1-skin-checks.txt) belegt Skin-Prüfung, 19 bestandene Hostprüfungen und bytegleiches Audio.
-Der [Skin-Testbericht für Acidline 0.1.1](tests/reports/acidline-0.1.1-skin-checks.txt)
-prüft alle 16 Parameterbindungen, Q-Link-Gruppen, PNG-Abmessungen und unveränderten Klang:
-die gerenderte Audiodatei ist bytegleich mit der 0.1.0-Referenz.
-Hardware-CPU, Ladezeit, Touch/Q-Link-Bedienung des neuen Skins und Projektwiederherstellung müssen auf
-der MPC geprüft werden. Plugins laufen ohne Crashschutz in der MPC-Anwendung.
+The [test summary](tests/reports/summary.json) and full logs are included.
+The [Prism Wave 0.1.1 skin report](tests/reports/prism-wave-0.1.1-skin-checks.txt) covers the skin checks, 19 passed host checks and byte-identical audio.
+The [Acidline 0.1.1 skin report](tests/reports/acidline-0.1.1-skin-checks.txt)
+checks all 16 parameter bindings, Q-Link groups, PNG sizes and unchanged sound:
+the rendered audio is byte-identical to the 0.1.0 reference.
+Plugins run inside the MPC application without crash protection.
 
-## Aus dem Quellcode bauen
+## Building from source
 
-Python 3.9+; der SDK-Builder lädt den Zig-Crosscompiler beim ersten Build herunter:
+Python 3.9+; the SDK builder downloads the Zig cross compiler on the first build:
 
 ```sh
 python tools/build.py plugins/Acidline
 python tools/build.py "plugins/Prism Wave"
-python tools/build.py "plugins/MPC Overwitch"      # ebenso "MPC Overwitch Send", "MPC USB Bridge"
-sh "plugins/MPC Overwitch/tests/run_tests.sh"      # Desktop-Tests ohne Hardware (aus dem Plugin-Ordner starten)
+python tools/build.py "plugins/MPC Overwitch"      # likewise "MPC Overwitch Send", "MPC USB Bridge"
+(cd "plugins/MPC Overwitch" && sh tests/run_tests.sh)   # desktop tests, no hardware needed
 ```
 
-Anschließend mit dem SDK-Hostsimulator testen. Siehe [Build-Hinweise](NOXED-BUILD.md),
-[SDK-Dokumentation](SDK-README.md) und [Testanleitung](docs/install-and-test.md).
-Die Windows-Release-Builds wurden alternativ mit Arm GNU 15.2 und LLVM-MinGW erstellt;
-`tools/build_noxed_windows.py` unterstützt diese vorkompilierten Toolchains.
+Then test with the SDK host simulator. See the [build notes](NOXED-BUILD.md),
+[SDK documentation](SDK-README.md) and [testing guide](docs/install-and-test.md).
+The Windows release builds were alternatively made with Arm GNU 15.2 and LLVM-MinGW;
+`tools/build_noxed_windows.py` supports these prebuilt toolchains.
 
-## Mitmachen
+## Contributing
 
-Fehlerberichte, Ideen und Pull Requests sind willkommen. Wie es geht, steht in [CONTRIBUTING.md](CONTRIBUTING.md); kurz:
+Bug reports, ideas and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) has the details; in short:
 
-- **Fehler melden:** [Issue anlegen](../../issues/new/choose) mit MPC-Modell, MPC-OS-Version, Plugin-Version und am besten einem Foto der Statuszeilen.
-- **Code beitragen:** Fork, Branch, `python tools/build.py "plugins/<Name>"` und den Host-Simulator grün bekommen, Pull Request gegen `main`. GitHub Actions baut und testet jeden Pull Request.
-- **Ohne Programmieren helfen:** auf eigener Hardware testen (andere MPC-Modelle, andere Elektron- oder USB-Geräte) und berichten, was geht.
+- **Report a bug:** [open an issue](../../issues/new/choose) with your MPC model, MPC OS version, plugin version and ideally a photo of the status rows.
+- **Contribute code:** fork, branch, get `python tools/build.py "plugins/<Name>"` and the host simulator green, open a pull request against `main`. GitHub Actions builds and tests every pull request.
+- **Help without coding:** test on your own hardware (other MPC models, other Elektron or USB devices) and report what works.
 
-## Unterstützen
+## Support
 
-Die Plugins sind kostenlos und bleiben es. Wenn sie dir Zeit oder Geld sparen, freue ich mich über einen Kaffee:
+The plugins are free and will stay free. If they save you time or money, a coffee is much appreciated:
 
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-noxend-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/noxend)
 
-Genauso hilfreich: Fehler melden, auf eigener Hardware testen und weitersagen.
+Reporting bugs, testing on your gear and spreading the word help just as much.
 
-## Lizenz und Herkunft
+## Licence and origin
 
-| Teil | Lizenz |
+| Part | Licence |
 | --- | --- |
-| NOXED-Code: Acidline, Prism Wave, Werkzeuge, Skins, Demo-Wavetable | [MIT](NOXED-LICENSE.txt) |
-| MPC Overwitch, MPC Overwitch Send, MPC USB Bridge (`plugins/MPC …`) | [GPL-3.0-or-later](plugins/MPC%20Overwitch/LICENSE) – nutzen die Gerätetabelle von [Overwitch](https://github.com/dagargo/overwitch) (GPL-3) |
-| Mitgeliefertes SDK (inMusic-Revision `febd2ca` vom 7. November 2026) | [MIT](LICENSE) |
+| NOXED code: Acidline, Prism Wave, tools, skins, demo wavetable | [MIT](NOXED-LICENSE.txt) |
+| MPC Overwitch, MPC Overwitch Send, MPC USB Bridge (`plugins/MPC …`) | [GPL-3.0-or-later](plugins/MPC%20Overwitch/LICENSE) – they use the device table of [Overwitch](https://github.com/dagargo/overwitch) (GPL-3) |
+| Bundled SDK (inMusic revision `febd2ca` from 7 November 2026) | [MIT](LICENSE) |
 
-Runtime-Lizenzhinweise sind den Release-Paketen beigefügt.
-Roland/TB-303/AIRA, Serum/Xfer, Elektron/Overbridge/Digitone und Akai/MPC sind Marken ihrer jeweiligen Inhaber. Keine Verbindung
-zu oder Freigabe durch diese Hersteller; Drittanbieter-Plugins sind von inMusic nicht unterstützt.
+Runtime licence notices are included in the release packages.
+Roland/TB-303/AIRA, Serum/Xfer, Elektron/Overbridge/Digitone and Akai/MPC are trademarks of their respective owners. Not affiliated with
+or endorsed by these manufacturers; third-party plugins are not supported by inMusic.
