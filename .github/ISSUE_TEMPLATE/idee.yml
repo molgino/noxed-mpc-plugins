@@ -1,0 +1,10 @@
+name: Idee / Feature request
+description: Vorschlag für eine neue Funktion oder ein neues Plugin.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Was wünschst du dir?
+      description: Wofür brauchst du es auf der MPC? Welche Hardware ist beteiligt?
+    validations: {required: true}

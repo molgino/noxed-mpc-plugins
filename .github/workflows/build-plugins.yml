@@ -4,6 +4,8 @@ name: Build MPC plugins
 # validator and host_sim test, and uploads the ready-to-copy plugin folders.
 on:
   push:
+    tags: ['v*']          # a version tag builds everything and publishes a GitHub release
+    branches: ['**']
     paths:
       - 'plugins/**'
       - 'framework/**'
@@ -64,3 +66,47 @@ jobs:
         with:
           name: NOXED - VST - ${{ matrix.plugin }}
           path: out/
+
+      - name: Package zip for release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: python tools/package.py "plugins/${{ matrix.plugin }}" --out release
+
+      - uses: actions/upload-artifact@v4
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          name: zip-${{ matrix.plugin }}
+          path: release/*.zip
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: art
+      - name: Collect zips and the combined package
+        run: |
+          mkdir -p dist "bundle/VST2 Plugins"
+          cp art/zip-*/*.zip dist/
+          for d in art/NOXED\ -\ VST\ -\ */"VST2 Plugins"/*; do cp -r "$d" "bundle/VST2 Plugins/"; done
+          cp docs/NOXED-Anleitung.txt bundle/INSTALL.txt 2>/dev/null || true
+          cp NOXED-LICENSE.txt bundle/ && cp "plugins/MPC Overwitch/LICENSE" bundle/GPL-3.0.txt
+          (cd bundle && zip -qr "../dist/NOXED-MPC-Plugins-${GITHUB_REF_NAME#v}.zip" .)
+          ls -l dist
+      - name: Release notes from CHANGELOG
+        run: |
+          {
+            echo "Open-Source-Plugins für Akai MPC Standalone. Installation: ZIP entpacken, Plugin-Ordner nach \`VST2 Plugins\` auf einem MPC-Datenträger kopieren. Voraussetzung: MPC OS 3.10.1+ und Preferences → Enhancements (Beta) → Enable Enhancements und External Plugin Support."
+            echo
+            echo "Gefällt dir das Projekt? [Ko-fi: noxend](https://ko-fi.com/noxend)"
+            echo
+            awk 'NR>1 && /^## /{n++} n<3 && NR>1' CHANGELOG.md
+          } > notes.md
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/*.zip --title "NOXED MPC Plugins ${GITHUB_REF_NAME#v}" --notes-file notes.md

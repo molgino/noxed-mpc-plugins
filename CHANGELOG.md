@@ -1,5 +1,12 @@
 # Änderungen
 
+## Release 0.2.0 – Open Source (15.11.2026)
+
+- Alle fünf Plugins in einem Release: Acidline 0.1.1, Prism Wave 0.1.2, MPC Overwitch 0.5.0, MPC Overwitch Send 0.4.0, MPC USB Bridge 0.2.1.
+- Lizenzen klar aufgeteilt: NOXED-Code MIT, die drei Brücken-Plugins GPL-3.0-or-later (eigene LICENSE-Datei im Plugin-Ordner), SDK MIT.
+- Mitmach-Anleitung, Vorlagen für Fehlerberichte und Pull Requests, Spenden-Knopf (Ko-fi).
+- Releases entstehen jetzt automatisch aus einem Versions-Tag (je Plugin ein ZIP plus Gesamtpaket).
+
 ## MPC Overwitch 0.5.0 / MPC USB Bridge 0.2.1 – MIDI zum Gerät (15.11.2026)
 
 - Neuer Parameter MIDI Ch (Off / 1–16, angehängt): Noten, CCs, Pitch Bend, Aftertouch und Programmwechsel der MPC-Spur gehen an den USB-MIDI-Port des Geräts, umgestellt auf den gewählten Kanal (`ob_midi.h`: direkter ALSA-MIDI-Port, sonst ALSA-Sequencer).
