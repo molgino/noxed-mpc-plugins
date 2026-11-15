@@ -1,20 +1,34 @@
-# NOXED MPC USB Bridge 0.1.0 – Stufe 1: Test (Roland S-1 & Co.)
+# NOXED MPC USB Bridge 0.2.0 – USB-Audiogerät als Plugin-Spur (Roland S-1 & Co.)
 
-Ziel: Class-compliant USB-Audiogeräte, die die MPC nicht als Interface nimmt (meist weil sie nur mit 48 kHz laufen), als Plugin-Spur in die MPC holen und Ton zu ihnen schicken. Zuerst der **Roland AIRA Compact S-1**, später auch T-8, J-6, P-6, E-4 und Elektron-Geräte im normalen USB-Audio-Modus. Die Umrechnung auf 44,1 kHz soll derselbe Resampler mit Drift-Ausgleich übernehmen wie bei MPC Overwitch.
+Holt ein class-compliant USB-Audiogerät, das die MPC nicht als Interface verwendet (zuerst der **Roland AIRA Compact S-1**, ebenso T-8, J-6 und ähnliche), als Instrument-Plugin-Spur in die MPC. Das Plugin nimmt das Gerät über die ALSA-Bibliothek der MPC selbst auf (`libasound`, zur Laufzeit geladen) und rechnet den Ton mit demselben Resampler mit Drift-Ausgleich wie MPC Overwitch auf die Rate der MPC um.
 
-**Diese Version macht noch keinen Ton.** Sie prüft auf der MPC:
+**Einrichten (S-1):** AIRA LINK am S-1 **aus**, S-1 per USB an die MPC, Plugin „MPC USB Bridge“ auf eine Spur laden. Nach etwa einer Sekunde steht STATUS auf **STREAMING**.
+
+| Bedienung | Bedeutung |
+|---|---|
+| LEVEL (Q-Link 13) | Ausgangspegel |
+| CARD (Q-Link 14) | **Auto** = erstes USB-Audiogerät, das nicht die MPC ist (Roland bevorzugt), oder eine feste ALSA-Karte |
+| REPORT (Q-Link 15) | blättert durch den USB-/ALSA-Bericht (wie 0.1) |
 
 | Zeile | Bedeutung |
 |---|---|
-| STATUS | Gesamturteil (siehe unten) |
-| DEVICE | Gefundene USB-Soundkarte (ALSA-Name), Roland bevorzugt |
-| AUDIO | Angebotene Sampleraten (44,1k / 48k) |
-| ACCESS | Ob das Plugin Aufnahme (`in`) und Wiedergabe (`out`) der Karte öffnen darf |
+| STATUS | STREAMING / Streaming (buffering) / Waiting / ERROR mit Grund |
+| DEVICE | ALSA-Name und USB-ID des Geräts |
+| STREAM | Format, Rate des Geräts (eingestellt und gemessen) → Rate der MPC, Periodengröße |
+| LEVELS | Spitzenpegel, Latenz, Drift in ppm, Aussetzer, Überläufe |
 | SYSTEM | Prozessor, Benutzer-ID, Kernel |
 
-Mit dem REPORT-Regler (erster Q-Link) blätterst du durch die Details: alle USB-Geräte mit Schnittstellen und Treibern, alle ALSA-Karten mit Formaten, Kanälen und Raten, Belegung der Audiogeräte und ob die ALSA-Bibliothek im MPC-Prozess verfügbar ist. Der vollständige Bericht steht in `MPC-USB-Bridge-Report.txt` im Plugin-Ordner auf dem MPC-Datenträger.
+**Was geht, was nicht (0.2):**
+- Nur **Aufnahme** vom Gerät in die MPC (Stereo; ein Mono-Gerät wird auf beide Seiten gelegt). Ton von der MPC zum Gerät gibt es noch nicht.
+- Ein Gerät kann nur von **einer** Plugin-Instanz gleichzeitig geöffnet werden; eine zweite Instanz zeigt „ERROR: open: Device or resource busy“.
+- Abziehen und wieder Einstecken funktioniert: Das Plugin sucht danach selbst weiter.
+- Latenz etwa 5–15 ms. CPU gering: ein Aufnahme-Thread plus Resampler.
+- **Parameteränderung gegenüber 0.1:** LEVEL und CARD sind neu, die Reihenfolge ist anders. Eine Spur mit der 0.1-Testversion bitte neu laden. Ab 0.2 bleiben IDs und Reihenfolge fest.
+- Nicht auf der MPC getestet, nur am Computer (siehe unten).
 
-Es wird nur gelesen (`/sys`, `/proc/asound`) und die Audiogeräte werden kurz geöffnet und wieder geschlossen. Nichts wird eingestellt, gestreamt oder verändert.
+## Bericht aus 0.1 (weiterhin enthalten)
+
+Mit REPORT blätterst du durch alle USB-Geräte mit Schnittstellen und Treibern, alle ALSA-Karten mit Formaten, Kanälen und Raten, die Belegung der Audiogeräte und ob die ALSA-Bibliothek im MPC-Prozess verfügbar ist. Der vollständige Bericht steht in `MPC-USB-Bridge-Report.txt` im Plugin-Ordner (alle 10 s aktualisiert).
 
 ## So testest du (S-1)
 
@@ -42,6 +56,9 @@ AIRA LINK ist ein nicht offengelegtes Roland-Protokoll für Audio und Tempo übe
 Roland S-1 mit AIRA LINK aus: eigene Soundkarte „S1“, Aufnahme und Wiedergabe je 2 Kanäle S32_LE mit **44,1 kHz** (nicht 48 kHz), beide lassen sich vom Plugin öffnen; libasound ist im MPC-Prozess bereits geladen. STATUS: „PROMISING: audio can be opened“. Damit ist das Brücken-Plugin mit Ton machbar. Weil der S-1 44,1 kHz anbietet, kann die MPC ihn eventuell auch direkt als Audio-Interface nutzen; das Plugin bleibt nützlich, weil die MPC nur ein Interface gleichzeitig verwendet.
 
 ## Tests am Computer
+
+`sh tests/run_tests.sh` (Linux mit libasound): Die Aufnahme-Engine nimmt ein ALSA-„file“-Gerät auf, das einen 1-kHz-Testton mit 44,1 kHz / S32 liefert, und liest ihn in Echtzeit mit 48 kHz aus. Geprüft werden Pegel links/rechts, Frequenz und Aussetzer (Ergebnis: 1000,2 Hz, 0 Aussetzer, ~10 ms Latenz). Läuft auch in GitHub Actions.
+
 
 Mit nachgebautem `/proc/asound` (Variable `USB_BRIDGE_ASOUND`) und einer S-1-Beispielbeschreibung geprüft; SDK-Hosttest bestanden (die Warnung zu Stille ist erwartet). Auf der MPC noch nicht getestet.
 

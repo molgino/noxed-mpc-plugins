@@ -1,25 +1,25 @@
-// MPC USB Bridge - NOXED (stage 0.1: probe). Goal: bring class-compliant USB audio devices that the MPC
-// cannot use as its interface (Roland AIRA Compact S-1, T-8, J-6, Elektron boxes in USB-audio mode, ...
-// usually because they run at 48 kHz) into the MPC as a plugin track, with sample-rate conversion.
+// MPC USB Bridge - NOXED 0.2. Brings a class-compliant USB audio device that the MPC does not use as its
+// interface (Roland AIRA Compact S-1, T-8, J-6, ...) into the MPC as a plugin track.
 //
-// This version makes NO sound. On the MPC screen and in MPC-USB-Bridge-Report.txt it shows:
-//   - every USB device with its interfaces and the kernel driver bound to each (Roland = vendor 0582);
-//     a Roland device without an audio interface is probably in AIRA LINK mode
-//   - every ALSA sound card, its USB id, and the formats / channels / sample rates each USB card offers
-//     (from /proc/asound/cardN/stream0)
-//   - whether the plugin can open the card's capture and playback devices (/dev/snd/pcmCxD0c/p),
-//     whether they are in use, and whether libasound is available in the MPC process
-// Nothing is configured, streamed or changed: files are only read, PCM devices only opened and closed.
+// Signal flow:
+//   USB device --(ALSA capture through the MPC's own libasound, ub_alsa.h, capture thread)-->
+//   lock-free ring --(ob_stream.h DriftReader: resampler device rate -> MPC rate that follows the clock
+//   drift between the two devices)--> LEVEL --> plugin output (stereo; a mono device is copied to both).
 //
-// Parameters: 0 Report (scrolls the report; param 0 is nudged by the host on load: harmless),
-//             1..5 read-only rows Status, Device, Audio, Access, System.
+// Parameters (order and ids are permanent from 0.2 on):
+//   0 Level   output gain (param 0, nudged by the host on load: harmless)
+//   1 Card    Auto = first USB audio card that is not the MPC (Roland preferred), or a fixed ALSA card
+//   2 Report  scrolls the USB / ALSA report (also written to MPC-USB-Bridge-Report.txt)
+//   3..7      read-only rows Status, Device, Stream, Levels, System
 // Licence: GPL-3.0-or-later.
 
 #include "mpc_plugin.h"
 #include "mpc_resources.h"
 
-#include "../../MPC Overwitch/src/ob_diag.h"
+#include "ub_alsa.h"
+#include "ub_diag.h"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cmath>
@@ -29,229 +29,11 @@
 #include <thread>
 #include <vector>
 
-#include <dlfcn.h>
-#include <fcntl.h>
-#include <sys/utsname.h>
-#include <unistd.h>
-
 namespace {
 
-enum ParamIndex { kLine = 0, kStatus, kDevice, kAudio, kAccess, kSystem, kNumParams };
+enum ParamIndex { kLevel = 0, kCard, kLine, kStatus, kDevice, kStream, kLevels, kSystem, kNumParams };
 constexpr int kMaxLines = 96;
-constexpr unsigned kRolandVid = 0x0582;
-
-struct Report
-{
-    std::vector<std::string> lines;   // short lines for the REPORT knob
-    std::string full;                 // report file
-    std::string status = "Scanning...", device = "-", audio = "-", access = "-", system = "-";
-};
-
-// USB_BRIDGE_ASOUND lets the desktop test point the scan at a fake /proc/asound; unset on the MPC.
-std::string asound(const std::string& rest)
-{
-    const char* fake = std::getenv("USB_BRIDGE_ASOUND");
-    return (fake ? std::string(fake) : std::string("/proc/asound")) + "/" + rest;
-}
-
-std::string readAll(const std::string& path)
-{
-    std::string s;
-    if (!mpc::readTextFile(path, s)) return std::string();
-    return s;
-}
-
-std::vector<std::string> splitLines(const std::string& s)
-{
-    std::vector<std::string> out;
-    size_t a = 0;
-    while (a < s.size())
-    {
-        size_t b = s.find('\n', a);
-        if (b == std::string::npos) b = s.size();
-        out.push_back(s.substr(a, b - a));
-        a = b + 1;
-    }
-    return out;
-}
-
-std::string trim(std::string s)
-{
-    while (!s.empty() && (s.back() == ' ' || s.back() == '\t' || s.back() == '\r' || s.back() == '\n')) s.pop_back();
-    size_t i = 0;
-    while (i < s.size() && (s[i] == ' ' || s[i] == '\t')) ++i;
-    return s.substr(i);
-}
-
-// Summarises /proc/asound/cardN/stream0: per direction the formats, channels and rates.
-std::vector<std::string> streamSummary(const std::string& text, bool& has44k, bool& has48k)
-{
-    std::vector<std::string> out;
-    std::string dir, fmt, ch, rates;
-    auto flush = [&]() {
-        if (!dir.empty() && !fmt.empty()) out.push_back(dir + ": " + fmt + " " + ch + "ch " + rates);
-        fmt.clear(); ch.clear(); rates.clear();
-    };
-    for (const std::string& raw : splitLines(text))
-    {
-        std::string l = trim(raw);
-        if (l == "Playback:" || l == "Capture:") { flush(); dir = l.substr(0, l.size() - 1); }
-        else if (l.compare(0, 7, "Format:") == 0) { flush(); fmt = trim(l.substr(7)); }
-        else if (l.compare(0, 9, "Channels:") == 0) ch = trim(l.substr(9));
-        else if (l.compare(0, 6, "Rates:") == 0)
-        {
-            rates = trim(l.substr(6));
-            if (rates.find("44100") != std::string::npos) has44k = true;
-            if (rates.find("48000") != std::string::npos) has48k = true;
-        }
-    }
-    flush();
-    return out;
-}
-
-std::string pcmAccess(int card, char dir)
-{
-    char node[64];
-    std::snprintf(node, sizeof(node), "/dev/snd/pcmC%dD0%c", card, dir);
-    int fd = ::open(node, O_RDWR | O_NONBLOCK | O_CLOEXEC);
-    if (fd >= 0) { ::close(fd); return "open OK"; }
-    return diag::errShort(errno);
-}
-
-std::string pcmState(int card, char dir)
-{
-    char p[96];
-    std::snprintf(p, sizeof(p), "card%d/pcm0%c/sub0/status", card, dir);
-    std::string s = trim(readAll(asound(p)));
-    if (s.empty()) return "?";
-    if (s == "closed") return "closed";
-    size_t st = s.find("state:");
-    size_t pid = s.find("owner_pid");
-    std::string out = st != std::string::npos ? trim(s.substr(st + 6, s.find('\n', st) - st - 6)) : "open";
-    if (pid != std::string::npos) out += " pid" + trim(s.substr(pid + 11, s.find('\n', pid) - pid - 11));
-    return out;
-}
-
-std::string libasound()
-{
-    if (void* h = dlopen("libasound.so.2", RTLD_LAZY | RTLD_NOLOAD)) { dlclose(h); return "libasound loaded in MPC"; }
-    if (void* h = dlopen("libasound.so.2", RTLD_LAZY)) { dlclose(h); return "libasound available"; }
-    return "no libasound";
-}
-
-Report scan(int scanNo)
-{
-    Report r;
-    std::vector<std::string>& L = r.lines;
-    std::string& F = r.full;
-    auto both = [&](const std::string& s, const std::string& l) { L.push_back(diag::clip(s)); F += l + "\n"; };
-
-    both(diag::fmt("USB Bridge scan #%d", scanNo), diag::fmt("NOXED MPC USB Bridge report, scan #%d", scanNo));
-    utsname u{};
-    uname(&u);
-    r.system = diag::clip(diag::fmt("%s uid%u %s", u.machine, (unsigned)geteuid(), u.release));
-    const std::string asl = libasound();
-    both(asl, "ALSA library: " + asl);
-
-    // USB devices.
-    const char* fake = std::getenv("USB_BRIDGE_SYSFS");
-    const std::string root = fake ? std::string(fake) + "/" : "/sys/bus/usb/devices/";
-    std::vector<std::string> names = diag::listDir(root);
-    struct Dev { std::string sys, product, maker; unsigned vid, pid; bool audio = false, vendorIf = false; std::string ifs; };
-    std::vector<Dev> devs;
-    for (const std::string& n : names)
-    {
-        if (n.find(':') != std::string::npos || n.compare(0, 3, "usb") == 0) continue;
-        Dev d;
-        d.sys = n;
-        d.vid = diag::readHex(root + n + "/idVendor");
-        d.pid = diag::readHex(root + n + "/idProduct");
-        d.product = diag::readLine(root + n + "/product");
-        d.maker = diag::readLine(root + n + "/manufacturer");
-        for (const std::string& m : names)
-        {
-            if (m.compare(0, n.size() + 1, n + ":") != 0) continue;
-            unsigned cls = diag::readHex(root + m + "/bInterfaceClass"), sub = diag::readHex(root + m + "/bInterfaceSubClass");
-            std::string drv = diag::linkBase(root + m + "/driver");
-            if (cls == 0x01 && sub == 0x02) d.audio = true;   // audio streaming interface
-            if (cls == 0xff) d.vendorIf = true;
-            d.ifs += diag::fmt(" %02x/%02x:%s", cls, sub, drv.empty() ? "-" : drv.c_str());
-        }
-        devs.push_back(d);
-    }
-    both(diag::fmt("USB devices: %d", (int)devs.size()), diag::fmt("\nUSB devices: %d", (int)devs.size()));
-    const Dev* roland = nullptr;
-    for (const Dev& d : devs)
-    {
-        both(diag::fmt("%04x:%04x %s", d.vid, d.pid, d.product.c_str()),
-             diag::fmt("  %s %04x:%04x %s / %s  interfaces (class/sub:driver):%s", d.sys.c_str(), d.vid, d.pid,
-                       d.maker.c_str(), d.product.c_str(), d.ifs.c_str()));
-        if (d.vid == kRolandVid && !roland) roland = &d;
-    }
-
-    // ALSA cards.
-    F += "\nALSA cards (/proc/asound/cards):\n" + readAll(asound("cards"));
-    int target = -1;
-    bool t44 = false, t48 = false;
-    std::string targetName, targetAccess, shortAccess;
-    for (int c = 0; c < 16; ++c)
-    {
-        char p[64];
-        std::snprintf(p, sizeof(p), "card%d/id", c);
-        std::string id = trim(readAll(asound(p)));
-        if (id.empty()) continue;
-        std::snprintf(p, sizeof(p), "card%d/usbid", c);
-        std::string usbid = trim(readAll(asound(p)));
-        both(diag::fmt("card%d %s %s", c, id.c_str(), usbid.empty() ? "(not USB)" : usbid.c_str()),
-             diag::fmt("\ncard%d id=%s usbid=%s", c, id.c_str(), usbid.empty() ? "-" : usbid.c_str()));
-        if (usbid.empty()) continue;
-        std::snprintf(p, sizeof(p), "card%d/stream0", c);
-        bool h44 = false, h48 = false;
-        std::string stream = readAll(asound(p));
-        F += stream;
-        for (const std::string& s : streamSummary(stream, h44, h48)) L.push_back(diag::clip(" " + s));
-        const std::string ca = pcmAccess(c, 'c'), pa = pcmAccess(c, 'p');
-        std::string acc = "capture " + ca + " (" + pcmState(c, 'c') + "), playback " + pa + " (" + pcmState(c, 'p') + ")";
-        both(" in " + ca + ", out " + pa, "  access: " + acc);
-        bool isRoland = usbid.compare(0, 4, "0582") == 0;
-        if (target < 0 || isRoland)
-        {
-            target = c; t44 = h44; t48 = h48; targetName = id; targetAccess = acc;
-            shortAccess = "in " + ca + " / out " + pa;
-        }
-    }
-
-    // Verdict.
-    if (target < 0)
-    {
-        if (roland && !roland->audio)
-        {
-            r.status = "Roland without audio: AIRA LINK on?";
-            r.device = diag::clip(roland->product.empty() ? "Roland device" : roland->product);
-        }
-        else
-        {
-            r.status = "No USB audio device found";
-            r.device = roland ? diag::clip(roland->product) : "none";
-        }
-    }
-    else
-    {
-        r.device = diag::clip(targetName);
-        r.audio = diag::clip(std::string(t48 ? "48k" : "") + (t44 ? (t48 ? " + 44.1k" : "44.1k") : "") +
-                             (!t44 && !t48 ? "no 44.1/48k" : "") + " offered");
-        r.access = diag::clip(shortAccess);
-        bool capOk = targetAccess.find("capture open OK") != std::string::npos;
-        bool busy = targetAccess.find("EBUSY") != std::string::npos;
-        if (capOk) r.status = "PROMISING: audio can be opened";
-        else if (busy) r.status = "Busy: card in use";
-        else r.status = "Seen, but cannot open audio";
-    }
-    if (roland && roland->vendorIf && !roland->audio)
-        both("Roland: vendor if only (AIRA LINK?)", "Roland device shows only vendor-specific interfaces: AIRA LINK mode is probably ON.");
-    both("=> " + r.status, "\nVerdict: " + r.status);
-    return r;
-}
+constexpr int kMaxCard = 16;
 
 } // namespace
 
@@ -260,33 +42,95 @@ class MPCUSBBridge : public mpc::Plugin
 public:
     MPCUSBBridge() : mpc::Plugin(makeInfo())
     {
+        addParam(mpc::floatParam("level", "Level", 0.0f, 1.0f, 0.8f));
+        addParam(mpc::intParam("card", "Card", 0, kMaxCard, 0));
         addParam(mpc::intParam("line", "Report", 1, kMaxLines, 1));
-        const char* ids[] = {"status", "device", "audio", "access", "system"};
-        const char* names[] = {"Status", "Device", "Audio", "Access", "System"};
+        const char* ids[] = {"status", "device", "stream", "levels", "system"};
+        const char* names[] = {"Status", "Device", "Stream", "Levels", "System"};
         for (int i = 0; i < 5; ++i)
         {
             mpc::Param p = mpc::floatParam(ids[i], names[i], 0.0f, 1.0f, 0.0f);
             p.automatable = false;
             addParam(p);
         }
-        rep_ = scan(++scans_);
+        rep_ = ubdiag::scan(++scans_);
+        rows();
         write();
-        worker_ = std::thread([this] { run(); });
+        capture_.start();
+        monitor_ = std::thread([this] { run(); });
     }
 
     ~MPCUSBBridge() override
     {
         stop_.store(true);
-        if (worker_.joinable()) worker_.join();
+        if (monitor_.joinable()) monitor_.join();
+        capture_.stop();
     }
 
-    void process(mpc::ProcessContext&) override {}   // silent in this probe version
+    void prepare(double sampleRate, int) override
+    {
+        hostRate_ = sampleRate > 0 ? sampleRate : 44100.0;
+        srcRate_ = 0.0;   // re-primed on the next block
+        gain_ = 0.0f;
+    }
+    void reset() override { reader_.reset(); }
+
+    void process(mpc::ProcessContext& ctx) override
+    {
+        float* l = ctx.outputs[0];
+        float* r = ctx.outputs[1];
+        const int n = ctx.numFrames;
+        const int card = (int)std::lround(get(kCard)) - 1;
+        if (capture_.wantCard.load(std::memory_order_relaxed) != card) capture_.wantCard.store(card, std::memory_order_relaxed);
+        const double rate = capture_.rate();
+        if (capture_.state() != ub::Capture::kStreaming || rate <= 0)
+        {
+            reader_.reset();
+            for (int i = 0; i < n; ++i) l[i] = r[i] = 0.0f;
+            peak_.store(0.0f, std::memory_order_relaxed);
+            return;
+        }
+        if (rate != srcRate_)
+        {
+            srcRate_ = rate;
+            const int per = capture_.period();
+            reader_.prepare(rate, hostRate_, per > 0 ? per : 128);
+        }
+        reader_.read(capture_.ring, l, r, n);
+        // Level: perceptual (squared) curve, smoothed per sample to avoid zipper noise.
+        const float lv = get(kLevel);
+        const float target = lv * lv * 1.25f;
+        float g = gain_, pk = 0.0f;
+        for (int i = 0; i < n; ++i)
+        {
+            g += (target - g) * 0.002f;
+            l[i] *= g;
+            r[i] *= g;
+            pk = std::max(pk, std::max(std::fabs(l[i]), std::fabs(r[i])));
+        }
+        gain_ = g;
+        if (pk > peak_.load(std::memory_order_relaxed)) peak_.store(pk, std::memory_order_relaxed);
+    }
 
     bool formatValue(int index, float plain, std::string& out) override
     {
+        if (index == kLevel)
+        {
+            float g = plain * plain * 1.25f;
+            out = g < 1e-5f ? "-inf dB" : diag::fmt("%.1f dB", 20.0f * std::log10(g));
+            return true;
+        }
         std::lock_guard<std::mutex> lock(mutex_);
         switch (index)
         {
+            case kCard:
+            {
+                int c = (int)std::lround(plain) - 1;
+                if (c < 0) { out = "Auto (first USB audio device)"; return true; }
+                std::string id = ubdiag::trim(ubdiag::readAll(ubdiag::asound("card" + std::to_string(c) + "/id")));
+                out = diag::fmt("Card %d: ", c) + (id.empty() ? std::string("(none)") : id);
+                return true;
+            }
             case kLine:
             {
                 int i = (int)std::lround(plain) - 1;
@@ -294,43 +138,86 @@ public:
                                                                       : diag::fmt("%d: (end of report)", i + 1));
                 return true;
             }
-            case kStatus: out = rep_.status; return true;
-            case kDevice: out = rep_.device; return true;
-            case kAudio:  out = rep_.audio;  return true;
-            case kAccess: out = rep_.access; return true;
+            case kStatus: out = status_; return true;
+            case kDevice: out = device_; return true;
+            case kStream: out = stream_; return true;
+            case kLevels: out = levels_; return true;
             case kSystem: out = rep_.system; return true;
             default: return false;
         }
     }
 
 private:
-    // Rescans every 2 s; redraws the page when a visible row changed (plugging in, AIRA LINK on/off).
+    // Updates the status rows twice a second and the full report every 10 s; redraws the page when a
+    // visible row changed.
     void run()
     {
+        int tick = 0;
         while (!stop_.load())
         {
-            for (int i = 0; i < 20 && !stop_.load(); ++i) std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            for (int i = 0; i < 5 && !stop_.load(); ++i) std::this_thread::sleep_for(std::chrono::milliseconds(100));
             if (stop_.load()) break;
-            Report r = scan(++scans_);
-            bool changed;
+            if (++tick % 20 == 0)
             {
+                ubdiag::Report r = ubdiag::scan(++scans_);
                 std::lock_guard<std::mutex> lock(mutex_);
-                changed = key(r) != key(rep_);
                 rep_ = std::move(r);
             }
-            write();
-            if (changed) requestDisplayUpdate();
+            std::string before, after;
+            {
+                std::lock_guard<std::mutex> lock(mutex_);
+                before = status_ + device_ + stream_ + levels_;
+            }
+            rows();
+            {
+                std::lock_guard<std::mutex> lock(mutex_);
+                after = status_ + device_ + stream_ + levels_;
+            }
+            if (tick % 20 == 0) write();
+            if (after != before) requestDisplayUpdate();
         }
     }
 
-    static std::string key(const Report& r) { return r.status + "|" + r.device + "|" + r.audio + "|" + r.access; }
+    void rows()
+    {
+        const int st = capture_.state();
+        std::string status, device = capture_.device(), stream, levels;
+        const std::string msg = capture_.message();
+        switch (st)
+        {
+            case ub::Capture::kStreaming: status = reader_.primed() ? "STREAMING" : "Streaming (buffering)"; break;
+            case ub::Capture::kOpening:   status = "Opening..."; break;
+            case ub::Capture::kSearching: status = "Waiting: " + msg; break;
+            case ub::Capture::kError:     status = "ERROR: " + msg; break;
+            default:                      status = "Stopped"; break;
+        }
+        if (device.empty()) device = "-";
+        if (st == ub::Capture::kStreaming)
+        {
+            stream = diag::fmt("%s %.1f kHz (measured %.2f) -> MPC %.1f kHz, period %d", capture_.format().c_str(),
+                               capture_.rate() / 1000.0, capture_.measuredRate() / 1000.0, hostRate_ / 1000.0, capture_.period());
+            driftAvg_ += (reader_.driftPpm() - driftAvg_) * 0.2;
+            const float pk = peak_.exchange(0.0f, std::memory_order_relaxed);
+            levels = diag::fmt("peak %s, latency %.1f ms, drift %+.0f ppm, %u dropouts, %u overruns",
+                               pk < 1e-5f ? "-inf" : diag::fmt("%.1f dB", 20.0f * std::log10(pk)).c_str(),
+                               reader_.latencyMs(), driftAvg_, reader_.dropouts(), capture_.xruns());
+            if (!capture_.rt()) levels += ", no RT priority";
+        }
+        else
+        {
+            stream = "-";
+            levels = "-";
+        }
+        std::lock_guard<std::mutex> lock(mutex_);
+        status_ = status; device_ = device; stream_ = stream; levels_ = levels;
+    }
 
     void write()
     {
         std::string body;
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            body = rep_.full;
+            body = rep_.full + "\nSTREAM\n  status: " + status_ + "\n  device: " + device_ + "\n  stream: " + stream_ + "\n";
         }
         size_t nl = body.find('\n');
         std::string k = nl == std::string::npos ? body : body.substr(nl);
@@ -349,7 +236,7 @@ private:
         info.name         = "MPC USB Bridge";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 100;            // 0.1.0
+        info.version      = 200;            // 0.2.0
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;
@@ -359,10 +246,17 @@ private:
 
     static constexpr char kUid[5] = "NXbD";
 
+    ub::Capture capture_;
+    ob::DriftReader reader_;
+    double hostRate_ = 44100.0, srcRate_ = 0.0, driftAvg_ = 0.0;
+    float gain_ = 0.0f;
+    std::atomic<float> peak_{0.0f};
+
     std::mutex mutex_;
-    Report rep_;
+    ubdiag::Report rep_;
+    std::string status_ = "Starting...", device_ = "-", stream_ = "-", levels_ = "-";
     std::atomic<bool> stop_{false};
-    std::thread worker_;
+    std::thread monitor_;
     std::string lastWritten_;
     int scans_ = 0;
 };

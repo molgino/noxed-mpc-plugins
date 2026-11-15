@@ -1,5 +1,11 @@
 # Änderungen
 
+## MPC USB Bridge 0.2.0 – mit Ton (15.11.2026)
+
+- Nimmt ein class-compliant USB-Audiogerät (Roland S-1 usw.) über die ALSA-Bibliothek der MPC auf und gibt es als Plugin-Spur aus, mit Drift-Ausgleich (Resampler von MPC Overwitch).
+- Neue Regler LEVEL und CARD (Auto oder feste Karte), neue Statuszeilen STREAM und LEVELS; der Bericht aus 0.1 bleibt.
+- Desktop-Test mit ALSA-Testgerät in CI. Parameter-Reihenfolge gegenüber 0.1 geändert (Testversion), ab 0.2 fest.
+
 ## Prism Wave 0.1.2 / MPC Overwitch 0.4.1 – Korrekturen nach Hardwaretest (15.11.2026)
 
 - Prism Wave FILTER: Die Modustasten LP/BP/HP/NOTCH reagierten nicht und waren unbeschriftet. Sie sind jetzt ein eigener Bedien-Baustein (wie der SYNC-Schalter), die Beschriftung ist ins Bild gezeichnet.

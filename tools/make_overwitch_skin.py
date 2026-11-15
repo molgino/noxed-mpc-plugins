@@ -260,11 +260,11 @@ def build_send(params):
 
 
 BRIDGE_SKINS = ROOT / 'plugins' / 'MPC USB Bridge' / 'skins'
-BRIDGE_ROWS = [(1, 'STATUS'), (2, 'DEVICE'), (3, 'AUDIO'), (4, 'ACCESS'), (5, 'SYSTEM')]
+BRIDGE_ROWS = [(3, 'STATUS'), (4, 'DEVICE'), (5, 'STREAM'), (6, 'LEVELS'), (7, 'SYSTEM')]
 
 
 def build_bridge(params):
-    """MPC USB Bridge probe: status rows + REPORT knob (param 0)."""
+    """MPC USB Bridge 0.2: LEVEL knob (0), CARD field (1), status rows (3-7), REPORT knob (2)."""
     out = BRIDGE_SKINS
     out.mkdir(parents=True, exist_ok=True)
     im, d = pw.canvas(W, H, pw.hex_rgb(pw.BG))
@@ -272,23 +272,42 @@ def build_bridge(params):
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC USB BRIDGE', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (290, 22), 'NOXED · CLASS-COMPLIANT USB AUDIO TEST (ROLAND S-1 ...) · NO SOUND YET', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (290, 22), 'NOXED · USB AUDIO DEVICE AS A PLUGIN TRACK (ROLAND S-1 ...) · 0.2', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
     children = []
-    pw.panel_box(d, (12, 48, 1268, 436), 'USB AUDIO', subtitle='RESCANS EVERY 2 S · SET AIRA LINK TO OFF')
-    for i, (prm, name) in enumerate(BRIDGE_ROWS):
-        y = 100 + i * 64
-        if i:
-            pw.line(d, [(28, y - 10), (1252, y - 10)], '#232835', 1)
-        pw.text(d, (40, y + 22), name, 13, 'bold', pw.MUTED, 'lm', spacing=1.4)
-        children.append(pw.entry('row %d' % prm, 'Label',
-                                 ui.label_data('Value', 'ff46c8f0' if prm == 1 else 'ffe4e9f2', 28.0 if prm == 1 else 22.0,
-                                               'left verticallyCentred'), '220 %d 1030 44' % y, [('Data', 'Parameter %d' % prm)]))
-    pw.panel_box(d, (12, 448, 1268, 616), 'REPORT', subtitle='TURN THE FIRST Q-LINK OR DRAG TO SCROLL · FULL TEXT IN MPC-USB-Bridge-Report.txt')
-    children.append(pw.entry('p0', 'ubReport', ui.obj(('version', 1), ('handleName', 'Data')), '28 496 1224 104',
+    pw.panel_box(d, (12, 48, 412, 436), 'INPUT', subtitle='USB DEVICE TO THIS TRACK')
+    children.append(pw.entry('p0', 'ubKnob', ui.obj(('version', 1), ('handleName', 'Data')), '142 96 140 118',
                              [('Data', 'Parameter 0')], 'Yes', None, 'Hide'))
+    pw.knob_name(d, 142, 96, 'LEVEL')
+    pw.line(d, [(28, 250), (396, 250)], '#232835', 1)
+    pw.text(d, (36, 276), 'CARD', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
+    children.append(pw.entry('p1', 'ubCard', ui.obj(('version', 1), ('handleName', 'Data')), '36 292 352 48',
+                             [('Data', 'Parameter 1')], 'Yes', None, 'Hide'))
+    for i, t in enumerate(['Auto takes the first USB audio device', 'that is not the MPC. S-1: AIRA LINK off.']):
+        pw.text(d, (36, 366 + i * 22), t, 12, 'medium', pw.DIM, 'lm')
+    pw.panel_box(d, (424, 48, 1268, 436), 'STATUS', subtitle='UPDATES TWICE A SECOND')
+    for i, (prm, name) in enumerate(BRIDGE_ROWS):
+        y = 96 + i * 66
+        if i:
+            pw.line(d, [(440, y - 11), (1252, y - 11)], '#232835', 1)
+        pw.text(d, (452, y + 22), name, 13, 'bold', pw.MUTED, 'lm', spacing=1.4)
+        children.append(pw.entry('row %d' % prm, 'Label',
+                                 ui.label_data('Value', 'ff46c8f0' if prm == 3 else 'ffe4e9f2', 26.0 if prm == 3 else 19.0,
+                                               'left verticallyCentred'), '580 %d 676 44' % y, [('Data', 'Parameter %d' % prm)]))
+    pw.panel_box(d, (12, 448, 1268, 616), 'REPORT', subtitle='TURN TO SCROLL · FULL TEXT IN MPC-USB-Bridge-Report.txt')
+    children.append(pw.entry('p2', 'ubReport', ui.obj(('version', 1), ('handleName', 'Data')), '28 496 1224 104',
+                             [('Data', 'Parameter 2')], 'Yes', None, 'Hide'))
     pw.strip(lambda v: pw.knob_frame(v, pw.KN, False), pw.FRAMES, pw.KN, pw.KN, out / 'knob.png')
+    pw.field_img(352, 48).save(out / 'field.png')
     pw.finish(im, W, H).convert('RGB').save(out / 'panel.png', optimize=True)
     defs = [
+        ('ubKnob', ui.component_definition(ui.control_actions('knob overlay'), [
+            pw.focus(140, 118),
+            pw.entry('knob', 'Knob', ui.knob_filmstrip_data('knob.png', pw.FRAMES), '%d 0 %d %d' % ((140 - pw.KN) // 2, pw.KN, pw.KN)),
+            pw.entry('value', 'Label', ui.label_data('Value', pw.VALUE_COL, 19.0, 'horizontallyCentred verticallyCentred'), '0 88 140 28')], '0')),
+        ('ubCard', ui.component_definition(ui.control_actions('knob overlay'), [
+            pw.entry('box', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'field.png')), '0 0 352 48'),
+            pw.focus(352, 48),
+            pw.entry('value', 'Label', ui.label_data('Value', pw.FIELD_TEXT, 20.0, 'left verticallyCentred'), '16 0 330 48')], '0')),
         ('ubReport', ui.component_definition(ui.control_actions('knob overlay', False), [
             pw.focus(1224, 104),
             pw.entry('knob', 'Knob', ui.knob_filmstrip_data('knob.png', pw.FRAMES), '20 20 %d %d' % (pw.KN, pw.KN)),
@@ -299,7 +318,7 @@ def build_bridge(params):
                   '0 0 1280 628')
     tab = ui.obj(('version', 1), ('tabName', 'USB'), ('fnKeyIndex', 0), ('fnKeySubIndex', 0),
                  ('componentDefinition', ui.component_definition([], [bg] + children, 'ff12141a')),
-                 ('qlinkBoundsData', ['20 488 1240 120']))
+                 ('qlinkBoundsData', ['20 88 384 264']))
     data = ui.obj(('pageData', ui.obj(
         ('version', 1),
         ('componentDefinitions', ui.obj(('version', 2), ('importFiles', []),
@@ -307,11 +326,12 @@ def build_bridge(params):
         ('replacementStrings', []),
         ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
         ('tabs', [tab]))))
+    # Bottom row of the hardware knobs: LEVEL, CARD, REPORT.
     qmap = ui.obj(('Tab', 1), ('SubTab', 1), ('Bank Direction', 'RowTopDown'),
-                  ('Q-Links', ui.Obj(('Q-Link %d' % q, 0 if q == 13 else -1) for q in range(1, 17))))
+                  ('Q-Links', ui.Obj(('Q-Link %d' % q, {13: 0, 14: 1, 15: 2}.get(q, -1)) for q in range(1, 17))))
     qlinks = ui.obj(('version', 4), ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
                     ('Screen Mode Q-Links', ui.obj(('version', 4), ('map', [qmap]))),
-                    ('Program Mode Q-Links', ui.Obj(('Q-Link %d' % (q + 1), 0 if q == 0 else -1) for q in range(16))))
+                    ('Program Mode Q-Links', ui.Obj(('Q-Link %d' % (q + 1), {0: 0, 1: 1, 2: 2}.get(q, -1)) for q in range(16))))
     (out / 'TUI.json').write_text(ui.dump_json(data) + '\n')
     (out / 'Q-Links.json').write_text(ui.dump_json(qlinks) + '\n')
     return out

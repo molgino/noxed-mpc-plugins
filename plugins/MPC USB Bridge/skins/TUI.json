@@ -6,6 +6,280 @@
             "importFiles": [],
             "localComponentDefinitions": [
                 {
+                    "key": "ubKnob",
+                    "value": {
+                        "version": 2,
+                        "actions": [
+                            {
+                                "version": 1,
+                                "onAction": "Mouse Down",
+                                "handler": "Q-Link",
+                                "handleName": "Data",
+                                "additionalData": ""
+                            },
+                            {
+                                "version": 1,
+                                "onAction": "Double Click",
+                                "handler": "Show Overlay",
+                                "handleName": "Data",
+                                "additionalData": "knob overlay"
+                            },
+                            {
+                                "version": 1,
+                                "onAction": "Enter Pressed",
+                                "handler": "Show Overlay",
+                                "handleName": "Data",
+                                "additionalData": "knob overlay"
+                            }
+                        ],
+                        "backgroundData": {
+                            "version": 1,
+                            "focussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            },
+                            "unfocussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            }
+                        },
+                        "ignoreMousePresses": false,
+                        "disableCoarseDataWheel": false,
+                        "componentsData": [
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "focus",
+                                    "type": "Focus",
+                                    "data": {
+                                        "version": 1,
+                                        "backgroundColour": "19ffffff",
+                                        "outlineColour": "ff46c8f0",
+                                        "backgroundInset": 4.0,
+                                        "outlineThickness": 1.0
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "WhenFocussed",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 0 140 118"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "knob",
+                                    "type": "Knob",
+                                    "data": {
+                                        "version": 2,
+                                        "knobType": "FilmStrip",
+                                        "filmStrip": "knob.png",
+                                        "numFrames": 101,
+                                        "invert": false,
+                                        "handleName": "Data"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "38 0 64 64"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "value",
+                                    "type": "Label",
+                                    "data": {
+                                        "version": 1,
+                                        "textStyle": {
+                                            "version": 1,
+                                            "font": {
+                                                "version": 1,
+                                                "name": "Titillium Web",
+                                                "style": "Regular",
+                                                "height": 19.0
+                                            },
+                                            "colour": "ffbfeaf8",
+                                            "justification": "horizontallyCentred verticallyCentred",
+                                            "case": "Original"
+                                        },
+                                        "type": "Value",
+                                        "handleName": "Data"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 88 140 28"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "key": "ubCard",
+                    "value": {
+                        "version": 2,
+                        "actions": [
+                            {
+                                "version": 1,
+                                "onAction": "Mouse Down",
+                                "handler": "Q-Link",
+                                "handleName": "Data",
+                                "additionalData": ""
+                            },
+                            {
+                                "version": 1,
+                                "onAction": "Double Click",
+                                "handler": "Show Overlay",
+                                "handleName": "Data",
+                                "additionalData": "knob overlay"
+                            },
+                            {
+                                "version": 1,
+                                "onAction": "Enter Pressed",
+                                "handler": "Show Overlay",
+                                "handleName": "Data",
+                                "additionalData": "knob overlay"
+                            }
+                        ],
+                        "backgroundData": {
+                            "version": 1,
+                            "focussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            },
+                            "unfocussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            }
+                        },
+                        "ignoreMousePresses": false,
+                        "disableCoarseDataWheel": false,
+                        "componentsData": [
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "box",
+                                    "type": "Image",
+                                    "data": {
+                                        "version": 2,
+                                        "imageType": "Regular",
+                                        "colour": "0",
+                                        "image": "field.png"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 0 352 48"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "focus",
+                                    "type": "Focus",
+                                    "data": {
+                                        "version": 1,
+                                        "backgroundColour": "19ffffff",
+                                        "outlineColour": "ff46c8f0",
+                                        "backgroundInset": 4.0,
+                                        "outlineThickness": 1.0
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "WhenFocussed",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 0 352 48"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "value",
+                                    "type": "Label",
+                                    "data": {
+                                        "version": 1,
+                                        "textStyle": {
+                                            "version": 1,
+                                            "font": {
+                                                "version": 1,
+                                                "name": "Titillium Web",
+                                                "style": "Regular",
+                                                "height": 20.0
+                                            },
+                                            "colour": "ffe4e9f2",
+                                            "justification": "left verticallyCentred",
+                                            "case": "Original"
+                                        },
+                                        "type": "Value",
+                                        "handleName": "Data"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 0 330 48"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
                     "key": "ubReport",
                     "value": {
                         "version": 2,
@@ -260,23 +534,39 @@
                             "version": 2,
                             "componentData": {
                                 "version": 1,
-                                "name": "row 1",
-                                "type": "Label",
+                                "name": "p0",
+                                "type": "ubKnob",
                                 "data": {
                                     "version": 1,
-                                    "textStyle": {
-                                        "version": 1,
-                                        "font": {
-                                            "version": 1,
-                                            "name": "Titillium Web",
-                                            "style": "Regular",
-                                            "height": 28.0
-                                        },
-                                        "colour": "ff46c8f0",
-                                        "justification": "left verticallyCentred",
-                                        "case": "Original"
-                                    },
-                                    "type": "Value",
+                                    "handleName": "Data"
+                                }
+                            },
+                            "handle remapping": {
+                                "version": 1,
+                                "map": [
+                                    {
+                                        "key": "Data",
+                                        "value": "Parameter 0"
+                                    }
+                                ]
+                            },
+                            "bounds": {
+                                "version": 1,
+                                "acceptsHWFocus": "Yes",
+                                "showWhenDataModelInvalid": "Hide",
+                                "whenVisible": "Always",
+                                "boundsType": "Absolute",
+                                "bounds": "142 96 140 118"
+                            }
+                        },
+                        {
+                            "version": 2,
+                            "componentData": {
+                                "version": 1,
+                                "name": "p1",
+                                "type": "ubCard",
+                                "data": {
+                                    "version": 1,
                                     "handleName": "Data"
                                 }
                             },
@@ -291,53 +581,11 @@
                             },
                             "bounds": {
                                 "version": 1,
-                                "acceptsHWFocus": "No",
-                                "showWhenDataModelInvalid": "Show",
+                                "acceptsHWFocus": "Yes",
+                                "showWhenDataModelInvalid": "Hide",
                                 "whenVisible": "Always",
                                 "boundsType": "Absolute",
-                                "bounds": "220 100 1030 44"
-                            }
-                        },
-                        {
-                            "version": 2,
-                            "componentData": {
-                                "version": 1,
-                                "name": "row 2",
-                                "type": "Label",
-                                "data": {
-                                    "version": 1,
-                                    "textStyle": {
-                                        "version": 1,
-                                        "font": {
-                                            "version": 1,
-                                            "name": "Titillium Web",
-                                            "style": "Regular",
-                                            "height": 22.0
-                                        },
-                                        "colour": "ffe4e9f2",
-                                        "justification": "left verticallyCentred",
-                                        "case": "Original"
-                                    },
-                                    "type": "Value",
-                                    "handleName": "Data"
-                                }
-                            },
-                            "handle remapping": {
-                                "version": 1,
-                                "map": [
-                                    {
-                                        "key": "Data",
-                                        "value": "Parameter 2"
-                                    }
-                                ]
-                            },
-                            "bounds": {
-                                "version": 1,
-                                "acceptsHWFocus": "No",
-                                "showWhenDataModelInvalid": "Show",
-                                "whenVisible": "Always",
-                                "boundsType": "Absolute",
-                                "bounds": "220 164 1030 44"
+                                "bounds": "36 292 352 48"
                             }
                         },
                         {
@@ -354,9 +602,9 @@
                                             "version": 1,
                                             "name": "Titillium Web",
                                             "style": "Regular",
-                                            "height": 22.0
+                                            "height": 26.0
                                         },
-                                        "colour": "ffe4e9f2",
+                                        "colour": "ff46c8f0",
                                         "justification": "left verticallyCentred",
                                         "case": "Original"
                                     },
@@ -379,7 +627,7 @@
                                 "showWhenDataModelInvalid": "Show",
                                 "whenVisible": "Always",
                                 "boundsType": "Absolute",
-                                "bounds": "220 228 1030 44"
+                                "bounds": "580 96 676 44"
                             }
                         },
                         {
@@ -396,7 +644,7 @@
                                             "version": 1,
                                             "name": "Titillium Web",
                                             "style": "Regular",
-                                            "height": 22.0
+                                            "height": 19.0
                                         },
                                         "colour": "ffe4e9f2",
                                         "justification": "left verticallyCentred",
@@ -421,7 +669,7 @@
                                 "showWhenDataModelInvalid": "Show",
                                 "whenVisible": "Always",
                                 "boundsType": "Absolute",
-                                "bounds": "220 292 1030 44"
+                                "bounds": "580 162 676 44"
                             }
                         },
                         {
@@ -438,7 +686,7 @@
                                             "version": 1,
                                             "name": "Titillium Web",
                                             "style": "Regular",
-                                            "height": 22.0
+                                            "height": 19.0
                                         },
                                         "colour": "ffe4e9f2",
                                         "justification": "left verticallyCentred",
@@ -463,14 +711,98 @@
                                 "showWhenDataModelInvalid": "Show",
                                 "whenVisible": "Always",
                                 "boundsType": "Absolute",
-                                "bounds": "220 356 1030 44"
+                                "bounds": "580 228 676 44"
                             }
                         },
                         {
                             "version": 2,
                             "componentData": {
                                 "version": 1,
-                                "name": "p0",
+                                "name": "row 6",
+                                "type": "Label",
+                                "data": {
+                                    "version": 1,
+                                    "textStyle": {
+                                        "version": 1,
+                                        "font": {
+                                            "version": 1,
+                                            "name": "Titillium Web",
+                                            "style": "Regular",
+                                            "height": 19.0
+                                        },
+                                        "colour": "ffe4e9f2",
+                                        "justification": "left verticallyCentred",
+                                        "case": "Original"
+                                    },
+                                    "type": "Value",
+                                    "handleName": "Data"
+                                }
+                            },
+                            "handle remapping": {
+                                "version": 1,
+                                "map": [
+                                    {
+                                        "key": "Data",
+                                        "value": "Parameter 6"
+                                    }
+                                ]
+                            },
+                            "bounds": {
+                                "version": 1,
+                                "acceptsHWFocus": "No",
+                                "showWhenDataModelInvalid": "Show",
+                                "whenVisible": "Always",
+                                "boundsType": "Absolute",
+                                "bounds": "580 294 676 44"
+                            }
+                        },
+                        {
+                            "version": 2,
+                            "componentData": {
+                                "version": 1,
+                                "name": "row 7",
+                                "type": "Label",
+                                "data": {
+                                    "version": 1,
+                                    "textStyle": {
+                                        "version": 1,
+                                        "font": {
+                                            "version": 1,
+                                            "name": "Titillium Web",
+                                            "style": "Regular",
+                                            "height": 19.0
+                                        },
+                                        "colour": "ffe4e9f2",
+                                        "justification": "left verticallyCentred",
+                                        "case": "Original"
+                                    },
+                                    "type": "Value",
+                                    "handleName": "Data"
+                                }
+                            },
+                            "handle remapping": {
+                                "version": 1,
+                                "map": [
+                                    {
+                                        "key": "Data",
+                                        "value": "Parameter 7"
+                                    }
+                                ]
+                            },
+                            "bounds": {
+                                "version": 1,
+                                "acceptsHWFocus": "No",
+                                "showWhenDataModelInvalid": "Show",
+                                "whenVisible": "Always",
+                                "boundsType": "Absolute",
+                                "bounds": "580 360 676 44"
+                            }
+                        },
+                        {
+                            "version": 2,
+                            "componentData": {
+                                "version": 1,
+                                "name": "p2",
                                 "type": "ubReport",
                                 "data": {
                                     "version": 1,
@@ -482,7 +814,7 @@
                                 "map": [
                                     {
                                         "key": "Data",
-                                        "value": "Parameter 0"
+                                        "value": "Parameter 2"
                                     }
                                 ]
                             },
@@ -498,7 +830,7 @@
                     ]
                 },
                 "qlinkBoundsData": [
-                    "20 488 1240 120"
+                    "20 88 384 264"
                 ]
             }
         ]
