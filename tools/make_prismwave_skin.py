@@ -287,10 +287,16 @@ def toggle_img(on):
     return finish(im, 58, 28)
 
 
-def seg_img(on):
+def seg_img(on, caption=''):
+    # Captions are drawn into the image: fixed-text labels in a tab are not drawn by the MPC.
     im, d = canvas(66, 28)
     rrect(d, (1, 1, 65, 27), '#1d3a47' if on else FIELD, ACCENT if on else '#2f3441', 1.2, 5)
+    if caption:
+        text(d, (33, 14.5), caption, 11, 'bold', '#e8f8ff' if on else MUTED, 'mm', spacing=0.8)
     return finish(im, 66, 28)
+
+
+MODES = ['LP', 'BP', 'HP', 'NOTCH']
 
 
 # ---- wavetables (mirrors src/Wavetables.h for the built-in banks) -------------------------
@@ -686,12 +692,9 @@ def build_pages(user_frames):
     pg = Page('FILTER')
     px, py = 12, 48
     panel_box(d, (px, py, px + 622, 438), 'FILTER', subtitle='SVF 12 dB')
-    for i, lab in enumerate(['LP', 'BP', 'HP', 'NOTCH']):
-        x = px + 330 + i * 70
-        pg.add(entry('mode %d' % i, 'Button', ui.button_data('seg-on.png', 'seg-off.png', i, 4),
-                     '%d %d 66 28' % (x, py + 5), [('Data', 'Parameter %d' % P['mode'])]))
-        pg.add(entry('mode lab %d' % i, 'Label', ui.label_data('Text', 'ffd5dbe8', 15.0,
-                     'horizontallyCentred verticallyCentred', lab), '%d %d 66 28' % (x, py + 5)))
+    # Filter mode: one component with four segment buttons (Buttons placed directly in a tab do not respond).
+    pg.add(entry('p%d' % P['mode'], 'pwModeSeg', ui.obj(('version', 1), ('handleName', 'Data')),
+                 '%d %d 276 28' % (px + 330, py + 5), [('Data', 'Parameter %d' % P['mode'])], 'Yes', None, 'Hide'))
     dx, dy = px + 12, py + 48
     filter_grid(d, (dx, dy, dx + DISP_W, dy + DISP_H))
     for m in range(4):
@@ -829,6 +832,9 @@ def definitions():
                                          ('image', 'field-%dx%d.png' % (w, h))), '0 0 %d %d' % (w, h)),
             focus(w, h),
             value_label('14 0 %d %d' % (w - 40, h), 18.0 if h < 32 else 20.0, FIELD_TEXT, 'left verticallyCentred')], '0')))
+    defs.append(('pwModeSeg', ui.component_definition(ui.control_actions('menu overlay', False), [focus(276, 28)] + [
+        entry('seg %d' % i, 'Button', ui.button_data('seg-%s-on.png' % m.lower(), 'seg-%s-off.png' % m.lower(), i, 4),
+              '%d 0 66 28' % (i * 70)) for i, m in enumerate(MODES)], '0')))
     defs.append(('pwToggle', ui.component_definition(ui.control_actions('menu overlay', False), [
         focus(58, 28), entry('toggle', 'Button', ui.button_data('toggle-on.png', 'toggle-off.png', 1, 1), '0 0 58 28')], '0')))
     defs.append(('pwAmountBar', ui.component_definition(ui.control_actions('knob overlay bipolar'), [
@@ -854,7 +860,9 @@ def make_art(user_frames):
     strip(lambda v: knob_frame(v, SMALL, False, 3.0), FRAMES, SMALL, SMALL, SKINS / 'knob-small.png')
     strip(bar_frame, FRAMES, BAR_W, BAR_H, SKINS / 'amount-bar.png')
     toggle_img(True).save(SKINS / 'toggle-on.png'); toggle_img(False).save(SKINS / 'toggle-off.png')
-    seg_img(True).save(SKINS / 'seg-on.png'); seg_img(False).save(SKINS / 'seg-off.png')
+    for m in MODES:
+        seg_img(True, m).save(SKINS / ('seg-%s-on.png' % m.lower()))
+        seg_img(False, m).save(SKINS / ('seg-%s-off.png' % m.lower()))
     banks = [builtin_bank(b) for b in range(4)]
     for b in range(4):
         strip(lambda v, b=b: wt_frame(banks[b], v), DISP_FRAMES, DISP_W, DISP_H, SKINS / ('wt-%d.png' % b))

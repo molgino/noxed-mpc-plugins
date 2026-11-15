@@ -37,6 +37,10 @@ Es wird nur gelesen (`/sys`, `/proc/asound`) und die Audiogeräte werden kurz ge
 
 AIRA LINK ist ein nicht offengelegtes Roland-Protokoll für Audio und Tempo über USB zwischen Roland-Geräten (Hosts sind z. B. der MX-1-Mixer und der DJ-808). Es wird nicht verwendet: Ton und MIDI laufen im normalen USB-Modus (AIRA LINK OFF), das Tempo kommt per MIDI-Clock von der MPC.
 
+## Ergebnis auf der MPC Live III (15.11.2026)
+
+Roland S-1 mit AIRA LINK aus: eigene Soundkarte „S1“, Aufnahme und Wiedergabe je 2 Kanäle S32_LE mit **44,1 kHz** (nicht 48 kHz), beide lassen sich vom Plugin öffnen; libasound ist im MPC-Prozess bereits geladen. STATUS: „PROMISING: audio can be opened“. Damit ist das Brücken-Plugin mit Ton machbar. Weil der S-1 44,1 kHz anbietet, kann die MPC ihn eventuell auch direkt als Audio-Interface nutzen; das Plugin bleibt nützlich, weil die MPC nur ein Interface gleichzeitig verwendet.
+
 ## Tests am Computer
 
 Mit nachgebautem `/proc/asound` (Variable `USB_BRIDGE_ASOUND`) und einer S-1-Beispielbeschreibung geprüft; SDK-Hosttest bestanden (die Warnung zu Stille ist erwartet). Auf der MPC noch nicht getestet.

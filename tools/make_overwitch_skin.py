@@ -94,7 +94,8 @@ def build(params):
         ('version', 1),
         ('componentDefinitions', ui.obj(('version', 2), ('importFiles', []),
                                         ('localComponentDefinitions', [ui.obj(('key', k), ('value', v)) for k, v in defs]))),
-        ('replacementStrings', [ui.obj(('key', 'Parameter 1'), ('value', choices))]),
+        ('replacementStrings', [ui.obj(('key', 'Parameter 1'), ('value', choices))] +
+                               [ui.obj(('key', 'Parameter %d' % (GROUP_FIRST + i)), ('value', ['Off', 'On'])) for i in range(20)]),
         ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
         ('tabs', [tab, group_tab]))))
     # Row 1 of the Q-Links: Source, Level; row 2: Report.
@@ -111,7 +112,8 @@ GROUP_FIRST = 8   # parameter index of "G Track 1"
 FX_NAMES = ['DELAY', 'REVERB', 'CHORUS', 'INPUT']
 
 
-def pad_img(on, w=150, h=100):
+def pad_img(on, w=150, h=100, caption=''):
+    # The caption is part of the image: fixed-text labels in a tab are not drawn by the MPC.
     im, d = pw.canvas(w, h)
     if on:
         pw.rrect(d, (1, 1, w - 1, h - 1), '#173847', pw.ACCENT, 1.6, 8)
@@ -119,6 +121,8 @@ def pad_img(on, w=150, h=100):
     else:
         pw.rrect(d, (1, 1, w - 1, h - 1), '#161920', '#2c313c', 1.2, 8)
         pw.rrect(d, (10, h - 14, w - 10, h - 9), '#2a2f3a', None, 0, 2)
+    if caption:
+        pw.text(d, (w / 2, h / 2 - 8), caption, 17, 'bold', '#eef9ff' if on else pw.TEXT, 'mm', spacing=1.2)
     return pw.finish(im, w, h)
 
 
@@ -134,34 +138,31 @@ def build_group_tab():
     pw.panel_box(d, (680, 48, 1268, 616), 'EFFECTS & INPUT', subtitle='ALSO SUMMABLE')
     children = []
     pad_w, pad_h = 150, 100
-    for i in range(16):
-        r, c = divmod(i, 4)
-        x, y = 28 + c * 160, 96 + r * 128
-        children.append(pw.entry('g%d' % i, 'owPad', ui.obj(('version', 1), ('handleName', 'Data')), '%d %d %d %d' % (x, y, pad_w, pad_h),
+    defs = []
+    names = ['TRACK %d' % (i + 1) for i in range(16)] + FX_NAMES
+    for i, name in enumerate(names):
+        w = pad_w if i < 16 else 260
+        if i < 16:
+            r, c = divmod(i, 4)
+            x, y = 28 + c * 160, 96 + r * 128
+        else:
+            k = i - 16
+            x, y = 708 + (k % 2) * 280, 96 + (k // 2) * 128
+        on, off = 'pad%02d-on.png' % (i + 1), 'pad%02d-off.png' % (i + 1)
+        pad_img(True, w, pad_h, name).save(SKINS / on)
+        pad_img(False, w, pad_h, name).save(SKINS / off)
+        comp = 'owPad%02d' % (i + 1)
+        defs.append((comp, ui.component_definition(ui.control_actions('menu overlay', False), [
+            pw.focus(w, pad_h),
+            pw.entry('pad', 'Button', ui.button_data(on, off, 1, 1), '0 0 %d %d' % (w, pad_h))], '0')))
+        children.append(pw.entry('g%d' % i, comp, ui.obj(('version', 1), ('handleName', 'Data')), '%d %d %d %d' % (x, y, w, pad_h),
                                  [('Data', 'Parameter %d' % (GROUP_FIRST + i))], 'Yes', None, 'Hide'))
-        children.append(pw.entry('gl%d' % i, 'Label', ui.label_data('Text', 'ffe4e9f2', 22.0, 'horizontallyCentred verticallyCentred',
-                                                                   'TRACK %d' % (i + 1)), '%d %d %d 70' % (x, y, pad_w)))
-    for i, name in enumerate(FX_NAMES):
-        x, y = 708 + (i % 2) * 280, 96 + (i // 2) * 128
-        children.append(pw.entry('gf%d' % i, 'owPadWide', ui.obj(('version', 1), ('handleName', 'Data')), '%d %d 260 %d' % (x, y, pad_h),
-                                 [('Data', 'Parameter %d' % (GROUP_FIRST + 16 + i))], 'Yes', None, 'Hide'))
-        children.append(pw.entry('gfl%d' % i, 'Label', ui.label_data('Text', 'ffe4e9f2', 22.0, 'horizontallyCentred verticallyCentred', name),
-                                 '%d %d 260 70' % (x, y)))
     for i, t in enumerate(['All lit outputs are summed to this plugin track when', 'SOURCE = Group. Use one MPC Overwitch instance per',
                            'group, e.g. Tracks 1-4 = drums, 5-8 = synths.', '',
                            'Names are those of the Digitone II; other Overbridge', 'devices map the same positions onto their outputs.']):
         pw.text(d, (708, 380 + i * 24), t, 13, 'medium', pw.MUTED if t else pw.DIM, 'lm')
     pw.text(d, (708, 590), 'The current group also appears as the SOURCE text, e.g. "Group: T1+T2+T3".', 11, 'medium', pw.DIM, 'lm')
-    pad_img(True).save(SKINS / 'pad-on.png')
-    pad_img(False).save(SKINS / 'pad-off.png')
-    pad_img(True, 260).save(SKINS / 'padw-on.png')
-    pad_img(False, 260).save(SKINS / 'padw-off.png')
     pw.finish(im, W, H).convert('RGB').save(SKINS / 'panel-group.png', optimize=True)
-    defs = []
-    for name, w, on, off in [('owPad', pad_w, 'pad-on.png', 'pad-off.png'), ('owPadWide', 260, 'padw-on.png', 'padw-off.png')]:
-        defs.append((name, ui.component_definition(ui.control_actions('menu overlay', False), [
-            pw.focus(w, pad_h),
-            pw.entry('pad', 'Button', ui.button_data(on, off, 1, 1), '0 0 %d %d' % (w, pad_h))], '0')))
     bg = pw.entry('panel', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'panel-group.png')),
                   '0 0 1280 628')
     tab = ui.obj(('version', 1), ('tabName', 'GROUP'), ('fnKeyIndex', 1), ('fnKeySubIndex', 0),

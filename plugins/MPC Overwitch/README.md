@@ -1,4 +1,4 @@
-# NOXED MPC Overwitch 0.4.0 – Gruppen
+# NOXED MPC Overwitch 0.4.1 – Gruppen
 
 MPC Overwitch holt den Ton eines Elektron-Geräts per **Overbridge** direkt in die MPC. Zuerst getestet wird der Digitone II, die Tabelle enthält auch Digitakt II, Digitakt, Digitone (Keys), Syntakt, Analog Four/Rytm MKII und Analog Heat. Das Gerät liefert 48 kHz; das Plugin rechnet auf die Samplerate der MPC um (44,1 kHz) und gleicht dabei die kleine Taktabweichung zwischen beiden Geräten laufend aus. Damit fällt das Samplerate-Problem von USB-Audio weg.
 
@@ -49,6 +49,7 @@ Q-Links: erste Reihe Source und Level, zweite Reihe Report. Im Program-Modus Q-L
 
 ## Verlauf
 
+- **0.4.1:** GROUP-Pads schalten wieder aus und sind beschriftet (Hardwaretest).
 - **0.4.0:** Gruppen: Source „Group“ summiert die auf der GROUP-Seite gewählten Ausgänge. Beide Overwitch-Plugins müssen 0.4.0 sein.
 - **0.3.1:** Pegelanzeige im Send-Plugin; beide Plugins müssen 0.3.1 sein.
 - **0.3.0:** Bis zu 16 Instanzen gleichzeitig mit eigener Quelle; gemeinsame USB-Verbindung mit dem neuen Effekt MPC Overwitch Send (Audio zum Gerät). Noch nicht auf Hardware getestet.

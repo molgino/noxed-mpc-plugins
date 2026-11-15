@@ -1,5 +1,16 @@
 # Änderungen
 
+## Prism Wave 0.1.2 / MPC Overwitch 0.4.1 – Korrekturen nach Hardwaretest (15.11.2026)
+
+- Prism Wave FILTER: Die Modustasten LP/BP/HP/NOTCH reagierten nicht und waren unbeschriftet. Sie sind jetzt ein eigener Bedien-Baustein (wie der SYNC-Schalter), die Beschriftung ist ins Bild gezeichnet.
+- MPC Overwitch GROUP: Pads schalteten nur ein, nicht wieder aus (fehlende Ein/Aus-Werteliste in der Skin), und ihre Beschriftungen fehlten. Beides behoben; Beschriftung im Bild.
+- Ursache auf der MPC: Buttons direkt in einer Seite reagieren nicht, und feste Textbeschriftungen direkt in einer Seite werden nicht gezeichnet. `tools/validate.py` warnt jetzt bei beidem.
+- Klang, Parameter und gemeinsames Engine-Layout unverändert; MPC Overwitch Send 0.4.0 passt weiter zu Overwitch 0.4.1.
+
+## MPC USB Bridge 0.1.0 – Ergebnis auf der MPC Live III
+
+- Roland S-1 (AIRA LINK aus) als eigene Soundkarte erkannt, 2 Kanäle S32_LE mit **44,1 kHz** für Aufnahme und Wiedergabe, beide lassen sich öffnen; libasound ist im MPC-Prozess geladen. Ergebnis „PROMISING: audio can be opened“.
+
 ## MPC Overwitch 0.4.0 / MPC Overwitch Send 0.4.0 – Gruppen
 
 - Neue Seite GROUP: Track 1–16, Delay, Reverb, Chorus, Input zuschaltbar; SOURCE „Group“ summiert sie zu einem Stereosignal (je Instanz eine Gruppe). Die Gruppe steht in der SOURCE-Anzeige („Group: T1+T2“).

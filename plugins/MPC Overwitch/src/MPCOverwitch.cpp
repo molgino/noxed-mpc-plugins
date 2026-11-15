@@ -43,7 +43,7 @@ namespace {
 
 enum ParamIndex { kLevel = 0, kSource, kLine, kStatus, kDevice, kStream, kDropouts, kSystem, kGroupFirst, kNumParams = kGroupFirst + 20 };
 constexpr int kMaxLines = 64;
-const char* const kVersion = "0.4.0";
+const char* const kVersion = "0.4.1";
 
 std::vector<std::string> sourceNames()
 {
@@ -329,7 +329,7 @@ private:
         info.name         = "MPC Overwitch";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 400;            // 0.4.0
+        info.version      = 401;            // 0.4.1
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;

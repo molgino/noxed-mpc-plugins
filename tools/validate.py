@@ -473,6 +473,22 @@ def check_skins(rep, skins_dir, nparams):
                 builtin = {"slider", "knob", "label", "button", "focus", "image", "separator", "combobox",
                            "knoboverlay", "menuoverlay", "numericoverlay", "texteditoverlay", "envelope",
                            "envelopeoverlay", "xypad", "meter", "plotter", "halodisplay", "indicator", "path"}
+                # Seen on MPC hardware (Prism Wave / MPC Overwitch, Nov 2026): a Button placed directly in a tab
+                # does not respond, and a fixed-text Label ("type": "Text") placed directly in a tab is not drawn.
+                for ti, t in enumerate(tabs if isinstance(tabs, list) else []):
+                    if not isinstance(t, dict):
+                        continue
+                    for e in ((t.get("componentDefinition") or {}).get("componentsData") or []):
+                        cd = e.get("componentData") if isinstance(e, dict) else None
+                        if not isinstance(cd, dict):
+                            continue
+                        nm = cd.get("name", "?")
+                        if cd.get("type") == "Button":
+                            rep.warn('TUI.json: tab %d entry "%s" is a Button placed directly in the tab; on the MPC it '
+                                     'does not respond. Put it inside a component definition with a Focus child.' % (ti + 1, nm))
+                        if cd.get("type") == "Label" and isinstance(cd.get("data"), dict) and cd["data"].get("type") == "Text":
+                            rep.warn('TUI.json: tab %d entry "%s" is a fixed-text Label placed directly in the tab; the MPC '
+                                     'did not draw these in tests. Draw the text into an image instead.' % (ti + 1, nm))
                 cdefs = (page.get("componentDefinitions") or {}).get("localComponentDefinitions") or []
                 for d in cdefs:
                     k = d.get("key") if isinstance(d, dict) else None

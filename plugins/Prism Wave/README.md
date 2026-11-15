@@ -1,4 +1,4 @@
-# NOXED Prism Wave 0.1.1
+# NOXED Prism Wave 0.1.2
 
 Eigenstaendiger Wavetable-Synth fuer Akai MPC Standalone, inspiriert vom Workflow moderner Wavetable-Synthesizer. Keine vollstaendige Serum-2-Nachbildung. Kein Xfer-Code, keine mitgelieferten Serum-Wavetables, -Samples oder -Presets.
 
