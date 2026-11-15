@@ -11,12 +11,15 @@
 //   1 Card    Auto = first USB audio card that is not the MPC (Roland preferred), or a fixed ALSA card
 //   2 Report  scrolls the USB / ALSA report (also written to MPC-USB-Bridge-Report.txt)
 //   3..7      read-only rows Status, Device, Stream, Levels, System
+//   8 MIDI Ch Off or 1..16: notes / CC / pitch bend / aftertouch / program changes of this MPC track go
+//             to the device's own MIDI port on this channel (ob_midi.h; the MPC host itself cannot)
 // Licence: GPL-3.0-or-later.
 
 #include "mpc_plugin.h"
 #include "mpc_resources.h"
 
 #include "ub_alsa.h"
+#include "../../MPC Overwitch/src/ob_midi.h"
 #include "ub_diag.h"
 
 #include <algorithm>
@@ -31,7 +34,7 @@
 
 namespace {
 
-enum ParamIndex { kLevel = 0, kCard, kLine, kStatus, kDevice, kStream, kLevels, kSystem, kNumParams };
+enum ParamIndex { kLevel = 0, kCard, kLine, kStatus, kDevice, kStream, kLevels, kSystem, kMidiCh, kNumParams };
 constexpr int kMaxLines = 96;
 constexpr int kMaxCard = 16;
 
@@ -53,10 +56,14 @@ public:
             p.automatable = false;
             addParam(p);
         }
+        std::vector<std::string> chans = {"Off"};
+        for (int c = 1; c <= 16; ++c) chans.push_back(std::to_string(c));
+        addParam(mpc::choiceParam("midich", "MIDI Ch", chans, 1));
         rep_ = ubdiag::scan(++scans_);
         rows();
         write();
         capture_.start();
+        midi_.start();
         monitor_ = std::thread([this] { run(); });
     }
 
@@ -64,6 +71,7 @@ public:
     {
         stop_.store(true);
         if (monitor_.joinable()) monitor_.join();
+        midi_.stop();
         capture_.stop();
     }
 
@@ -73,10 +81,17 @@ public:
         srcRate_ = 0.0;   // re-primed on the next block
         gain_ = 0.0f;
     }
-    void reset() override { reader_.reset(); }
+    void reset() override { reader_.reset(); midi_.releaseHeld(); }
 
     void process(mpc::ProcessContext& ctx) override
     {
+        // MIDI from the track to the device (before the audio, independent of it).
+        const int ch = (int)std::lround(get(kMidiCh)) - 1;
+        if (wasPlaying_ && !ctx.transport.playing) midi_.releaseHeld();
+        wasPlaying_ = ctx.transport.playing;
+        for (int i = 0; i < ctx.numMidiEvents; ++i) midi_.process(ctx.midi[i].data, ctx.midi[i].size, ch);
+        midiCh_.store(ch, std::memory_order_relaxed);
+
         float* l = ctx.outputs[0];
         float* r = ctx.outputs[1];
         const int n = ctx.numFrames;
@@ -143,6 +158,12 @@ public:
             case kStream: out = stream_; return true;
             case kLevels: out = levels_; return true;
             case kSystem: out = rep_.system; return true;
+            case kMidiCh:
+            {
+                int c = (int)std::lround(plain);
+                out = c <= 0 ? "Off" : "Ch " + std::to_string(c);
+                return true;
+            }
             default: return false;
         }
     }
@@ -192,6 +213,7 @@ private:
             default:                      status = "Stopped"; break;
         }
         if (device.empty()) device = "-";
+        device += "  |  " + midi_.status(midiCh_.load(std::memory_order_relaxed));
         if (st == ub::Capture::kStreaming)
         {
             stream = diag::fmt("%s %.1f kHz (measured %.2f) -> MPC %.1f kHz, period %d", capture_.format().c_str(),
@@ -236,7 +258,7 @@ private:
         info.name         = "MPC USB Bridge";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 200;            // 0.2.0
+        info.version      = 210;            // 0.2.1
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;
@@ -247,6 +269,9 @@ private:
     static constexpr char kUid[5] = "NXbD";
 
     ub::Capture capture_;
+    obmidi::Forwarder midi_{[this] { return capture_.card(); }};
+    std::atomic<int> midiCh_{0};
+    bool wasPlaying_ = false;
     ob::DriftReader reader_;
     double hostRate_ = 44100.0, srcRate_ = 0.0, driftAvg_ = 0.0;
     float gain_ = 0.0f;

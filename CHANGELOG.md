@@ -1,5 +1,12 @@
 # Änderungen
 
+## MPC Overwitch 0.5.0 / MPC USB Bridge 0.2.1 – MIDI zum Gerät (15.11.2026)
+
+- Neuer Parameter MIDI Ch (Off / 1–16, angehängt): Noten, CCs, Pitch Bend, Aftertouch und Programmwechsel der MPC-Spur gehen an den USB-MIDI-Port des Geräts, umgestellt auf den gewählten Kanal (`ob_midi.h`: direkter ALSA-MIDI-Port, sonst ALSA-Sequencer).
+- Gehaltene Noten werden bei Kanalwechsel, Transport-Stopp und Entfernen losgelassen. MIDI-Status in der Zeile DEVICE.
+- Standard: Overwitch Off, USB Bridge Kanal 1. Gemeinsames Engine-Layout unverändert (Send 0.4.0 passt).
+- Desktop-Test für die MIDI-Weiterleitung in CI.
+
 ## MPC USB Bridge 0.2.0 – mit Ton (15.11.2026)
 
 - Nimmt ein class-compliant USB-Audiogerät (Roland S-1 usw.) über die ALSA-Bibliothek der MPC auf und gibt es als Plugin-Spur aus, mit Drift-Ausgleich (Resampler von MPC Overwitch).

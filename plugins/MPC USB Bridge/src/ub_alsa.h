@@ -133,6 +133,7 @@ public:
     int period() const { return period_.load(); }
     uint32_t xruns() const { return xruns_.load(); }
     bool rt() const { return rt_.load(); }
+    int card() const { return card_.load(); }   // ALSA card in use or being tried, -1 none
     std::string device() { std::lock_guard<std::mutex> l(m_); return device_; }
     std::string message() { std::lock_guard<std::mutex> l(m_); return msg_; }
     std::string format() { std::lock_guard<std::mutex> l(m_); return fmtName_; }
@@ -160,7 +161,7 @@ private:
         {
             std::string pcmName, label;
             const char* forced = std::getenv("USB_BRIDGE_PCM");   // desktop tests: e.g. "null"
-            if (forced) { pcmName = forced; label = forced; }
+            if (forced) { pcmName = forced; label = forced; card_.store(-1); }
             else
             {
                 std::vector<Card> cards = captureCards();
@@ -168,6 +169,7 @@ private:
                 const Card* pick = nullptr;
                 for (const Card& c : cards)
                     if (want < 0 || c.index == want) { pick = &c; break; }
+                card_.store(pick ? pick->index : -1);
                 if (!pick) { set(kSearching, want < 0 ? "connect a USB audio device" : "chosen card not found"); sleepFor(1000); continue; }
                 pcmName = "hw:" + std::to_string(pick->index) + ",0";
                 label = pick->id + " (" + pick->usbid + ")";
@@ -289,6 +291,7 @@ private:
     std::atomic<int> period_{0};
     std::atomic<uint32_t> xruns_{0};
     std::atomic<bool> rt_{false};
+    std::atomic<int> card_{-1};
     std::mutex m_;
     std::string device_, msg_, fmtName_;
     int fmt_ = -1, channels_ = 2, bytesPerSample_ = 4;

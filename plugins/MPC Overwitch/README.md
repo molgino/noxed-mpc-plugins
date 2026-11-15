@@ -1,10 +1,17 @@
-# NOXED MPC Overwitch 0.4.1 – Gruppen
+# NOXED MPC Overwitch 0.5.0 – Gruppen und MIDI
 
 MPC Overwitch holt den Ton eines Elektron-Geräts per **Overbridge** direkt in die MPC. Zuerst getestet wird der Digitone II, die Tabelle enthält auch Digitakt II, Digitakt, Digitone (Keys), Syntakt, Analog Four/Rytm MKII und Analog Heat. Das Gerät liefert 48 kHz; das Plugin rechnet auf die Samplerate der MPC um (44,1 kHz) und gleicht dabei die kleine Taktabweichung zwischen beiden Geräten laufend aus. Damit fällt das Samplerate-Problem von USB-Audio weg.
 
 Grundlage ist das Open-Source-Projekt [Overwitch](https://github.com/dagargo/overwitch) von David García Goñi. Sein USB-Protokoll (`engine.c`, MIT, Stefan Rehm und David García Goñi) wurde für die MPC neu umgesetzt, die Gerätetabelle ist aus Overwitchs `devices.json` (GPL-3) erzeugt (`tools/gen_overwitch_devices.py`). Code, Grafiken oder Software von Elektron werden nicht verwendet. Lizenz dieses Plugins: GPL-3.0-or-later.
 
 **Stand:** Version 0.2.0 läuft auf der MPC Live III mit dem Digitone II (13.11.2026): STREAMING, gemessen 48,00 kHz, etwa 8 ms Puffer, Drift-Ausgleich bei wenigen ppm, 0 Aussetzer, 0 USB-Fehler, USB-Thread mit Echtzeit-Priorität; der Ton kommt sauber auf der Plugin-Spur an. Längere Sessions, CPU-Last und die anderen Elektron-Geräte sind noch nicht geprüft.
+
+
+## MIDI zum Gerät (0.5.0)
+
+**MIDI zum Gerät:** Noten, CCs, Pitch Bend, Aftertouch und Programmwechsel, die die MPC-Spur an dieses Plugin schickt, gehen direkt an den USB-MIDI-Port des Geräts, und zwar auf dem Kanal unter **MIDI CHANNEL** (Off = nichts senden). Die MPC selbst kann MIDI von Plugins nicht weiterleiten, deshalb öffnet das Plugin den MIDI-Port des Geräts selbst: zuerst direkt, und falls die MPC den Port belegt, über den ALSA-Sequencer. Die Zeile DEVICE zeigt hinter „|“, ob es klappt („MIDI ch 1 -> hw:2,0“, „MIDI: port busy …“, „MIDI: device has no MIDI port“). Gehaltene Noten werden beim Kanalwechsel, beim Stoppen des Transports und beim Entfernen des Plugins losgelassen. Timing: höchstens ein Audioblock plus 1 ms Verzögerung (wenige ms). **Tipp:** Ist das Gerät zusätzlich in den MIDI-Einstellungen der MPC als Ausgang einer Spur eingetragen, kommen Noten doppelt an; dann eines von beiden abschalten. Nur am Computer getestet.
+
+Standard ist **Off**, damit bestehende Projekte und mehrere Instanzen nichts doppelt senden. Mit mehreren Instanzen kann jede Spur auf einen anderen Kanal senden (z. B. Digitone-II-Spuren 1–16). MPC Overwitch Send ist ein Effekt und bekommt von der MPC kein MIDI.
 
 ## Bedienung
 
@@ -49,6 +56,7 @@ Q-Links: erste Reihe Source und Level, zweite Reihe Report. Im Program-Modus Q-L
 
 ## Verlauf
 
+- **0.5.0:** MIDI CHANNEL (Parameter 28, Q-Link 15): Noten und CCs der Spur gehen an den USB-MIDI-Port des Elektron-Geräts.
 - **0.4.1:** GROUP-Pads schalten wieder aus und sind beschriftet (Hardwaretest).
 - **0.4.0:** Gruppen: Source „Group“ summiert die auf der GROUP-Seite gewählten Ausgänge. Beide Overwitch-Plugins müssen 0.4.0 sein.
 - **0.3.1:** Pegelanzeige im Send-Plugin; beide Plugins müssen 0.3.1 sein.

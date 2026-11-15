@@ -18,6 +18,8 @@
 //   3..7       read-only status rows: Status, Device, Stream, Dropouts, System
 //   8..27      GROUP page: which outputs are summed when Source = Group (Track 1-16, Delay, Reverb,
 //              Chorus, Input on Digitone II; other devices map the same positions onto their outputs)
+//   28 MIDI Ch Off or 1..16: notes / CC / pitch bend / aftertouch / program changes of this MPC track go
+//              to the Elektron device's own USB MIDI port on this channel (ob_midi.h)
 //
 // Protocol from Overwitch (https://github.com/dagargo/overwitch): engine.c MIT (Stefan Rehm, David
 // Garcia Goni), device table GPL-3. This plugin: GPL-3.0-or-later.
@@ -27,6 +29,7 @@
 
 #include "ob_shared.h"
 #include "ob_diag.h"
+#include "ob_midi.h"
 
 #include <atomic>
 #include <chrono>
@@ -41,9 +44,9 @@
 
 namespace {
 
-enum ParamIndex { kLevel = 0, kSource, kLine, kStatus, kDevice, kStream, kDropouts, kSystem, kGroupFirst, kNumParams = kGroupFirst + 20 };
+enum ParamIndex { kLevel = 0, kSource, kLine, kStatus, kDevice, kStream, kDropouts, kSystem, kGroupFirst, kMidiCh = kGroupFirst + 20, kNumParams };
 constexpr int kMaxLines = 64;
-const char* const kVersion = "0.4.1";
+const char* const kVersion = "0.5.0";
 
 std::vector<std::string> sourceNames()
 {
@@ -76,6 +79,10 @@ public:
         std::vector<std::string> src = sourceNames();
         for (int i = 0; i < 20; ++i)
             addParam(mpc::boolParam(("group_" + std::to_string(i + 1)).c_str(), ("G " + src[(size_t)i + 1]).c_str(), false));
+        std::vector<std::string> chans = {"Off"};
+        for (int c = 1; c <= 16; ++c) chans.push_back(std::to_string(c));
+        addParam(mpc::choiceParam("midich", "MIDI Ch", chans, 0));
+        midi_.start();
 
         utsname u{};
         uname(&u);
@@ -95,6 +102,7 @@ public:
     {
         stop_.store(true);
         if (monitor_.joinable()) monitor_.join();
+        midi_.stop();
         ob::freeSlot(shared_, slot_);
         ob::releaseShared(shared_);
     }
@@ -104,10 +112,17 @@ public:
         reader_.prepare(48000.0, sampleRate, ob::DriftReader::kUsbBurst);
         gain_ = 0.0f;
     }
-    void reset() override { reader_.reset(); }
+    void reset() override { reader_.reset(); midi_.releaseHeld(); }
 
     void process(mpc::ProcessContext& ctx) override
     {
+        // MIDI from the track to the device's USB MIDI port (independent of the audio stream).
+        const int ch = (int)std::lround(get(kMidiCh)) - 1;
+        if (wasPlaying_ && !ctx.transport.playing) midi_.releaseHeld();
+        wasPlaying_ = ctx.transport.playing;
+        for (int i = 0; i < ctx.numMidiEvents; ++i) midi_.process(ctx.midi[i].data, ctx.midi[i].size, ch);
+        midiCh_.store(ch, std::memory_order_relaxed);
+
         float* l = ctx.outputs[0];
         float* r = ctx.outputs[1];
         const int n = ctx.numFrames;
@@ -148,6 +163,12 @@ public:
         {
             float g = plain * plain * 1.25f;
             out = g < 1e-5f ? "-inf dB" : diag::fmt("%.1f dB", 20.0f * std::log10(g));
+            return true;
+        }
+        if (index == kMidiCh)
+        {
+            int c = (int)std::lround(plain);
+            out = c <= 0 ? "Off" : "Ch " + std::to_string(c);
             return true;
         }
         std::lock_guard<std::mutex> lock(mutex_);
@@ -271,6 +292,7 @@ private:
         }
         lines.push_back(system_);
 
+        device += "  |  " + midi_.status(midiCh_.load(std::memory_order_relaxed));
         // Also redraw once when the first rate measurement arrives (the STREAM row showed 0.00 kHz until reopened).
         const bool rateKnown = engine_ && slot_ >= 0 && engine_->measuredRate() > 1000.0;
         const std::string group = "Group: " + groupSummary(sources);
@@ -329,7 +351,7 @@ private:
         info.name         = "MPC Overwitch";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 401;            // 0.4.1
+        info.version      = 500;            // 0.5.0
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;
@@ -347,6 +369,9 @@ private:
     float gain_ = 0.0f;
 
     std::thread monitor_;
+    obmidi::Forwarder midi_{[] { return obmidi::findUsbMidiCard("1935"); }};   // 1935 = Elektron
+    std::atomic<int> midiCh_{-1};
+    bool wasPlaying_ = false;
     std::atomic<bool> stop_{false}, dirty_{false};
     std::mutex mutex_;
     std::string status_, device_, stream_, dropouts_, system_, visibleKey_, groupLabel_ = "Group: empty";

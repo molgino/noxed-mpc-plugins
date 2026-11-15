@@ -25,7 +25,7 @@ def build(params):
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC OVERWITCH', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (300, 22), 'NOXED · OVERBRIDGE FOR THE MPC · 0.4 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (300, 22), 'NOXED · OVERBRIDGE FOR THE MPC · 0.5 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
 
     children = []
     # Output panel: source and level.
@@ -39,9 +39,12 @@ def build(params):
                              [('Data', 'Parameter 0')], 'Yes', None, 'Hide'))
     pw.knob_name(d, 142, 240, 'LEVEL')
     pw.line(d, [(28, 384), (396, 384)], '#232835', 1)
-    for i, t in enumerate(['Digitone II / Digitakt II and other', 'Overbridge 2 devices. Set the device',
-                           'USB config to OVERBRIDGE.', '', 'Up to 16 instances, each with its own', 'source (and MPC Overwitch Send).']):
-        pw.text(d, (36, 412 + i * 22), t, 12, 'medium', pw.MUTED if t else pw.DIM, 'lm')
+    pw.text(d, (36, 404), 'MIDI CHANNEL', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
+    children.append(pw.entry('p%d' % MIDI_PARAM, 'owSource', ui.obj(('version', 1), ('handleName', 'Data')), '36 420 352 48',
+                             [('Data', 'Parameter %d' % MIDI_PARAM)], 'Yes', None, 'Hide'))
+    for i, t in enumerate(['Notes and CC of this track go to the', 'device on this channel (USB MIDI).',
+                           'Set the device USB config to OVERBRIDGE.']):
+        pw.text(d, (36, 488 + i * 22), t, 12, 'medium', pw.MUTED, 'lm')
     pw.text(d, (36, 590), 'Based on Overwitch by David Garcia Goni', 10, 'medium', pw.DIM, 'lm')
 
     # Status panel.
@@ -95,12 +98,13 @@ def build(params):
         ('componentDefinitions', ui.obj(('version', 2), ('importFiles', []),
                                         ('localComponentDefinitions', [ui.obj(('key', k), ('value', v)) for k, v in defs]))),
         ('replacementStrings', [ui.obj(('key', 'Parameter 1'), ('value', choices))] +
-                               [ui.obj(('key', 'Parameter %d' % (GROUP_FIRST + i)), ('value', ['Off', 'On'])) for i in range(20)]),
+                               [ui.obj(('key', 'Parameter %d' % (GROUP_FIRST + i)), ('value', ['Off', 'On'])) for i in range(20)] +
+                               [ui.obj(('key', 'Parameter %d' % MIDI_PARAM), ('value', MIDI_CHOICES))]),
         ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
         ('tabs', [tab, group_tab]))))
     # Row 1 of the Q-Links: Source, Level; row 2: Report.
     qmap = ui.obj(('Tab', 1), ('SubTab', 1), ('Bank Direction', 'RowTopDown'),
-                  ('Q-Links', ui.Obj(('Q-Link %d' % q, {13: 1, 14: 0, 9: 2}.get(q, -1)) for q in range(1, 17))))
+                  ('Q-Links', ui.Obj(('Q-Link %d' % q, {13: 1, 14: 0, 15: MIDI_PARAM, 9: 2}.get(q, -1)) for q in range(1, 17))))
     qlinks = ui.obj(('version', 4), ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
                     ('Screen Mode Q-Links', ui.obj(('version', 4), ('map', [qmap, group_qmap]))),
                     ('Program Mode Q-Links', ui.Obj(('Q-Link %d' % (q + 1), {0: 0, 1: 1}.get(q, -1)) for q in range(16))))
@@ -109,6 +113,8 @@ def build(params):
 
 
 GROUP_FIRST = 8   # parameter index of "G Track 1"
+MIDI_PARAM = 28   # MPC Overwitch "MIDI Ch"
+MIDI_CHOICES = ['Off'] + ['Ch %d' % c for c in range(1, 17)]
 FX_NAMES = ['DELAY', 'REVERB', 'CHORUS', 'INPUT']
 
 
@@ -272,12 +278,17 @@ def build_bridge(params):
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC USB BRIDGE', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (290, 22), 'NOXED · USB AUDIO DEVICE AS A PLUGIN TRACK (ROLAND S-1 ...) · 0.2', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (290, 22), 'NOXED · USB AUDIO DEVICE AS A PLUGIN TRACK (ROLAND S-1 ...) · 0.2.1', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
     children = []
     pw.panel_box(d, (12, 48, 412, 436), 'INPUT', subtitle='USB DEVICE TO THIS TRACK')
-    children.append(pw.entry('p0', 'ubKnob', ui.obj(('version', 1), ('handleName', 'Data')), '142 96 140 118',
+    children.append(pw.entry('p0', 'ubKnob', ui.obj(('version', 1), ('handleName', 'Data')), '36 96 140 118',
                              [('Data', 'Parameter 0')], 'Yes', None, 'Hide'))
-    pw.knob_name(d, 142, 96, 'LEVEL')
+    pw.knob_name(d, 36, 96, 'LEVEL')
+    pw.text(d, (212, 104), 'MIDI CHANNEL', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
+    children.append(pw.entry('p8', 'ubMidi', ui.obj(('version', 1), ('handleName', 'Data')), '212 120 176 48',
+                             [('Data', 'Parameter 8')], 'Yes', None, 'Hide'))
+    for i, t in enumerate(['Notes and CC of this', 'track to the device.']):
+        pw.text(d, (212, 190 + i * 20), t, 12, 'medium', pw.DIM, 'lm')
     pw.line(d, [(28, 250), (396, 250)], '#232835', 1)
     pw.text(d, (36, 276), 'CARD', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
     children.append(pw.entry('p1', 'ubCard', ui.obj(('version', 1), ('handleName', 'Data')), '36 292 352 48',
@@ -298,8 +309,14 @@ def build_bridge(params):
                              [('Data', 'Parameter 2')], 'Yes', None, 'Hide'))
     pw.strip(lambda v: pw.knob_frame(v, pw.KN, False), pw.FRAMES, pw.KN, pw.KN, out / 'knob.png')
     pw.field_img(352, 48).save(out / 'field.png')
+    pw.field_img(176, 48).save(out / 'field-small.png')
     pw.finish(im, W, H).convert('RGB').save(out / 'panel.png', optimize=True)
     defs = [
+        ('ubMidi', ui.component_definition(ui.control_actions('menu overlay'), [
+            pw.entry('box', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'field-small.png')), '0 0 176 48'),
+            pw.focus(176, 48),
+            pw.entry('value', 'Label', ui.label_data('Value', pw.FIELD_TEXT, 22.0, 'left verticallyCentred'), '16 0 130 48')], '0')),
+        ('menu overlay', ui.overlay_component('MenuOverlay', ui.menu_overlay_data(), 'ff12141a')),
         ('ubKnob', ui.component_definition(ui.control_actions('knob overlay'), [
             pw.focus(140, 118),
             pw.entry('knob', 'Knob', ui.knob_filmstrip_data('knob.png', pw.FRAMES), '%d 0 %d %d' % ((140 - pw.KN) // 2, pw.KN, pw.KN)),
@@ -323,15 +340,15 @@ def build_bridge(params):
         ('version', 1),
         ('componentDefinitions', ui.obj(('version', 2), ('importFiles', []),
                                         ('localComponentDefinitions', [ui.obj(('key', k), ('value', v)) for k, v in defs]))),
-        ('replacementStrings', []),
+        ('replacementStrings', [ui.obj(('key', 'Parameter 8'), ('value', MIDI_CHOICES))]),
         ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
         ('tabs', [tab]))))
-    # Bottom row of the hardware knobs: LEVEL, CARD, REPORT.
+    # Bottom row of the hardware knobs: LEVEL, CARD, REPORT, MIDI CH.
     qmap = ui.obj(('Tab', 1), ('SubTab', 1), ('Bank Direction', 'RowTopDown'),
-                  ('Q-Links', ui.Obj(('Q-Link %d' % q, {13: 0, 14: 1, 15: 2}.get(q, -1)) for q in range(1, 17))))
+                  ('Q-Links', ui.Obj(('Q-Link %d' % q, {13: 0, 14: 1, 15: 2, 16: 8}.get(q, -1)) for q in range(1, 17))))
     qlinks = ui.obj(('version', 4), ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
                     ('Screen Mode Q-Links', ui.obj(('version', 4), ('map', [qmap]))),
-                    ('Program Mode Q-Links', ui.Obj(('Q-Link %d' % (q + 1), {0: 0, 1: 1, 2: 2}.get(q, -1)) for q in range(16))))
+                    ('Program Mode Q-Links', ui.Obj(('Q-Link %d' % (q + 1), {0: 0, 1: 1, 2: 2, 3: 8}.get(q, -1)) for q in range(16))))
     (out / 'TUI.json').write_text(ui.dump_json(data) + '\n')
     (out / 'Q-Links.json').write_text(ui.dump_json(qlinks) + '\n')
     return out

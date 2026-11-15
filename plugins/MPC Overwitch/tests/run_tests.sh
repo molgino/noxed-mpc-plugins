@@ -9,3 +9,4 @@ g++ -O2 -std=c++17 -pthread -Isrc tests/engine_smoke.cpp -o /tmp/ow_smoke -ldl &
 g++ -O2 -std=c++17 -fPIC -shared -fvisibility=hidden -DLIB -Isrc tests/two_libs.cpp -o /tmp/ow_liba.so -pthread
 g++ -O2 -std=c++17 -fPIC -shared -fvisibility=hidden -DLIB -Isrc tests/two_libs.cpp -o /tmp/ow_libb.so -pthread
 g++ -O2 -std=c++17 tests/two_libs.cpp -o /tmp/ow_two -ldl -pthread && /tmp/ow_two /tmp/ow_liba.so /tmp/ow_libb.so
+g++ -O2 -std=c++17 -pthread -I../../framework tests/midi_test.cpp -o /tmp/ow_midi -ldl && OB_MIDI_DEV=/tmp/ow_midi.out /tmp/ow_midi | tail -1

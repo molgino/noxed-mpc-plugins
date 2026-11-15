@@ -1,4 +1,4 @@
-# NOXED MPC USB Bridge 0.2.0 – USB-Audiogerät als Plugin-Spur (Roland S-1 & Co.)
+# NOXED MPC USB Bridge 0.2.1 – USB-Audiogerät als Plugin-Spur (Roland S-1 & Co.)
 
 Holt ein class-compliant USB-Audiogerät, das die MPC nicht als Interface verwendet (zuerst der **Roland AIRA Compact S-1**, ebenso T-8, J-6 und ähnliche), als Instrument-Plugin-Spur in die MPC. Das Plugin nimmt das Gerät über die ALSA-Bibliothek der MPC selbst auf (`libasound`, zur Laufzeit geladen) und rechnet den Ton mit demselben Resampler mit Drift-Ausgleich wie MPC Overwitch auf die Rate der MPC um.
 
@@ -9,6 +9,7 @@ Holt ein class-compliant USB-Audiogerät, das die MPC nicht als Interface verwen
 | LEVEL (Q-Link 13) | Ausgangspegel |
 | CARD (Q-Link 14) | **Auto** = erstes USB-Audiogerät, das nicht die MPC ist (Roland bevorzugt), oder eine feste ALSA-Karte |
 | REPORT (Q-Link 15) | blättert durch den USB-/ALSA-Bericht (wie 0.1) |
+| MIDI CHANNEL (Q-Link 16) | Off oder Kanal 1–16, Standard 1 (S-1 empfängt ab Werk auf Kanal 1) |
 
 | Zeile | Bedeutung |
 |---|---|
@@ -18,8 +19,10 @@ Holt ein class-compliant USB-Audiogerät, das die MPC nicht als Interface verwen
 | LEVELS | Spitzenpegel, Latenz, Drift in ppm, Aussetzer, Überläufe |
 | SYSTEM | Prozessor, Benutzer-ID, Kernel |
 
+**MIDI zum Gerät:** Noten, CCs, Pitch Bend, Aftertouch und Programmwechsel, die die MPC-Spur an dieses Plugin schickt, gehen direkt an den USB-MIDI-Port des Geräts, und zwar auf dem Kanal unter **MIDI CHANNEL** (Off = nichts senden). Die MPC selbst kann MIDI von Plugins nicht weiterleiten, deshalb öffnet das Plugin den MIDI-Port des Geräts selbst: zuerst direkt, und falls die MPC den Port belegt, über den ALSA-Sequencer. Die Zeile DEVICE zeigt hinter „|“, ob es klappt („MIDI ch 1 -> hw:2,0“, „MIDI: port busy …“, „MIDI: device has no MIDI port“). Gehaltene Noten werden beim Kanalwechsel, beim Stoppen des Transports und beim Entfernen des Plugins losgelassen. Timing: höchstens ein Audioblock plus 1 ms Verzögerung (wenige ms). **Tipp:** Ist das Gerät zusätzlich in den MIDI-Einstellungen der MPC als Ausgang einer Spur eingetragen, kommen Noten doppelt an; dann eines von beiden abschalten. Nur am Computer getestet.
+
 **Was geht, was nicht (0.2):**
-- Nur **Aufnahme** vom Gerät in die MPC (Stereo; ein Mono-Gerät wird auf beide Seiten gelegt). Ton von der MPC zum Gerät gibt es noch nicht.
+- Ton nur vom Gerät in die MPC (Stereo; ein Mono-Gerät wird auf beide Seiten gelegt), noch nicht zurück. MIDI geht zum Gerät (ab 0.2.1).
 - Ein Gerät kann nur von **einer** Plugin-Instanz gleichzeitig geöffnet werden; eine zweite Instanz zeigt „ERROR: open: Device or resource busy“.
 - Abziehen und wieder Einstecken funktioniert: Das Plugin sucht danach selbst weiter.
 - Latenz etwa 5–15 ms. CPU gering: ein Aufnahme-Thread plus Resampler.
