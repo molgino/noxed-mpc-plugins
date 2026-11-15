@@ -1,0 +1,17 @@
+{
+  "name": "MPC USB Bridge",
+  "manufacturer": "NOXED",
+  "version": "0.2.1",
+  "format": "vst2",
+  "kind": "instrument",
+  "uid": "NXbD",
+  "numInputs": 0,
+  "numOutputs": 2,
+  "category": "Generator",
+  "file32": "VST/mpc-usb-bridge-arm32.so",
+  "file64": "VST/mpc-usb-bridge-arm64.so",
+  "description": "MPC USB Bridge: brings a class-compliant USB audio device that the MPC does not use as its interface (Roland AIRA Compact S-1 etc.) into the MPC as a plugin track, with drift-following sample-rate conversion.",
+  "author": "NOXED",
+  "url": "",
+  "license": "GPL-3.0-or-later"
+}

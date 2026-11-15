@@ -467,6 +467,34 @@ def check_skins(rep, skins_dir, nparams):
                         seen[key] = i
                         if not isinstance(t.get("tabName"), str):
                             rep.warn("TUI.json: tabs[%d] has no tabName" % i)
+                # A local component definition named like a built-in widget type (e.g. "knob")
+                # can be resolved to the bare widget on the MPC: the control then shows no value
+                # and does not move its parameter. Seen on hardware with Prism Wave 0.1.1.
+                builtin = {"slider", "knob", "label", "button", "focus", "image", "separator", "combobox",
+                           "knoboverlay", "menuoverlay", "numericoverlay", "texteditoverlay", "envelope",
+                           "envelopeoverlay", "xypad", "meter", "plotter", "halodisplay", "indicator", "path"}
+                # Seen on MPC hardware (Prism Wave / MPC Overwitch, Nov 2026): a Button placed directly in a tab
+                # does not respond, and a fixed-text Label ("type": "Text") placed directly in a tab is not drawn.
+                for ti, t in enumerate(tabs if isinstance(tabs, list) else []):
+                    if not isinstance(t, dict):
+                        continue
+                    for e in ((t.get("componentDefinition") or {}).get("componentsData") or []):
+                        cd = e.get("componentData") if isinstance(e, dict) else None
+                        if not isinstance(cd, dict):
+                            continue
+                        nm = cd.get("name", "?")
+                        if cd.get("type") == "Button":
+                            rep.warn('TUI.json: tab %d entry "%s" is a Button placed directly in the tab; on the MPC it '
+                                     'does not respond. Put it inside a component definition with a Focus child.' % (ti + 1, nm))
+                        if cd.get("type") == "Label" and isinstance(cd.get("data"), dict) and cd["data"].get("type") == "Text":
+                            rep.warn('TUI.json: tab %d entry "%s" is a fixed-text Label placed directly in the tab; the MPC '
+                                     'did not draw these in tests. Draw the text into an image instead.' % (ti + 1, nm))
+                cdefs = (page.get("componentDefinitions") or {}).get("localComponentDefinitions") or []
+                for d in cdefs:
+                    k = d.get("key") if isinstance(d, dict) else None
+                    if isinstance(k, str) and k.lower() in builtin:
+                        rep.error('TUI.json: component definition "%s" has the name of a built-in widget type; '
+                                  'rename it (e.g. "my%s")' % (k, k[:1].upper() + k[1:]))
                 # Every "Parameter N" handle in range, and every image referenced present.
                 bad = []
                 images = set()

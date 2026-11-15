@@ -1,0 +1,70 @@
+Prism Wave 0.1.1 skin checks (2026-11-12, Linux, native gcc build)
+
+tools/make_prismwave_skin.py: 5 pages, 36 PNGs, 56 parameters bound
+validate.check_skins:
+  OK     TUI.json: all parameter handles are within 0..55
+  OK     TUI.json: image amount-bar.png present
+  OK     TUI.json: image env-1.png present
+  OK     TUI.json: image env-2.png present
+  OK     TUI.json: image field-140x36.png present
+  OK     TUI.json: image field-150x34.png present
+  OK     TUI.json: image field-250x36.png present
+  OK     TUI.json: image field-258x28.png present
+  OK     TUI.json: image field-320x44.png present
+  OK     TUI.json: image filter-0.png present
+  OK     TUI.json: image filter-1.png present
+  OK     TUI.json: image filter-2.png present
+  OK     TUI.json: image filter-3.png present
+  OK     TUI.json: image knob-bi.png present
+  OK     TUI.json: image knob-small.png present
+  OK     TUI.json: image knob.png present
+  OK     TUI.json: image lfo-0.png present
+  OK     TUI.json: image lfo-1.png present
+  OK     TUI.json: image lfo-2.png present
+  OK     TUI.json: image lfo-3.png present
+  OK     TUI.json: image lfo-4.png present
+  OK     TUI.json: image panel-env.png present
+  OK     TUI.json: image panel-filter.png present
+  OK     TUI.json: image panel-lfo.png present
+  OK     TUI.json: image panel-matrix.png present
+  OK     TUI.json: image panel-osc.png present
+  OK     TUI.json: image seg-off.png present
+  OK     TUI.json: image seg-on.png present
+  OK     TUI.json: image toggle-off.png present
+  OK     TUI.json: image toggle-on.png present
+  OK     TUI.json: image wt-0.png present
+  OK     TUI.json: image wt-1.png present
+  OK     TUI.json: image wt-2.png present
+  OK     TUI.json: image wt-3.png present
+  OK     TUI.json: image wt-4.png present
+  OK     TUI.json: image wt-user.png present
+  OK     TUI.json: 5 tabs
+  OK     Q-Links.json: 5 tab maps, all values in range
+  errors 0 warnings 0
+
+host_sim test (native):
+  PASS  load: library opened and VSTPluginMain found
+  PASS  AEffect: magic 'VstP', resvd2 == 0, object != NULL
+  PASS  MPC load sequence: "Prism Wave" by "NOXED", instrument, 8 program(s), first program "NOXED Init"
+  PASS  prepare: speaker arrangement, sample rate 44100, block size 128, resume, parameter-0 toggle quirk, start
+  PASS  instrument produced sound in response to MIDI notes
+  PASS  main pass: no NaN/Inf in the output
+  PASS  block size 32 (told 128): 690 blocks ok, peak -33.14 dBFS
+  PASS  block size 512 (told 512): 44 blocks ok, peak -33.14 dBFS
+  PASS  parameter sweep: 200 random setParameter calls round-trip through getParameter
+  PASS  parameter sweep: audio stayed finite while parameters changed
+  PASS  state round-trip: all 56 parameters restored from the chunk
+  PASS  state round-trip: re-saved chunk is byte-identical
+  PASS  effSetChunk tolerated invalid data without crashing (returned 0)
+  PASS  instrument went quiet after all-notes-off (peak -200.0 dBFS in the last 100 ms)
+  PASS  no NaN/Inf anywhere in the main pass
+  PASS  no clipping in the main pass (peak -32.11 dBFS)
+  PASS  no denormals in the main pass
+  PASS  timing: average 0.55% CPU per block
+  PASS  effStopProcess, effMainsChanged(0), effClose
+  Result: PASS  (19 passed, 0 warnings, 0 failures)
+
+Audio: build/test.wav rendered by host_sim is byte-identical before and after the 0.1.1 change (cmp).
+Not done here: ARM32/ARM64 cross build (no cross toolchain in this environment), test on MPC hardware.
+
+Fix (2026-11-13): component definitions renamed (knob -> pwKnobUni etc.) after hardware report that plain knobs showed no value and did not move their parameter. validate.check_skins: 0 errors, 0 warnings; new built-in-name check flags the old TUI.json.
