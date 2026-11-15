@@ -107,9 +107,9 @@ jobs:
       - name: Release notes from CHANGELOG
         run: |
           {
-            echo "Open-Source-Plugins für Akai MPC Standalone. Installation: ZIP entpacken, Plugin-Ordner nach \`VST2 Plugins\` auf einem MPC-Datenträger kopieren. Voraussetzung: MPC OS 3.10.1+ und Preferences → Enhancements (Beta) → Enable Enhancements und External Plugin Support."
+            echo "Open-source plugins for Akai MPC standalone. Installation: unzip, copy the plugin folder into \`VST2 Plugins\` on an MPC drive. Requires MPC OS 3.10.1+ and Preferences → Enhancements (Beta) → Enable Enhancements and External Plugin Support."
             echo
-            echo "Gefällt dir das Projekt? [Ko-fi: noxend](https://ko-fi.com/noxend)"
+            echo "Like the project? [Ko-fi: noxend](https://ko-fi.com/noxend)"
             echo
             awk 'NR>1 && /^## /{n++} n<3 && NR>1' CHANGELOG.md
           } > notes.md

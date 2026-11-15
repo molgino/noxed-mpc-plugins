@@ -1,10 +1,10 @@
-## Was ändert sich?
+## What changes?
 
-## Getestet
-- [ ] `python tools/build.py "plugins/<Name>"` ohne Fehler
-- [ ] Host-Simulator: `Result: PASS`
-- [ ] Desktop-Tests (Overwitch / USB Bridge), falls betroffen
-- [ ] Auf einer MPC getestet (Modell, MPC-OS-Version): …
+## Tested
+- [ ] `python tools/build.py "plugins/<Name>"` without errors
+- [ ] Host simulator: `Result: PASS`
+- [ ] Desktop tests (Overwitch / USB Bridge), if affected
+- [ ] Tested on an MPC (model, MPC OS version): …
 
-## Hinweise
-Parameter-IDs und -Reihenfolge unverändert? Neue Parameter nur hinten angefügt?
+## Notes
+Parameter IDs and order unchanged? New parameters only added at the end?

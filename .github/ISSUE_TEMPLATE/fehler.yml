@@ -1,33 +1,33 @@
-name: Fehler melden / Bug report
-description: Etwas funktioniert auf der MPC oder beim Bauen nicht.
+name: Bug report / Fehler melden
+description: Something does not work on the MPC or when building.
 labels: [bug]
 body:
   - type: dropdown
     id: plugin
     attributes:
       label: Plugin
-      options: [Acidline, Prism Wave, MPC Overwitch, MPC Overwitch Send, MPC USB Bridge, Werkzeuge / Build]
+      options: [Acidline, Prism Wave, MPC Overwitch, MPC Overwitch Send, MPC USB Bridge, Tools / build]
     validations: {required: true}
   - type: input
     id: version
     attributes:
-      label: Plugin-Version
-      placeholder: z. B. 0.5.0
+      label: Plugin version
+      placeholder: e.g. 0.5.0
     validations: {required: true}
   - type: input
     id: mpc
     attributes:
-      label: MPC-Modell und MPC-OS-Version
-      placeholder: z. B. MPC Live III, MPC OS 3.10.1
+      label: MPC model and MPC OS version
+      placeholder: e.g. MPC Live III, MPC OS 3.10.1
     validations: {required: true}
   - type: input
     id: device
     attributes:
-      label: Angeschlossenes Gerät (Overwitch / USB Bridge)
-      placeholder: z. B. Digitone II (OS 1.10), Roland S-1
+      label: Connected device (Overwitch / USB Bridge)
+      placeholder: e.g. Digitone II (OS 1.10), Roland S-1
   - type: textarea
     id: what
     attributes:
-      label: Was ist passiert, was hättest du erwartet?
-      description: Schritte zum Nachstellen, Foto der Statuszeilen oder die Berichtsdatei aus dem Plugin-Ordner helfen sehr.
+      label: What happened, and what did you expect?
+      description: Steps to reproduce, a photo of the status rows or the report file from the plugin folder help a lot.
     validations: {required: true}
