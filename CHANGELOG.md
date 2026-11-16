@@ -1,5 +1,12 @@
 # Änderungen
 
+## Release 0.2.3 – 303 pattern workflow and explicit Prism pickers
+
+- Acidline 0.3.0: replace the four step tables with one silver-panel keyboard page and Pitch/Time/Normal modes, octave input, Accent/Slide, TAP/BACK and Note/Tie/Rest. Pitch and timing sequences are separate; ties/rests do not consume a pitch. Existing 0.2.0 pattern mapping is retained until writing is started.
+- Prism Wave 0.1.4: replace the native choice overlay with an explicit skin-drawn, labelled picker; select and auto-close or close with X. Append one UI-only parameter without changing sound parameter IDs/order.
+- Correction to 0.2.2: transparent overlay wrappers were NOT a confirmed fix. Independent hardware findings in open-mpc SDK-PORTING.md report blank native MenuOverlay rows even with replacementStrings (Key 37, OS 3.10.1.12). The new drawn-picker approach avoids that native widget. Our own MPC confirmation remains pending.
+- Offline checks: builds/skin validators, host tests, two-pass 303 input/tie/rest/slide behavior, picker routing/selection/restore, state and audio regressions. No circuit-accuracy or new hardware-verification claim.
+
 ## Release 0.2.2 – UI cleanup and Acidline preview (16 Nov 2026)
 
 - Acidline 0.2.0 preview: switchable 16-step sequencer synchronized to MPC transport, with per-step pitch, rest, accent and slide, pattern length and gate. Four silver-panel sequencer banks; parameter state is saved. Original engine remains the default for project compatibility.

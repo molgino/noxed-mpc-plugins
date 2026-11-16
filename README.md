@@ -6,7 +6,7 @@ Open-source plugins for Akai MPC standalone (MPC Live/X/One/Key/Force, MPC OS 3.
 [inMusic MPC Plugin Builder SDK](https://github.com/inmusic-software/mpc-plugin-builder-sdk):
 two instruments and three bridges to external hardware. **Contributions are very welcome**, see [Contributing](#contributing).
 
-**Acidline 0.2.0 · Prism Wave 0.1.3 · MPC Overwitch 0.5.1 · MPC Overwitch Send 0.5.1 · MPC USB Bridge 0.2.2.**
+**Acidline 0.3.0 · Prism Wave 0.1.4 · MPC Overwitch 0.5.1 · MPC Overwitch Send 0.5.1 · MPC USB Bridge 0.2.2.**
 Acidline, Prism Wave and MPC Overwitch have been tried on an MPC Live III; plugins marked *preview* have not had every feature checked on hardware yet (details in each plugin's README).
 
 > **How this was made:** these plugins are vibecoded. They were built with an AI coding assistant (Claude) and tested on real hardware by the author. The code is all here; reviews and fixes from people who know DSP, USB audio or C++ are very welcome.

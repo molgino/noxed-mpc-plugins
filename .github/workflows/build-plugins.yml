@@ -59,6 +59,12 @@ jobs:
           g++ -std=c++17 -O2 -Iframework tests/acidline_sequencer.cpp -o /tmp/acidline-sequencer-test
           /tmp/acidline-sequencer-test
 
+      - name: Prism picker regression
+        if: matrix.plugin == 'Prism Wave'
+        run: |
+          g++ -std=c++17 -O2 -Iframework tests/prism_picker.cpp -o /tmp/prism-picker-test
+          /tmp/prism-picker-test
+
       - name: Host simulator test
         run: |
           slug=$(python -c "import json,sys; p=json.load(open('plugins/${{ matrix.plugin }}/plugin.json')); print(p['file64'].split('/')[-1].replace('-arm64.so',''))")
