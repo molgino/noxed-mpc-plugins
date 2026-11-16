@@ -827,15 +827,15 @@ def definitions():
             entry('knob', 'Knob', ui.knob_filmstrip_data(img, FRAMES), '%d 0 %d %d' % ((CW - KN) // 2, KN, KN)),
             value_label('0 88 %d 28' % CW)], '0')))
     for w, h in sorted(USED_FIELDS):
-        defs.append(('pwField%dx%d' % (w, h), ui.component_definition(ui.control_actions('menu overlay'), [
+        defs.append(('pwField%dx%d' % (w, h), ui.component_definition(ui.control_actions('knob overlay'), [
             entry('box', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'),
                                          ('image', 'field-%dx%d.png' % (w, h))), '0 0 %d %d' % (w, h)),
             focus(w, h),
             value_label('14 0 %d %d' % (w - 40, h), 18.0 if h < 32 else 20.0, FIELD_TEXT, 'left verticallyCentred')], '0')))
-    defs.append(('pwModeSeg', ui.component_definition(ui.control_actions('menu overlay', False), [focus(276, 28)] + [
+    defs.append(('pwModeSeg', ui.component_definition([ui.action('Mouse Down','Q-Link','Data','')], [focus(276, 28)] + [
         entry('seg %d' % i, 'Button', ui.button_data('seg-%s-on.png' % m.lower(), 'seg-%s-off.png' % m.lower(), i, 4),
               '%d 0 66 28' % (i * 70)) for i, m in enumerate(MODES)], '0')))
-    defs.append(('pwToggle', ui.component_definition(ui.control_actions('menu overlay', False), [
+    defs.append(('pwToggle', ui.component_definition([ui.action('Mouse Down','Q-Link','Data','')], [
         focus(58, 28), entry('toggle', 'Button', ui.button_data('toggle-on.png', 'toggle-off.png', 1, 1), '0 0 58 28')], '0')))
     defs.append(('pwAmountBar', ui.component_definition(ui.control_actions('knob overlay bipolar'), [
         focus(BAR_W, BAR_H),
@@ -846,8 +846,7 @@ def definitions():
         entry('knob', 'Knob', ui.knob_filmstrip_data('knob-small.png', FRAMES), '0 0 %d %d' % (SMALL, SMALL)),
         value_label('40 0 82 34', 18.0, VALUE_COL, 'left verticallyCentred')], '0')))
     for name, data, typ in [('knob overlay', ui.knob_overlay_data(False), 'KnobOverlay'),
-                            ('knob overlay bipolar', ui.knob_overlay_data(True), 'KnobOverlay'),
-                            ('menu overlay', ui.menu_overlay_data(), 'MenuOverlay')]:
+                            ('knob overlay bipolar', ui.knob_overlay_data(True), 'KnobOverlay')]:
         defs.append((name, ui.overlay_component(typ, data, 'ff12141a')))
     return defs
 
@@ -880,6 +879,8 @@ def make_art(user_frames):
 
 
 def make_tui(pages, arts, params):
+    from drawn_choices import install
+    picker_defs = install(__import__(__name__), pages, params)
     tabs, maps = [], []
     for ti, (pg, art) in enumerate(zip(pages, arts)):
         name = 'panel-%s.png' % pg.name.lower()
@@ -912,11 +913,13 @@ def make_tui(pages, arts, params):
             referenced.add(int(v.split()[-1]))
     for t in tabs:
         scan(t)
+    discrete[56] = ['Closed'] + ['Field %d'%i for i in range(56)]
+    referenced.add(56)
     repl = [ui.obj(('key', 'Parameter %d' % i), ('value', list(discrete[i]))) for i in sorted(referenced) if i in discrete]
     data = ui.obj(('pageData', ui.obj(
         ('version', 1),
         ('componentDefinitions', ui.obj(('version', 2), ('importFiles', []),
-                                        ('localComponentDefinitions', [ui.obj(('key', k), ('value', v)) for k, v in definitions()]))),
+                                        ('localComponentDefinitions', [ui.obj(('key', k), ('value', v)) for k, v in definitions() + picker_defs]))),
         ('replacementStrings', repl),
         ('info', ui.obj(('version', 1), ('type', 'CompleteDescription'))),
         ('tabs', tabs))))
@@ -1012,7 +1015,7 @@ def main():
                     help='do not render the shipped Content/Wavetables/userNN.wav files into the display')
     args = ap.parse_args()
     params = json.loads(args.params.read_text())
-    assert len(params['params']) == 56, 'expected Prism Wave 0.1.x with 56 parameters'
+    assert len(params['params']) == 57, 'expected Prism Wave 0.1.x with 56 parameters'
     user_frames = {}
     if not args.no_user_previews:
         for u in range(8):

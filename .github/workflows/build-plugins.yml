@@ -1,6 +1,6 @@
 name: Build MPC plugins
 
-# Builds both NOXED plugins for the MPC (native + ARM32 + ARM64), runs the SDK
+# Builds all NOXED plugins for the MPC (native + ARM32 + ARM64), runs the SDK
 # validator and host_sim test, and uploads the ready-to-copy plugin folders.
 on:
   push:
@@ -53,6 +53,18 @@ jobs:
           ls /usr/lib/x86_64-linux-gnu/libasound.so.2* || sudo apt-get install -y libasound2t64
           sh tests/run_tests.sh
 
+      - name: Acidline sequencer regression
+        if: matrix.plugin == 'Acidline'
+        run: |
+          g++ -std=c++17 -O2 -Iframework tests/acidline_sequencer.cpp -o /tmp/acidline-sequencer-test
+          /tmp/acidline-sequencer-test
+
+      - name: Prism picker regression
+        if: matrix.plugin == 'Prism Wave'
+        run: |
+          g++ -std=c++17 -O2 -Iframework tests/prism_picker.cpp -o /tmp/prism-picker-test
+          /tmp/prism-picker-test
+
       - name: Host simulator test
         run: |
           slug=$(python -c "import json,sys; p=json.load(open('plugins/${{ matrix.plugin }}/plugin.json')); print(p['file64'].split('/')[-1].replace('-arm64.so',''))")
@@ -75,19 +87,23 @@ jobs:
       # Open MPC plugin catalog (https://open-mpc.github.io): per-build zips in the catalog's format, made with
       # their tools at a pinned commit and checked with catalog_check.py. Only for plugins listed there.
       - name: Open MPC catalog zips
-        if: matrix.plugin == 'MPC Overwitch'
+        if: contains(fromJSON('["MPC Overwitch", "MPC Overwitch Send", "Prism Wave"]'), matrix.plugin)
         env:
           OPENMPC_COMMIT: 33d99c6a17f6b804cd5f710e6978243d6f3d827f
-          CAT_ID: noxed-mpc-overwitch
         run: |
           git clone -q https://github.com/open-mpc/mpc-vst-plugins /tmp/openmpc
           git -C /tmp/openmpc checkout -q "$OPENMPC_COMMIT"
           P="plugins/${{ matrix.plugin }}"
+          case "${{ matrix.plugin }}" in
+            "MPC Overwitch") CAT_ID=noxed-mpc-overwitch; CAT_LICENSE=GPL-3.0-or-later; CAT_REQUIRES="Elektron Overbridge device; USB mode Overbridge; MPC OS 3.10.1+" ;;
+            "MPC Overwitch Send") CAT_ID=noxed-mpc-overwitch-send; CAT_LICENSE=GPL-3.0-or-later; CAT_REQUIRES="Elektron Overbridge device; USB mode Overbridge; MPC OS 3.10.1+" ;;
+            "Prism Wave") CAT_ID=noxed-prism-wave; CAT_LICENSE=MIT; CAT_REQUIRES="MPC OS 3.10.1+" ;;
+          esac
           ver=$(python -c "import json;print(json.load(open('$P/plugin.json'))['version'])")
           python /tmp/openmpc/tools/sdk_release.py "$P/build/NOXED - VST - ${{ matrix.plugin }}" --version "$ver" \
-            --id "$CAT_ID" --repo molgino/noxed-mpc-plugins --license GPL-3.0-or-later -o catalog-dist \
+            --id "$CAT_ID" --repo molgino/noxed-mpc-plugins --license "$CAT_LICENSE" -o catalog-dist \
             --asset-name "$CAT_ID" \
-            --requires "Elektron Overbridge device with USB config OVERBRIDGE; MPC Overwitch Send in the same version if used"
+            --requires "$CAT_REQUIRES"
           ls -l catalog-dist
           python /tmp/openmpc/tools/sdk_zip.py "catalog-dist/$CAT_ID-$ver-mpc-sdk.zip" catalog-dist/*-mpc-armv7.zip catalog-dist/*-mpc-aarch64.zip || echo "::warning::sdk_zip failed"
           for z in catalog-dist/*-mpc-armv7.zip catalog-dist/*-mpc-aarch64.zip; do
@@ -99,7 +115,7 @@ jobs:
           done
 
       - uses: actions/upload-artifact@v4
-        if: matrix.plugin == 'MPC Overwitch'
+        if: contains(fromJSON('["MPC Overwitch", "MPC Overwitch Send", "Prism Wave"]'), matrix.plugin)
         with:
           name: catalog-${{ matrix.plugin }}
           path: catalog-dist/*.zip
