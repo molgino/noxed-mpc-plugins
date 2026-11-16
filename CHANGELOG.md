@@ -1,5 +1,10 @@
 # Änderungen
 
+## Release 0.2.1 – Open MPC catalog packages (16 Nov 2026)
+
+- MPC Overwitch 0.5.0 is also published in the format of the [Open MPC plugin catalog](https://open-mpc.github.io): `noxed-mpc-overwitch-0.5.0-mpc-armv7.zip` (Gen1), `-mpc-aarch64.zip` (Gen2, e.g. MPC Live III) and `-mpc-sdk.zip` (one folder for MPC OS 3.10.1+). Built with Open MPC's `sdk_release.py` and checked with `catalog_check.py` in CI.
+- No plugin changes; all versions as in 0.2.0.
+
 ## Release 0.2.0 – Open Source (15.11.2026)
 
 - Alle fünf Plugins in einem Release: Acidline 0.1.1, Prism Wave 0.1.2, MPC Overwitch 0.5.0, MPC Overwitch Send 0.4.0, MPC USB Bridge 0.2.1.
