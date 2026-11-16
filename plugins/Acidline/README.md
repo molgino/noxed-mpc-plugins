@@ -1,4 +1,4 @@
-# NOXED Acidline 0.2.0
+# NOXED Acidline 0.3.0
 
 Monophonic acid synth for Akai MPC standalone. Original TB-303-inspired sound engine; not a circuit-accurate emulation, no Roland software and no original samples.
 
@@ -11,7 +11,15 @@ Monophonic acid synth for Akai MPC standalone. Original TB-303-inspired sound en
 
 ## Preview version: hardware testing pending
 
-Four SEQ banks edit steps 1–4, 5–8, 9–12 and 13–16. Each step has Note (C1–C5), Play/Rest, Accent and Slide; a slide ties into the next active step without retriggering. Pattern Length is 1–16; Step Gate is 10–95%. Timing is straight sixteenths. The 16-key strip identifies the bank being edited, not a live playhead. Step parameters are saved and automatable. Stop, bypassing the sequencer and switching models release the voice. The sequencer needs host playing, valid tempo and PPQ; no standalone free-run.
+The SEQUENCE page uses a 303-style **two-pass entry workflow**, rather than a step table:
+
+1. Select **PITCH MODE**. Enter up to 16 pitches on the 13-key keyboard; input advances automatically. DOWN/NORMAL/UP shifts the input octave. Returning to PITCH MODE starts checking at the first pitch; TAP auditions that pitch, subsequent taps advance. BACK moves back. ACCENT and SLIDE edit the pitch currently indicated by the write cursor.
+2. Select **TIME MODE**. Enter NOTE, TIE or REST for each sixteenth. NOTE consumes the next recorded pitch; TIE extends the previous note and REST inserts silence. Ties and rests do not consume pitches. The number of entered timing cells defines pattern length (1–16).
+3. Return to **NORMAL**, enable **SEQ ON / OFF**, and press MPC Play. The keyboard auditions short notes while the internal sequencer is disabled. CLEAR clears the current pattern. This version has one pattern, no song/track chaining or original 303 real-time tap recording.
+
+The small numbered lamps indicate the **write cursor**, not the playback position. Touching one jumps to that entry. These touch shortcuts and host clock synchronization adapt the workflow to MPC; this is not a claim of every original TB-303 key combination being reproduced. Q-Links expose timing, pitch count and sound model; SETUP also exposes Sound Model, Pattern Length and Gate.
+
+Patterns from 0.2.0 keep the original playback mapping until PITCH MODE or TIME MODE is entered. That action converts active steps into a separate pitch sequence and note/rest timing. Existing parameter IDs/order remain unchanged; editor and rhythm parameters are appended. Save a copy of an old project before editing its pattern.
 
 SOUND MODEL selects **Original** (the existing engine, default for compatibility) or **303 Model** (Open303 by Robin Schmidt, MIT). The latter includes its 303 saw/square tables, TB-303 filter mode with feedback high-pass, measured envelope mapping, accent shaping and slide. Select it explicitly before comparing. Drive remains an optional NOXED output stage; Pulse Width and Key Track belong to the Original engine; the 303 Model keeps its original waveform geometry. Filter coefficients update every eight samples; envelope and audio states run at full rate. Start with Drive = 0 for model comparisons.
 

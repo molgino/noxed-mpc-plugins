@@ -10,6 +10,9 @@
 #include "mpc_plugin.h"
 #include <algorithm>
 #include "acid303.h"
+#include "acid_editor.h"
+#include <thread>
+#include <chrono>
 using namespace mpc::dsp;
 class Acidline : public mpc::Plugin {
 public:
@@ -32,14 +35,14 @@ public:
     BendRange,
     SeqOn, SeqLength, SeqGate, StepFirst,
     Engine = StepFirst + 16 * 4,
-    Count
+    Count = AcidPatternEditor::Count
   };
   static mpc::PluginInfo makeInfo() {
     mpc::PluginInfo i;
     i.name = "Acidline";
     i.vendor = "NOXED";
     i.uniqueId = MPC_FOURCC('N', 'c', 'e', 'p');
-    i.version = 200;
+    i.version = 300;
     i.isInstrument = true;
     i.numInputs = 0;
     return i;
@@ -75,6 +78,33 @@ public:
       addParam(boolParam((id + "_slide").c_str(), (name + " Slide").c_str(), false));
     }
     addParam(choiceParam("engine", "Sound Model", {"Original", "303 Model"}, 0));
+    addParam(choiceParam("edit_mode", "Write Mode", {"Normal", "Pitch Mode", "Time Mode"}, 0));
+    addParam(intParam("edit_cursor", "Write Position", 1, 16, 1));
+    addParam(intParam("edit_octave", "Octave Shift", -1, 1, 0));
+    addParam(boolParam("pattern_303", "303 Pattern", false));
+    addParam(intParam("pitch_count", "Pitch Notes", 1, 16, 16));
+    for(int i=0;i<16;++i){
+      std::string id="time_"+std::to_string(i+1),name="Time "+std::to_string(i+1);
+      addParam(choiceParam(id.c_str(),name.c_str(),{"Note","Tie","Rest"},0));
+    }
+    const char *keys[]={"C","Cs","D","Ds","E","F","Fs","G","Gs","A","As","B","C_hi"};
+    for(auto key:keys){
+      std::string id="key_"+std::string(key),name="Key "+std::string(key);
+      auto command=boolParam(id.c_str(),name.c_str(),false);command.automatable=false;addParam(command);
+    }
+    for(auto key:{"back","tap","time_note","time_tie","time_rest","clear","accent","slide"}){
+      std::string id="edit_"+std::string(key);auto command=boolParam(id.c_str(),key,false);
+      command.automatable=false;addParam(command);
+    }
+    auto readout=intParam("edit_display","Pattern Readout",0,1,0);readout.automatable=false;addParam(readout);
+    refreshThread_=std::thread([this]{while(!stopRefresh_.load()){
+      std::this_thread::sleep_for(std::chrono::milliseconds(25));
+      if(editorDirty_.exchange(false)){
+        notifyHostParameterChanged(AcidPatternEditor::Display);
+        notifyHostParameterChanged(AcidPatternEditor::Cursor);
+        requestDisplayUpdate();
+      }
+    }});
     auto pr = [&](const char *n,
                   std::initializer_list<std::pair<int, float>> edits) {
       std::vector<float> v;
@@ -105,6 +135,10 @@ public:
                   {Slide, 120},
                   {Accent, 85}});
   }
+  ~Acidline() override {
+    stopRefresh_.store(true);if(refreshThread_.joinable())refreshThread_.join();
+  }
+  void parameterChanged(int index,float) override {editor_.changed(index);}
   void prepare(double sr, int) override {
     sr_ = float(sr);
     model_.setSampleRate(sr);
@@ -118,6 +152,7 @@ public:
     dc_.setCutoff(20, sr);
   }
   void reset() override {
+    editor_.reset();auditionSamples_=0;auditionKey_=-1;
     model_.resetVoice();
     amp_.reset();
     env_.reset();
@@ -140,6 +175,7 @@ public:
     pitch_.snap(48);
   }
   void process(mpc::ProcessContext &c) override {
+    if(editor_.consume(*this))editorDirty_.store(true);
     for (int p = 0; p < Count; ++p)
       s_[p] = get(p);
     gain_.setTarget(dbToGain(s_[Volume]));
@@ -175,11 +211,22 @@ public:
       model_.setVolume(0); // Original 303 waveform geometry stays fixed; no table rebuild in audio.
       model_.setPitchBend(bend_ * s_[BendRange]);
     }
+    if(editor_.audition>=0){
+      if(!seq){
+        if(auditionKey_>=0)handle(mpc::MidiEvent::noteOff(0,auditionKey_));
+        auditionKey_=editor_.audition;auditionSamples_=int(sr_*.15f);
+        handle(mpc::MidiEvent::noteOn(0,auditionKey_,100));
+      }
+      editor_.audition=-1;
+    }
     int e = 0;
     for (int n = 0; n < c.numFrames; ++n) {
       while (e < c.numMidiEvents && c.midi[e].sampleOffset <= n) {
         const auto &event = c.midi[e++];
         if (!seq || event.isAllNotesOff() || event.isPitchBend()) handle(event);
+      }
+      if(auditionSamples_>0 && --auditionSamples_==0){
+        handle(mpc::MidiEvent::noteOff(0,auditionKey_));auditionKey_=-1;
       }
       if (running) {
         const double position = c.transport.ppqPos * 4 + n * stepsPerSample;
@@ -187,9 +234,16 @@ public:
         const int length = int(s_[SeqLength]);
         const int step = int((absolute % length + length) % length);
         if (absolute != seqStep_) {
-          const int base = StepFirst + step * 4;
-          const bool play = s_[base + 1] > .5f;
-          if (play) {
+          const bool classic=s_[AcidPatternEditor::Style]>.5f;
+          int pitchSlot=step;
+          if(classic){pitchSlot=0;for(int k=0;k<step;++k)if(s_[AcidPatternEditor::TimeFirst+k]<.5f)++pitchSlot;
+            pitchSlot%=int(s_[AcidPatternEditor::PitchCount]);}
+          const int base = StepFirst + pitchSlot * 4;
+          const int timing=classic?int(s_[AcidPatternEditor::TimeFirst+step]):0;
+          const bool tie=classic && timing==1;
+          const bool play=classic?timing==0:s_[base+1]>.5f;
+          if(tie) { /* Hold the preceding pitch; do not consume or retrigger a pitch note. */ }
+          else if (play) {
             if (seqHeld_ && seqSlide_) pitch_.setTarget(s_[base]);
             else {
               pitch_.snap(s_[base]);
@@ -199,12 +253,16 @@ public:
             if(model) model_.trigger(int(s_[base]), s_[base + 2] > .5f, seqHeld_ && seqSlide_);
             ctrl_ = 0;
           } else { amp_.noteOff(); env_.noteOff(); model_.release(); }
-          seqHeld_ = play;
-          seqSlide_ = play && s_[base + 3] > .5f &&
-                      s_[StepFirst + ((step + 1) % length) * 4 + 1] > .5f;
+          if(!tie){
+            seqHeld_ = play;
+            seqSlide_ = play && s_[base + 3] > .5f &&
+                (classic?s_[AcidPatternEditor::TimeFirst+(step+1)%length]<1.5f:
+                 s_[StepFirst+((step+1)%length)*4+1]>.5f);
+          }
           seqStep_ = absolute;
         }
-        if (seqHeld_ && !seqSlide_ && position - std::floor(position) >= s_[SeqGate] * .01) {
+        const bool extends=s_[AcidPatternEditor::Style]>.5f && int(s_[AcidPatternEditor::TimeFirst+(step+1)%length])==1;
+        if (seqHeld_ && !seqSlide_ && !extends && position - std::floor(position) >= s_[SeqGate] * .01) {
           amp_.noteOff(); env_.noteOff(); model_.release(); seqHeld_ = false;
         }
       }
@@ -248,6 +306,18 @@ public:
   }
 
   bool formatValue(int index, float value, std::string &out) override {
+    if(index==AcidPatternEditor::Display){
+      int cursor=getInt(AcidPatternEditor::Cursor)-1,mode=getInt(AcidPatternEditor::Mode);
+      if(mode==2){
+        static const char *time[]={"NOTE","TIE","REST"};
+        out="TIME "+std::to_string(cursor+1)+"   "+time[getInt(AcidPatternEditor::TimeFirst+cursor)];
+      }else{
+        int key=getInt(StepFirst+cursor*4);static const char *notes[]={"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
+        out="PITCH "+std::to_string(cursor+1)+"   "+notes[key%12]+std::to_string(key/12-1);
+        if(getBool(StepFirst+cursor*4+2))out+="   ACCENT";
+        if(getBool(StepFirst+cursor*4+3))out+="   SLIDE";
+      }return true;
+    }
     if(index >= StepFirst && index < Engine && (index - StepFirst) % 4 == 0) {
       static const char *names[] = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
       const int key = std::max(0, std::min(127, int(std::lround(value))));
@@ -303,6 +373,10 @@ private:
       if(modelActive_) model_.setPitchBend(bend_ * s_[BendRange]);
     }
   }
+  AcidPatternEditor editor_;
+  std::atomic<bool> stopRefresh_{false},editorDirty_{false};
+  std::thread refreshThread_;
+  int auditionSamples_=0,auditionKey_=-1;
   Acid303 model_;
   bool modelActive_ = false;
   PolyBlepOsc osc_;

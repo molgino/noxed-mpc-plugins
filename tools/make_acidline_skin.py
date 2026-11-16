@@ -83,8 +83,9 @@ def panel(page):
             ticks(d,x,y,74)
             box(d,(x-65,y+76,x+65,y+104),'#c3c3b8','#a5a69c',1,3)
         box(d,(102,478,1178,545),'#bebfb6','#999d91',1,5)
-        text(d,(640,501),'ACCENT VELOCITY sets the minimum MIDI velocity for accented notes.',18)
-        text(d,(640,526),'Return to BASSLINE for the six classic tone controls.',16)
+        text(d,(120,465),'SOUND MODEL',14,True,anchor='lm')
+        text(d,(590,465),'PATTERN LENGTH',14,True,anchor='lm')
+        text(d,(970,465),'GATE %',14,True,anchor='lm')
     box(d,(61,601,1218,602),'#92958b')
     text(d,(62,582 if page==0 else 578),'COMPUTER CONTROLLED',13,True,anchor='lm')
     text(d,(1218,582 if page==0 else 578),'MONOPHONIC BASS SYNTHESIZER',13,anchor='rm')
@@ -152,60 +153,38 @@ def make_tui(params):
         if page==0:
             # Genuine waveform selectors; no decorative sequencer keys with no function.
             for choice,label,x in [(0,'SAW',874),(1,'SQUARE',1054)]:
-                button=ui.component_definition(ui.control_actions('menu overlay',False),[
+                button=ui.component_definition([ui.action('Mouse Down','Q-Link','Data','')],[
                     entry('button','Button',ui.button_data('wave-on.png','wave-off.png',choice,2),'0 0 164 68'),
                     entry('caption','Label',ui.label_data('Text','ff30342b',19,'horizontallyCentred verticallyCentred',label),'20 21 132 32')],'0')
                 name=f'wave{choice}';defs.append((name,button));children.append(entry(name,name,ui.obj(('version',1),('handleName','Data')),f'{x} 396 164 68',[('Data','Parameter 8')],focus='Yes'))
-            toggle=ui.component_definition(ui.control_actions('menu overlay',False),[
+            toggle=ui.component_definition([ui.action('Mouse Down','Q-Link','Data','')],[
                 entry('button','Button',ui.button_data('slide-on.png','slide-off.png',1,1),'0 0 344 52'),
                 entry('value','Label',ui.label_data('Value','ff30342b',20,'horizontallyCentred verticallyCentred'),'0 0 344 52')],'0')
             defs.append(('slide switch',toggle));children.append(entry('slide','slide switch',ui.obj(('version',1),('handleName','Data')),'874 510 344 52',[('Data','Parameter 12')],focus='Yes'))
+        if page==1:
+            for choice,label,x in [(0,'ORIGINAL',120),(1,'303 MODEL',308)]:
+                for on in (False,True):
+                    art=Image.new('RGBA',(170*S,48*S));ad=ImageDraw.Draw(art)
+                    box(ad,(1,1,169,47),'#e8dfc5','#73776a',1,4)
+                    box(ad,(10,10,23,15),ORANGE if on else '#8a887b',radius=2)
+                    text(ad,(85,27),label,16,True)
+                    art.resize((170,48),Image.Resampling.LANCZOS).save(SKINS/f'model{choice}-{on}.png')
+                key='model%d'%choice
+                defs.append((key,ui.component_definition([], [entry('button','Button',ui.button_data(f'model{choice}-True.png',f'model{choice}-False.png',choice,2),'0 0 170 48')],'0')))
+                children.append(entry(key,key,ui.obj(('version',1),('handleName','Data')),f'{x} 486 170 48',[('Data','Parameter 83')]))
+            for param,x,width in [(17,590,200),(18,970,150)]:
+                key='setup%d'%param
+                defs.append((key,ui.component_definition(ui.control_actions('knob overlay'),[entry('value','Label',ui.label_data('Value','ff30342b',26,'horizontallyCentred verticallyCentred'),f'0 0 {width} 48')],'0')))
+                children.append(entry(key,key,ui.obj(('version',1),('handleName','Data')),f'{x} 486 {width} 48',[('Data',f'Parameter {param}')],focus='Yes'))
         bounds=['48 116 766 220','856 116 370 455','48 375 766 195','0 0 0 0']if page==0 else['130 194 1020 250','0 0 0 0','0 0 0 0','0 0 0 0']
         tabs.append(ui.obj(('version',1),('tabName','BASSLINE'if page==0 else'SETUP'),('fnKeyIndex',page),('fnKeySubIndex',0),('componentDefinition',ui.component_definition([],children,'ffcecec6')),('qlinkBoundsData',bounds)))
         groups=[[9,1,2,3],[4,5,8,12],[0,7,6,13],[-1]*4]if page==0 else[[10,11,14,15],[-1]*4,[-1]*4,[-1]*4]
         assigned={13+col-4*row:groups[col][row]for col in range(4)for row in range(4)}
         maps.append(ui.obj(('Tab',page+1),('SubTab',1),('Bank Direction','Column'),('Q-Links',ui.Obj((f'Q-Link {q}',assigned[q])for q in range(1,17)))))
-    # Four pattern banks: each column edits one step (pitch, gate, accent, slide).
-    for bank in range(4):
-        image=Image.new('RGB',(W*S,H*S),'#cecec6');d=ImageDraw.Draw(image)
-        text(d,(55,38),'ACIDLINE / PATTERN WRITE',25,True,anchor='lm')
-        text(d,(55,78),'16 STEPS · 1/16 · MPC TRANSPORT SYNC',16,anchor='lm')
-        children=[]
-        for step in range(16):
-            x=44+step*75
-            box(d,(x,108,x+65,164),'#e7dfc7' if step//4==bank else '#a5a69c','#55584e',1,4)
-            box(d,(x+25,117,x+40,122),ORANGE if step//4==bank else '#77796d',radius=2)
-            text(d,(x+32,145),str(step+1),17,True)
-        # Every bank repeats the actual sequencer enable and timing controls.
-        controls=[(16,'SEQUENCER',44,190,220),(17,'LENGTH',300,190,220),(18,'GATE %',556,190,220),(83,'SOUND MODEL',812,190,380)]
-        for col in range(4):
-            step=bank*4+col
-            text(d,(184+col*300,302),'STEP %02d'%(step+1),22,True)
-            for row,label in enumerate(('NOTE','PLAY / REST','ACCENT','SLIDE')):
-                controls.append((19+step*4+row,label,44+col*300,330+row*62,270))
-        for param,label,x,y,width in controls:
-            text(d,(x,y-12),label,12,True,anchor='lm')
-            name='seq%d'%param
-            if param==16 or (19<=param<83 and (param-19)%4!=0):
-                for on in (False,True):
-                    art=Image.new('RGBA',(width*S,44*S));ad=ImageDraw.Draw(art)
-                    box(ad,(1,1,width-1,43),'#e8dfc5','#73776a',1,4)
-                    box(ad,(14,15,30,22),ORANGE if on else '#8a887b',radius=2)
-                    text(ad,(width/2,22),'ON' if on else 'OFF',18,True)
-                    art.resize((width,44),Image.Resampling.LANCZOS).save(SKINS/f'seq-{width}-{on}.png')
-                definition=ui.component_definition(ui.control_actions('menu overlay',False),[
-                    entry('button','Button',ui.button_data(f'seq-{width}-True.png',f'seq-{width}-False.png',1,1),f'0 0 {width} 44')],'0')
-            else:
-                definition=ui.component_definition(ui.control_actions('menu overlay' if param==83 else 'knob overlay'),[
-                    entry('value','Label',ui.label_data('Value','ff30342b',23,'left verticallyCentred'),'0 0 %d 44'%width)],'ffdcd8c8')
-            defs.append((name,definition))
-            children.append(entry(name,name,ui.obj(('version',1),('handleName','Data')),f'{x} {y} {width} 44',[('Data',f'Parameter {param}')],focus='Yes'))
-        filename='panel-seq%d.png'%bank
-        image.resize((W,H),Image.Resampling.LANCZOS).save(SKINS/filename)
-        children.insert(0,entry('panel','Image',ui.obj(('version',2),('imageType','Regular'),('colour','0'),('image',filename)),'0 0 1280 628'))
-        tabs.append(ui.obj(('version',1),('tabName','SEQ %d-%d'%(bank*4+1,bank*4+4)),('fnKeyIndex',bank+2),('fnKeySubIndex',0),('componentDefinition',ui.component_definition([],children,'ffcecec6')),('qlinkBoundsData',[f'{38+c*300} 310 282 270' for c in range(4)])))
-        maps.append(ui.obj(('Tab',bank+3),('SubTab',1),('Bank Direction','Column'),('Q-Links',ui.Obj((f'Q-Link {13+c-4*r}',19+(bank*4+c)*4+r) for c in range(4) for r in range(4)))))
-    data=ui.obj(('pageData',ui.obj(('version',1),('componentDefinitions',ui.obj(('version',2),('importFiles',[]),('localComponentDefinitions',[ui.obj(('key',k),('value',v))for k,v in defs]))),('replacementStrings',[ui.obj(('key','Parameter 8'),('value',['Saw','Square'])),ui.obj(('key','Parameter 12'),('value',['Off','On'])),ui.obj(('key','Parameter 16'),('value',['Off','On'])),ui.obj(('key','Parameter 83'),('value',['Original','303 Model'])),*[ui.obj(('key',f'Parameter {19+step*4+field}'),('value',['Off','On'])) for step in range(16) for field in (1,2,3)]]),('info',ui.obj(('version',1),('type','CompleteDescription'))),('tabs',tabs))))
+    from acid303_panel import build
+    seqtab,seqdefs,seqmap,seqrepl=build(__import__(__name__),params)
+    tabs.append(seqtab);defs+=seqdefs;maps.append(seqmap)
+    data=ui.obj(('pageData',ui.obj(('version',1),('componentDefinitions',ui.obj(('version',2),('importFiles',[]),('localComponentDefinitions',[ui.obj(('key',k),('value',v))for k,v in defs]))),('replacementStrings',seqrepl+[ui.obj(('key','Parameter 8'),('value',['Saw','Square'])),ui.obj(('key','Parameter 12'),('value',['Off','On'])),ui.obj(('key','Parameter 16'),('value',['Off','On'])),ui.obj(('key','Parameter 83'),('value',['Original','303 Model'])),*[ui.obj(('key',f'Parameter {19+step*4+field}'),('value',['Off','On'])) for step in range(16) for field in (1,2,3)]]),('info',ui.obj(('version',1),('type','CompleteDescription'))),('tabs',tabs))))
     qlinks=ui.obj(('version',4),('info',ui.obj(('version',1),('type','CompleteDescription'))),('Screen Mode Q-Links',ui.obj(('version',4),('map',maps))),('Program Mode Q-Links',ui.Obj((f'Q-Link {q+1}',p)for q,p in enumerate([1,2,3,4,5,6,7,0,9,8,12,13,10,11,14,15]))))
     (SKINS/'TUI.json').write_text(ui.dump_json(data)+'\n')
     (SKINS/'Q-Links.json').write_text(ui.dump_json(qlinks)+'\n')
@@ -243,8 +222,8 @@ def render_preview(params,output):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--params',type=Path,required=True);ap.add_argument('--preview-dir',type=Path,default=PROJECT/'preview');args=ap.parse_args()
-    params=json.loads(args.params.read_text());assert len(params['params'])==84
+    params=json.loads(args.params.read_text());assert len(params['params'])==127
     make_art();make_tui(params);args.preview_dir.mkdir(parents=True,exist_ok=True);render_preview(params,args.preview_dir)
-    print('Generated original silver-panel skin: 6 pages, 84 parameters, 127-frame knobs, working waveform/slide switches.')
+    print('Generated original silver-panel skin: 3 pages, 127 parameters, 127-frame knobs, working waveform/slide switches.')
     print('Artwork and previews:',SKINS,args.preview_dir)
 if __name__=='__main__':main()

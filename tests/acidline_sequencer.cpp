@@ -51,6 +51,28 @@ int main(){
   assert(a.internalLoadState(state.data(),state.size()));
   assert(a.getInt(Acidline::StepFirst)==43 && a.getInt(Acidline::Engine)==1);
   assert(a.getBool(Acidline::StepFirst+2) && a.getBool(Acidline::StepFirst+3));
+  // Record two pitches, then four independent timing cells, just as a two-pass 303 write.
+  a.set(Acidline::SeqOn,0);a.reset();
+  auto press=[&](int key){a.set(key,1-a.getInt(key));render(a,128,false);};
+  press(AcidPatternEditor::Clear);
+  a.set(AcidPatternEditor::Mode,1);render(a,128,false);
+  press(AcidPatternEditor::KeyFirst);press(AcidPatternEditor::KeyFirst+7);
+  assert(a.getInt(AcidPatternEditor::PitchCount)==2);
+  assert(a.getInt(Acidline::StepFirst)==36 && a.getInt(Acidline::StepFirst+4)==43);
+  press(AcidPatternEditor::Back);press(AcidPatternEditor::Accent);press(AcidPatternEditor::Slide);
+  assert(a.getBool(Acidline::StepFirst+6) && a.getBool(Acidline::StepFirst+7));
+  a.set(AcidPatternEditor::Mode,2);render(a,128,false);
+  press(AcidPatternEditor::Note);press(AcidPatternEditor::Tie);press(AcidPatternEditor::Rest);press(AcidPatternEditor::Note);
+  assert(a.getInt(Acidline::SeqLength)==4 && a.getInt(AcidPatternEditor::PitchCount)==2);
+  for(int i=0;i<4;++i)assert(a.getInt(AcidPatternEditor::TimeFirst+i)==(i==1?1:i==2?2:0));
+  const auto pattern=a.internalSaveState();
+  a.set(Acidline::SeqOn,1);a.reset();auto classic32=render(a,32);
+  a.reset();auto classic512=render(a,512);
+  assert(energy(classic32)>.01);
+  for(size_t i=0;i<classic32.size();++i)assert(std::abs(classic32[i]-classic512[i])<1e-5);
+  assert(a.internalLoadState(pattern.data(),pattern.size()));a.reset();render(a,128,false);
+  assert(a.getInt(Acidline::SeqLength)==4 && a.getInt(AcidPatternEditor::PitchCount)==2);
+  std::puts("PASS 303 pitch/time entry, accent/slide, independent rhythm, block invariance and safe state restore");
   std::puts("PASS saved pattern/model state and zero audio-thread allocations");
   std::puts("PASS Open303 playback, block invariance, stop and disable");
   std::puts("PASS sequencer default off, playback, block invariance, stop, rests, negative PPQ, disable");
