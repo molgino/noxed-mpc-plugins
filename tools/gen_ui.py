@@ -591,7 +591,8 @@ def radio_component(style, overlay_name, n):
 
 def overlay_component(type_name, data, bg_colour):
     child = entry("overlay", type_name, data, "0 0 1280 800", "No", "Show", "Always")
-    return component_definition([], [child], bg_colour, ignore_mouse=True)
+    # The host paints the overlay itself; an opaque wrapper can cover its list.
+    return component_definition([], [child], "00000000", ignore_mouse=True)
 
 
 # --------------------------------------------------------------------------------------------

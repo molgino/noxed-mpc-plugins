@@ -1,4 +1,4 @@
-# NOXED MPC Overwitch 0.5.0 – groups and MIDI (preview)
+# NOXED MPC Overwitch 0.5.1 – groups and MIDI (preview)
 
 MPC Overwitch brings the audio of an Elektron device into the MPC over **Overbridge**. The Digitone II is tested first; the device table also has Digitakt II, Digitakt, Digitone (Keys), Syntakt, Analog Four/Rytm MKII and Analog Heat. The device runs at 48 kHz; the plugin converts to the MPC's sample rate (44.1 kHz) and continuously corrects the small clock difference between the two devices. That removes the sample-rate problem of plain USB audio.
 
@@ -18,15 +18,14 @@ The default is **Off**, so existing projects and multiple instances do not send 
 - **LEVEL:** output level (default −1.9 dB, maximum +1 dB).
 - **MIDI CHANNEL:** Off or 1–16, see above.
 - **STATUS:** Searching… → Connecting… → Streaming (buffering) → **STREAMING**. Other messages: "Set device USB: Overbridge", "Unsupported Elektron device", "Error: …", "Busy: other instance has it".
-- **STREAM:** measured device sample rate, buffer latency and clock drift in ppm.
-- **DROPOUTS:** buffer dropouts and USB errors since loading.
-- **REPORT:** details to scroll through, also written to `MPC-Overwitch-Report.txt` in the plugin folder.
+The main screen shows only routing, level, MIDI channel, connection status and device.
+Diagnostic parameters remain available internally for project compatibility but are hidden from the skin and Q-Links.
 
-**Groups (since 0.4):** on the second page, **GROUP**, you switch Track 1–16, Delay, Reverb, Chorus and Input on or off. With SOURCE set to **Group**, all switched-on outputs are summed to one stereo signal – for example tracks 1–4 as drums on plugin track 1 and tracks 5–8 as synths on track 2 (one instance per group). The SOURCE field shows the group, e.g. "Group: T1+T2+T3". On the GROUP page the 16 tracks sit on the 16 Q-Links (top row = tracks 1–4). Per-track levels inside a group are not available yet.
+**Groups (since 0.4):** on the second page, **GROUP**, you switch Track 1–16, Delay, Reverb, Chorus and Input on or off. With SOURCE set to **Group**, all switched-on outputs are summed to one stereo signal – for example tracks 1–4 as drums on plugin track 1 and tracks 5–8 as synths on track 2 (one instance per group). The SOURCE field shows the group, e.g. "Group: T1+T2+T3". On the GROUP page tracks are arranged in two rows of eight, with Delay/Reverb/Chorus/Input underneath; the 16 Q-Links follow tracks 1–16. Per-track levels inside a group are not available yet.
 
 Several tracks: create one MPC plugin track with MPC Overwitch for each device track you want, and choose its SOURCE there (up to 16 together with Send instances).
 
-Q-Links: first row Source, Level and MIDI Channel, second row Report. In Program mode Q-Link 1 is Level and Q-Link 2 is Source.
+Q-Links: first row Source, Level and MIDI Channel, no diagnostic Q-Link. In Program mode Q-Link 1 is Level and Q-Link 2 is Source.
 
 ## How to test
 

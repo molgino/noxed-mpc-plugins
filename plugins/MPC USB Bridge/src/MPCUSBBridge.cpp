@@ -258,7 +258,7 @@ private:
         info.name         = "MPC USB Bridge";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 210;            // 0.2.1
+        info.version      = 220;            // 0.2.2
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;

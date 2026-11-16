@@ -150,12 +150,12 @@
                             "version": 1,
                             "focussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             },
                             "unfocussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             }
                         },
@@ -614,12 +614,12 @@
                             "version": 1,
                             "focussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             },
                             "unfocussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             }
                         },

@@ -1,5 +1,13 @@
 # Änderungen
 
+## Overwitch 0.5.1 / Send 0.5.1 / Prism Wave 0.1.3 / USB Bridge 0.2.2
+
+- All five plugin skins: transparent overlay wrappers as specified by the SDK, so the host paints value lists without an opaque panel covering them. Hardware confirmation of the reported list issue remains pending.
+- Overwitch: neutral dark panel with red accents; group tracks in two rows of eight, effects/input underneath. Hide report, stream statistics, system and dropouts from the receive screen; retain parameter IDs for saved projects.
+- Overwitch Send: matching visual theme. Audio routing and shared-engine ABI are unchanged.
+- Native and ARM builds, validators and offline USB/MIDI/audio regressions checked; these UI changes still need MPC touch testing.
+- Acidline sequencer and 303 sound-model work is a separate local test build and is excluded from this release.
+
 ## Release 0.2.1 – Open MPC catalog packages (16 Nov 2026)
 
 - MPC Overwitch 0.5.0 is also published in the format of the [Open MPC plugin catalog](https://open-mpc.github.io): `noxed-mpc-overwitch-0.5.0-mpc-armv7.zip` (Gen1), `-mpc-aarch64.zip` (Gen2, e.g. MPC Live III) and `-mpc-sdk.zip` (one folder for MPC OS 3.10.1+). Built with Open MPC's `sdk_release.py` and checked with `catalog_check.py` in CI.

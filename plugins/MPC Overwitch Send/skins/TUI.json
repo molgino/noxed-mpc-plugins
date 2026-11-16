@@ -288,12 +288,12 @@
                             "version": 1,
                             "focussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             },
                             "unfocussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             }
                         },
@@ -350,12 +350,12 @@
                             "version": 1,
                             "focussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             },
                             "unfocussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             }
                         },
@@ -571,7 +571,7 @@
                                             "style": "Regular",
                                             "height": 28.0
                                         },
-                                        "colour": "ff46c8f0",
+                                        "colour": "ffe65a46",
                                         "justification": "left verticallyCentred",
                                         "case": "Original"
                                     },
