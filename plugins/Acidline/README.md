@@ -9,7 +9,7 @@ Monophonic acid synth for Akai MPC standalone. Original TB-303-inspired sound en
 - For **slide**, let MIDI notes overlap and switch on **Legato Slide**. The envelopes are not retriggered; accent is kept from the previous note.
 - When you release the newest note, the instrument returns to the last note still held. Pitch bend range is adjustable. No sustain pedal.
 
-## Local test version (not published)
+## Preview version: hardware testing pending
 
 Four SEQ banks edit steps 1–4, 5–8, 9–12 and 13–16. Each step has Note (C1–C5), Play/Rest, Accent and Slide; a slide ties into the next active step without retriggering. Pattern Length is 1–16; Step Gate is 10–95%. Timing is straight sixteenths. The 16-key strip identifies the bank being edited, not a live playhead. Step parameters are saved and automatable. Stop, bypassing the sequencer and switching models release the voice. The sequencer needs host playing, valid tempo and PPQ; no standalone free-run.
 

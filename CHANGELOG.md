@@ -1,5 +1,13 @@
 # Änderungen
 
+## Release 0.2.2 – UI cleanup and Acidline preview (16 Nov 2026)
+
+- Acidline 0.2.0 preview: switchable 16-step sequencer synchronized to MPC transport, with per-step pitch, rest, accent and slide, pattern length and gate. Four silver-panel sequencer banks; parameter state is saved. Original engine remains the default for project compatibility.
+- Optional Open303 sound model (MIT, Robin Schmidt), with 303 waveforms, dedicated TB filter and measured envelope mapping. Circuit-informed DSP; component-accurate TB-303 equivalence has NOT been established. Hardware sound and CPU checks remain pending.
+- Acidline offline tests cover block-size invariance, stop/disable, rests, pattern state and zero allocations in the audio callback; address/undefined-behavior sanitizers pass (leak detection disabled under the sandbox).
+- Overwitch 0.5.1, Send 0.5.1, Prism Wave 0.1.3 and USB Bridge 0.2.2: UI changes below; native/ARM builds and offline regressions checked, MPC touch/list confirmation pending.
+- Catalog packages now cover Overwitch, Overwitch Send and Prism Wave. Acidline is published in this repository as a preview, not registered in the catalog.
+
 ## Overwitch 0.5.1 / Send 0.5.1 / Prism Wave 0.1.3 / USB Bridge 0.2.2
 
 - All five plugin skins: transparent overlay wrappers as specified by the SDK, so the host paints value lists without an opaque panel covering them. Hardware confirmation of the reported list issue remains pending.
