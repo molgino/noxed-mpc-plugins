@@ -72,6 +72,38 @@ jobs:
           name: NOXED - VST - ${{ matrix.plugin }}
           path: out/
 
+      # Open MPC plugin catalog (https://open-mpc.github.io): per-build zips in the catalog's format, made with
+      # their tools at a pinned commit and checked with catalog_check.py. Only for plugins listed there.
+      - name: Open MPC catalog zips
+        if: matrix.plugin == 'MPC Overwitch'
+        env:
+          OPENMPC_COMMIT: 33d99c6a17f6b804cd5f710e6978243d6f3d827f
+          CAT_ID: noxed-mpc-overwitch
+        run: |
+          git clone -q https://github.com/open-mpc/mpc-vst-plugins /tmp/openmpc
+          git -C /tmp/openmpc checkout -q "$OPENMPC_COMMIT"
+          P="plugins/${{ matrix.plugin }}"
+          ver=$(python -c "import json;print(json.load(open('$P/plugin.json'))['version'])")
+          python /tmp/openmpc/tools/sdk_release.py "$P/build/NOXED - VST - ${{ matrix.plugin }}" --version "$ver" \
+            --id "$CAT_ID" --repo molgino/noxed-mpc-plugins --license GPL-3.0-or-later -o catalog-dist \
+            --asset-name "$CAT_ID" \
+            --requires "Elektron Overbridge device with USB config OVERBRIDGE; MPC Overwitch Send in the same version if used"
+          ls -l catalog-dist
+          python /tmp/openmpc/tools/sdk_zip.py "catalog-dist/$CAT_ID-$ver-mpc-sdk.zip" catalog-dist/*-mpc-armv7.zip catalog-dist/*-mpc-aarch64.zip || echo "::warning::sdk_zip failed"
+          for z in catalog-dist/*-mpc-armv7.zip catalog-dist/*-mpc-aarch64.zip; do
+            if python /tmp/openmpc/tools/catalog_check.py "$z" --catalog --expect-id "$CAT_ID" --expect-repo molgino/noxed-mpc-plugins > check.txt 2>&1; then
+              echo "::notice title=catalog_check OK $(basename "$z")::$(tr '\n' ' ' < check.txt | cut -c1-900)"
+            else
+              echo "::error title=catalog_check FAILED $(basename "$z")::$(tr '\n' ' ' < check.txt | cut -c1-900)"; exit 1
+            fi
+          done
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.plugin == 'MPC Overwitch'
+        with:
+          name: catalog-${{ matrix.plugin }}
+          path: catalog-dist/*.zip
+
       - name: Package zip for release
         if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release != '')
         run: python tools/package.py "plugins/${{ matrix.plugin }}" --out release
@@ -99,6 +131,7 @@ jobs:
         run: |
           mkdir -p dist "bundle/VST2 Plugins"
           cp art/zip-*/*.zip dist/
+          cp art/catalog-*/*.zip dist/ 2>/dev/null || true
           for d in art/NOXED\ -\ VST\ -\ */"VST2 Plugins"/*; do cp -r "$d" "bundle/VST2 Plugins/"; done
           cp docs/NOXED-Anleitung.txt bundle/INSTALL.txt 2>/dev/null || true
           cp NOXED-LICENSE.txt bundle/ && cp "plugins/MPC Overwitch/LICENSE" bundle/GPL-3.0.txt
