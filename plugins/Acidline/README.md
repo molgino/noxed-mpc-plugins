@@ -1,13 +1,21 @@
-# NOXED Acidline 0.1.1
+# NOXED Acidline 0.2.0
 
 Monophonic acid synth for Akai MPC standalone. Original TB-303-inspired sound engine; not a circuit-accurate emulation, no Roland software and no original samples.
 
 ## Playing
 
-- Notes come from the MPC sequencer, pads or a keyboard. There is no built-in 303 step sequencer.
+- Notes come from the MPC sequencer, pads or a keyboard. Optional built-in 16-step sequencer, synchronized to the MPC transport. Switch SEQUENCER on on any SEQ page; press MPC Play. With it off, MIDI plays normally.
 - Velocity at or above **Accent Vel** (default 100) turns on accent for a newly struck note. Accent lifts the VCA and the filter envelope.
 - For **slide**, let MIDI notes overlap and switch on **Legato Slide**. The envelopes are not retriggered; accent is kept from the previous note.
 - When you release the newest note, the instrument returns to the last note still held. Pitch bend range is adjustable. No sustain pedal.
+
+## Local test version (not published)
+
+Four SEQ banks edit steps 1–4, 5–8, 9–12 and 13–16. Each step has Note (C1–C5), Play/Rest, Accent and Slide; a slide ties into the next active step without retriggering. Pattern Length is 1–16; Step Gate is 10–95%. Timing is straight sixteenths. The 16-key strip identifies the bank being edited, not a live playhead. Step parameters are saved and automatable. Stop, bypassing the sequencer and switching models release the voice. The sequencer needs host playing, valid tempo and PPQ; no standalone free-run.
+
+SOUND MODEL selects **Original** (the existing engine, default for compatibility) or **303 Model** (Open303 by Robin Schmidt, MIT). The latter includes its 303 saw/square tables, TB-303 filter mode with feedback high-pass, measured envelope mapping, accent shaping and slide. Select it explicitly before comparing. Drive remains an optional NOXED output stage; Pulse Width and Key Track belong to the Original engine; the 303 Model keeps its original waveform geometry. Filter coefficients update every eight samples; envelope and audio states run at full rate. Start with Drive = 0 for model comparisons.
+
+This is a circuit-informed DSP model, **not a verified component-by-component circuit simulation**. No claim of exact TB-303 equivalence: hardware/reference comparisons of oscillator, cutoff/resonance, decay, accent and slide, plus CPU measurement on MPC, remain pending. The silver panel evokes the 303; editing is adapted to the MPC rather than copying its original button-entry workflow.
 
 ## Controls
 
@@ -35,4 +43,4 @@ Replace the folder **NOXED - VST - Acidline** with the new version, then restart
 
 ## Source and licence
 
-Original NOXED code, MIT. Uses the MIT-licensed inMusic MPC Plugin Builder SDK (separate LICENSE in the source package). Roland and TB-303 are trademarks of their respective owners; no affiliation or endorsement.
+NOXED wrapper and sequencer, MIT. The optional 303 Model uses Open303 DSP, MIT, Copyright (c) 2009 Robin Schmidt; see src/open303/UPSTREAM.md for the pinned revision and local fixes. Its licence is included in Content/Open303-LICENSE.txt in the test package. Uses the MIT-licensed inMusic MPC Plugin Builder SDK (separate LICENSE in the source package). Roland and TB-303 are trademarks of their respective owners; no affiliation or endorsement.

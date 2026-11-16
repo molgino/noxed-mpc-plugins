@@ -165,7 +165,47 @@ def make_tui(params):
         groups=[[9,1,2,3],[4,5,8,12],[0,7,6,13],[-1]*4]if page==0 else[[10,11,14,15],[-1]*4,[-1]*4,[-1]*4]
         assigned={13+col-4*row:groups[col][row]for col in range(4)for row in range(4)}
         maps.append(ui.obj(('Tab',page+1),('SubTab',1),('Bank Direction','Column'),('Q-Links',ui.Obj((f'Q-Link {q}',assigned[q])for q in range(1,17)))))
-    data=ui.obj(('pageData',ui.obj(('version',1),('componentDefinitions',ui.obj(('version',2),('importFiles',[]),('localComponentDefinitions',[ui.obj(('key',k),('value',v))for k,v in defs]))),('replacementStrings',[ui.obj(('key','Parameter 8'),('value',['Saw','Square'])),ui.obj(('key','Parameter 12'),('value',['Off','On']))]),('info',ui.obj(('version',1),('type','CompleteDescription'))),('tabs',tabs))))
+    # Four pattern banks: each column edits one step (pitch, gate, accent, slide).
+    for bank in range(4):
+        image=Image.new('RGB',(W*S,H*S),'#cecec6');d=ImageDraw.Draw(image)
+        text(d,(55,38),'ACIDLINE / PATTERN WRITE',25,True,anchor='lm')
+        text(d,(55,78),'16 STEPS · 1/16 · MPC TRANSPORT SYNC',16,anchor='lm')
+        children=[]
+        for step in range(16):
+            x=44+step*75
+            box(d,(x,108,x+65,164),'#e7dfc7' if step//4==bank else '#a5a69c','#55584e',1,4)
+            box(d,(x+25,117,x+40,122),ORANGE if step//4==bank else '#77796d',radius=2)
+            text(d,(x+32,145),str(step+1),17,True)
+        # Every bank repeats the actual sequencer enable and timing controls.
+        controls=[(16,'SEQUENCER',44,190,220),(17,'LENGTH',300,190,220),(18,'GATE %',556,190,220),(83,'SOUND MODEL',812,190,380)]
+        for col in range(4):
+            step=bank*4+col
+            text(d,(184+col*300,302),'STEP %02d'%(step+1),22,True)
+            for row,label in enumerate(('NOTE','PLAY / REST','ACCENT','SLIDE')):
+                controls.append((19+step*4+row,label,44+col*300,330+row*62,270))
+        for param,label,x,y,width in controls:
+            text(d,(x,y-12),label,12,True,anchor='lm')
+            name='seq%d'%param
+            if param==16 or (19<=param<83 and (param-19)%4!=0):
+                for on in (False,True):
+                    art=Image.new('RGBA',(width*S,44*S));ad=ImageDraw.Draw(art)
+                    box(ad,(1,1,width-1,43),'#e8dfc5','#73776a',1,4)
+                    box(ad,(14,15,30,22),ORANGE if on else '#8a887b',radius=2)
+                    text(ad,(width/2,22),'ON' if on else 'OFF',18,True)
+                    art.resize((width,44),Image.Resampling.LANCZOS).save(SKINS/f'seq-{width}-{on}.png')
+                definition=ui.component_definition(ui.control_actions('menu overlay',False),[
+                    entry('button','Button',ui.button_data(f'seq-{width}-True.png',f'seq-{width}-False.png',1,1),f'0 0 {width} 44')],'0')
+            else:
+                definition=ui.component_definition(ui.control_actions('menu overlay' if param==83 else 'knob overlay'),[
+                    entry('value','Label',ui.label_data('Value','ff30342b',23,'left verticallyCentred'),'0 0 %d 44'%width)],'ffdcd8c8')
+            defs.append((name,definition))
+            children.append(entry(name,name,ui.obj(('version',1),('handleName','Data')),f'{x} {y} {width} 44',[('Data',f'Parameter {param}')],focus='Yes'))
+        filename='panel-seq%d.png'%bank
+        image.resize((W,H),Image.Resampling.LANCZOS).save(SKINS/filename)
+        children.insert(0,entry('panel','Image',ui.obj(('version',2),('imageType','Regular'),('colour','0'),('image',filename)),'0 0 1280 628'))
+        tabs.append(ui.obj(('version',1),('tabName','SEQ %d-%d'%(bank*4+1,bank*4+4)),('fnKeyIndex',bank+2),('fnKeySubIndex',0),('componentDefinition',ui.component_definition([],children,'ffcecec6')),('qlinkBoundsData',[f'{38+c*300} 310 282 270' for c in range(4)])))
+        maps.append(ui.obj(('Tab',bank+3),('SubTab',1),('Bank Direction','Column'),('Q-Links',ui.Obj((f'Q-Link {13+c-4*r}',19+(bank*4+c)*4+r) for c in range(4) for r in range(4)))))
+    data=ui.obj(('pageData',ui.obj(('version',1),('componentDefinitions',ui.obj(('version',2),('importFiles',[]),('localComponentDefinitions',[ui.obj(('key',k),('value',v))for k,v in defs]))),('replacementStrings',[ui.obj(('key','Parameter 8'),('value',['Saw','Square'])),ui.obj(('key','Parameter 12'),('value',['Off','On'])),ui.obj(('key','Parameter 16'),('value',['Off','On'])),ui.obj(('key','Parameter 83'),('value',['Original','303 Model'])),*[ui.obj(('key',f'Parameter {19+step*4+field}'),('value',['Off','On'])) for step in range(16) for field in (1,2,3)]]),('info',ui.obj(('version',1),('type','CompleteDescription'))),('tabs',tabs))))
     qlinks=ui.obj(('version',4),('info',ui.obj(('version',1),('type','CompleteDescription'))),('Screen Mode Q-Links',ui.obj(('version',4),('map',maps))),('Program Mode Q-Links',ui.Obj((f'Q-Link {q+1}',p)for q,p in enumerate([1,2,3,4,5,6,7,0,9,8,12,13,10,11,14,15]))))
     (SKINS/'TUI.json').write_text(ui.dump_json(data)+'\n')
     (SKINS/'Q-Links.json').write_text(ui.dump_json(qlinks)+'\n')
@@ -203,8 +243,8 @@ def render_preview(params,output):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--params',type=Path,required=True);ap.add_argument('--preview-dir',type=Path,default=PROJECT/'preview');args=ap.parse_args()
-    params=json.loads(args.params.read_text());assert len(params['params'])==16
+    params=json.loads(args.params.read_text());assert len(params['params'])==84
     make_art();make_tui(params);args.preview_dir.mkdir(parents=True,exist_ok=True);render_preview(params,args.preview_dir)
-    print('Generated original silver-panel skin: 2 pages, 16 parameters, 127-frame knobs, working waveform/slide switches.')
+    print('Generated original silver-panel skin: 6 pages, 84 parameters, 127-frame knobs, working waveform/slide switches.')
     print('Artwork and previews:',SKINS,args.preview_dir)
 if __name__=='__main__':main()
