@@ -1,0 +1,37 @@
+[
+  {
+    "id": "noxed-acidline",
+    "version": "0.3.0",
+    "device": "MPC Live III (Gen2)",
+    "firmware": "3.10.1",
+    "date": "2026-11-17"
+  },
+  {
+    "id": "noxed-prism-wave",
+    "version": "0.1.4",
+    "device": "MPC Live III (Gen2)",
+    "firmware": "3.10.1",
+    "date": "2026-11-17"
+  },
+  {
+    "id": "noxed-mpc-overwitch",
+    "version": "0.5.1",
+    "device": "MPC Live III (Gen2)",
+    "firmware": "3.10.1",
+    "date": "2026-11-17"
+  },
+  {
+    "id": "noxed-mpc-overwitch-send",
+    "version": "0.5.1",
+    "device": "MPC Live III (Gen2)",
+    "firmware": "3.10.1",
+    "date": "2026-11-17"
+  },
+  {
+    "id": "noxed-mpc-usb-bridge",
+    "version": "0.2.2",
+    "device": "MPC Live III (Gen2)",
+    "firmware": "3.10.1",
+    "date": "2026-11-17"
+  }
+]

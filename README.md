@@ -66,6 +66,8 @@ Details: [Prism Wave manual](plugins/Prism%20Wave/README.md) ·
 
 ## Testing
 
+- **Hardware report, 17 November 2026:** the author reports all five plugins from release **v0.2.3** working on an **MPC Live III (Gen2), MPC OS 3.10.1**. Exact plugin versions and scope are in [Hardware tests](docs/HARDWARE-TESTS.md) and root [tested.json](tested.json), used by the Open MPC catalog. These records refer to the release binaries and source tag, not the older versions on this branch. No Gen1 test or measured CPU benchmark is claimed.
+
 - 19 SDK host checks per instrument: no warnings or errors.
 - 33 additional audio/function tests, including all presets, accent/slide,
   wavetable import and morphing, modulation matrix, sustain and a unison stress test.
