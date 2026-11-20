@@ -44,9 +44,9 @@
 
 namespace {
 
-enum ParamIndex { kLevel = 0, kSource, kLine, kStatus, kDevice, kStream, kDropouts, kSystem, kGroupFirst, kMidiCh = kGroupFirst + 20, kNumParams };
+enum ParamIndex { kLevel = 0, kSource, kLine, kStatus, kDevice, kStream, kDropouts, kSystem, kGroupFirst, kMidiCh = kGroupFirst + 20, kUiOpen, kNumParams };
 constexpr int kMaxLines = 64;
-const char* const kVersion = "0.5.0";
+const char* const kVersion = "0.6.0";
 
 std::vector<std::string> sourceNames()
 {
@@ -82,6 +82,11 @@ public:
         std::vector<std::string> chans = {"Off"};
         for (int c = 1; c <= 16; ++c) chans.push_back(std::to_string(c));
         addParam(mpc::choiceParam("midich", "MIDI Ch", chans, 0));
+        // UI only: which drawn pick-list is open (0 = none, k+1 = list of parameter k). MPC's native list
+        // overlay opens empty for VST2 plugins, so SOURCE and MIDI CH draw their own lists in the skin.
+        mpc::Param pick = mpc::intParam("ui_open", "Choice Picker", 0, kUiOpen, 0);
+        pick.automatable = false;
+        addParam(pick);
         midi_.start();
 
         utsname u{};
@@ -112,7 +117,14 @@ public:
         reader_.prepare(48000.0, sampleRate, ob::DriftReader::kUsbBurst);
         gain_ = 0.0f;
     }
-    void reset() override { reader_.reset(); midi_.releaseHeld(); }
+    void reset() override { reader_.reset(); midi_.releaseHeld(); set(kUiOpen, 0); }
+
+    // A value picked in an open list closes it; the host hears about it from the monitor thread.
+    void parameterChanged(int index, float) override
+    {
+        if (index != kUiOpen && (int)std::lround(get(kUiOpen)) == index + 1) set(kUiOpen, 0);
+        if (index == kUiOpen) pickerDirty_.store(true);
+    }
 
     void process(mpc::ProcessContext& ctx) override
     {
@@ -218,7 +230,11 @@ private:
         int tick = 0;
         while (!stop_.load())
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            for (int q = 0; q < 4; ++q)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(25));
+                if (pickerDirty_.exchange(false)) { notifyHostParameterChanged(kUiOpen); requestDisplayUpdate(); }
+            }
             if (++tick % 5 && !dirty_.load()) continue;
             bool full = tick % 20 == 0;     // diagnostics scan every 2 s while not streaming
             bool changed = rebuild(full) || dirty_.exchange(false);
@@ -351,7 +367,7 @@ private:
         info.name         = "MPC Overwitch";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 500;            // 0.5.0
+        info.version      = 600;            // 0.6.0
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;
@@ -372,7 +388,7 @@ private:
     obmidi::Forwarder midi_{[] { return obmidi::findUsbMidiCard("1935"); }};   // 1935 = Elektron
     std::atomic<int> midiCh_{-1};
     bool wasPlaying_ = false;
-    std::atomic<bool> stop_{false}, dirty_{false};
+    std::atomic<bool> stop_{false}, dirty_{false}, pickerDirty_{false};
     std::mutex mutex_;
     std::string status_, device_, stream_, dropouts_, system_, visibleKey_, groupLabel_ = "Group: empty";
     std::vector<std::string> lines_, diagLines_;

@@ -1,5 +1,36 @@
 # Änderungen
 
+
+## MPC Overwitch 0.6.0 / MPC Overwitch Send 0.6.0 / MPC USB Bridge 0.2.3 – drawn choice lists (20 Nov 2026)
+
+- MPC's native list overlay opens empty for VST2 plugins (confirmed by the Open MPC project on MPC OS 3.10.1). SOURCE and MIDI CHANNEL (Overwitch) and MIDI CHANNEL (USB Bridge) now open their own drawn list: tap the field, tap a value, X closes. A new UI-only parameter `ui_open` is appended at the end, so existing projects keep their settings.
+- MPC Overwitch Send: DESTINATION is now a row of four buttons instead of a list.
+- Offline: picker open/pick/close test, host simulator, ThreadSanitizer/AddressSanitizer stress test of state save/load while audio runs. Not yet checked on hardware.
+- The repository is now `molgino/noxend-mpc-plugins`; catalog packages carry the new name.
+
+## Release 0.2.3 – 303 pattern workflow and explicit Prism pickers
+
+- Acidline 0.3.0: replace the four step tables with one silver-panel keyboard page and Pitch/Time/Normal modes, octave input, Accent/Slide, TAP/BACK and Note/Tie/Rest. Pitch and timing sequences are separate; ties/rests do not consume a pitch. Existing 0.2.0 pattern mapping is retained until writing is started.
+- Prism Wave 0.1.4: replace the native choice overlay with an explicit skin-drawn, labelled picker; select and auto-close or close with X. Append one UI-only parameter without changing sound parameter IDs/order.
+- Correction to 0.2.2: transparent overlay wrappers were NOT a confirmed fix. Independent hardware findings in open-mpc SDK-PORTING.md report blank native MenuOverlay rows even with replacementStrings (Key 37, OS 3.10.1.12). The new drawn-picker approach avoids that native widget. Our own MPC confirmation remains pending.
+- Offline checks: builds/skin validators, host tests, two-pass 303 input/tie/rest/slide behavior, picker routing/selection/restore, state and audio regressions. No circuit-accuracy or new hardware-verification claim.
+
+## Release 0.2.2 – UI cleanup and Acidline preview (16 Nov 2026)
+
+- Acidline 0.2.0 preview: switchable 16-step sequencer synchronized to MPC transport, with per-step pitch, rest, accent and slide, pattern length and gate. Four silver-panel sequencer banks; parameter state is saved. Original engine remains the default for project compatibility.
+- Optional Open303 sound model (MIT, Robin Schmidt), with 303 waveforms, dedicated TB filter and measured envelope mapping. Circuit-informed DSP; component-accurate TB-303 equivalence has NOT been established. Hardware sound and CPU checks remain pending.
+- Acidline offline tests cover block-size invariance, stop/disable, rests, pattern state and zero allocations in the audio callback; address/undefined-behavior sanitizers pass (leak detection disabled under the sandbox).
+- Overwitch 0.5.1, Send 0.5.1, Prism Wave 0.1.3 and USB Bridge 0.2.2: UI changes below; native/ARM builds and offline regressions checked, MPC touch/list confirmation pending.
+- Catalog packages now cover Overwitch, Overwitch Send and Prism Wave. Acidline is published in this repository as a preview, not registered in the catalog.
+
+## Overwitch 0.5.1 / Send 0.5.1 / Prism Wave 0.1.3 / USB Bridge 0.2.2
+
+- All five plugin skins: transparent overlay wrappers as specified by the SDK, so the host paints value lists without an opaque panel covering them. Hardware confirmation of the reported list issue remains pending.
+- Overwitch: neutral dark panel with red accents; group tracks in two rows of eight, effects/input underneath. Hide report, stream statistics, system and dropouts from the receive screen; retain parameter IDs for saved projects.
+- Overwitch Send: matching visual theme. Audio routing and shared-engine ABI are unchanged.
+- Native and ARM builds, validators and offline USB/MIDI/audio regressions checked; these UI changes still need MPC touch testing.
+- Acidline sequencer and 303 sound-model work is a separate local test build and is excluded from this release.
+
 ## Release 0.2.1 – Open MPC catalog packages (16 Nov 2026)
 
 - MPC Overwitch 0.5.0 is also published in the format of the [Open MPC plugin catalog](https://open-mpc.github.io): `noxed-mpc-overwitch-0.5.0-mpc-armv7.zip` (Gen1), `-mpc-aarch64.zip` (Gen2, e.g. MPC Live III) and `-mpc-sdk.zip` (one folder for MPC OS 3.10.1+). Built with Open MPC's `sdk_release.py` and checked with `catalog_check.py` in CI.

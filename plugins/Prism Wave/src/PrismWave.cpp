@@ -5,6 +5,8 @@
 // Original implementation, not Serum code, assets, presets or file formats.
 // SPDX-License-Identifier: MIT
 #include "Wavetables.h"
+#include <thread>
+#include <chrono>
 #include "dsp/adsr.h"
 #include "dsp/delay_line.h"
 #include "dsp/lfo.h"
@@ -73,6 +75,7 @@ public:
     DelayDiv,
     Feedback,
     Bend,
+    UiOpen, // UI-only picker state, appended to keep all sound parameter indices stable.
     Count
   };
   static mpc::PluginInfo makeInfo() {
@@ -80,7 +83,7 @@ public:
     i.name = "Prism Wave";
     i.vendor = "NOXED";
     i.uniqueId = MPC_FOURCC('N', 'H', 's', 'C');
-    i.version = 102;
+    i.version = 104;
     i.isInstrument = true;
     i.numInputs = 0;
     return i;
@@ -149,6 +152,18 @@ public:
                          kDivisionQuarter));
     addParam(floatParam("feedback", "Feedback", 0, 85, 35, "%", 0));
     addParam(intParam("bend", "Bend Range", 0, 24, 2, "st"));
+    auto picker = intParam("ui_open", "Choice Picker", 0, UiOpen, 0);
+    picker.automatable = false;
+    addParam(picker);
+    refreshThread_ = std::thread([this] {
+      while (!stopRefresh_.load()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(25));
+        if (pickerDirty_.exchange(false)) {
+          notifyHostParameterChanged(UiOpen);
+          requestDisplayUpdate();
+        }
+      }
+    });
     auto pr = [&](const char *n,
                   std::initializer_list<std::pair<int, float>> edits) {
       std::vector<float> v;
@@ -220,6 +235,14 @@ public:
                      {DelayMix, 20},
                      {Cutoff, 4200}});
   }
+  ~PrismWave() override {
+    stopRefresh_.store(true);
+    if (refreshThread_.joinable()) refreshThread_.join();
+  }
+  void parameterChanged(int index, float) override {
+    if (index != UiOpen && getInt(UiOpen) == index + 1) set(UiOpen, 0);
+    if (index == UiOpen) pickerDirty_.store(true);
+  }
   bool formatValue(int p, float value, std::string &out) override {
     if (p != ATable && p != BTable)
       return false;
@@ -249,6 +272,7 @@ public:
       smooth_[p].setTime(12, sr);
   }
   void reset() override {
+    set(UiOpen,0);
     for (auto &v : voices_) {
       v.amp.reset();
       v.env.reset();
@@ -396,6 +420,8 @@ public:
   }
 
 private:
+  std::atomic<bool> stopRefresh_{false}, pickerDirty_{false};
+  std::thread refreshThread_;
   struct Voice {
     ADSR amp, env;
     SVF filter[2];

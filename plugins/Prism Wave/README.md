@@ -73,3 +73,7 @@ Versions 0.1.1 and 0.1.2 only change the interface; sound, plugin ID, parameter 
 ## Licence
 
 Original NOXED code and demo wavetable: MIT. Uses the MIT-licensed inMusic MPC Plugin Builder SDK; its LICENSE is in the source package. Serum/Xfer belong to their respective owners; no affiliation or endorsement.
+
+## Choice lists (0.1.4)
+
+Touch a choice field once to open a skin-drawn picker at the left. Option captions are baked into the button art; the selected option is highlighted. Touch an option to select and close, or X to close without changing the sound. This avoids the native MPC MenuOverlay, independently reported to show blank rows for external VST2 even with SDK replacementStrings. Native knob overlays and Q-Link control remain available. The new picker is structurally validated and tested offline; touch operation still needs confirmation on an MPC. The UI-only picker parameter is appended after the existing 56 sound parameters and does not alter DSP.

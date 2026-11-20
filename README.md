@@ -6,7 +6,7 @@ Open-source plugins for Akai MPC standalone (MPC Live/X/One/Key/Force, MPC OS 3.
 [inMusic MPC Plugin Builder SDK](https://github.com/inmusic-software/mpc-plugin-builder-sdk):
 two instruments and three bridges to external hardware. **Contributions are very welcome**, see [Contributing](#contributing).
 
-**Acidline 0.1.1 · Prism Wave 0.1.2 · MPC Overwitch 0.5.0 · MPC Overwitch Send 0.4.0 · MPC USB Bridge 0.2.1.**
+**Acidline 0.3.0 · Prism Wave 0.1.4 · MPC Overwitch 0.5.1 · MPC Overwitch Send 0.5.1 · MPC USB Bridge 0.2.2.**
 Acidline, Prism Wave and MPC Overwitch have been tried on an MPC Live III; plugins marked *preview* have not had every feature checked on hardware yet (details in each plugin's README).
 
 > **How this was made:** these plugins are vibecoded. They were built with an AI coding assistant (Claude) and tested on real hardware by the author. The code is all here; reviews and fixes from people who know DSP, USB audio or C++ are very welcome.
@@ -22,7 +22,7 @@ More Prism Wave pages: [Filter/FX](docs/screenshots/prism-wave-filter.png) · [E
 
 | Plugin | What it does |
 | --- | --- |
-| **Acidline** | Monophonic, TB-303-inspired acid synth with saw/square, non-linear resonant filter, velocity accent, legato slide, drive and six presets. [README](plugins/Acidline/README.md) |
+| **Acidline** | Monophonic, TB-303-inspired acid synth with saw/square, non-linear resonant filter, velocity accent, legato slide, drive, six presets, optional Open303 sound model and a switchable 16-step sequencer. [README](plugins/Acidline/README.md) |
 | **Prism Wave** | Original, Serum-inspired wavetable synth: eight voices, two oscillators with up to three unison voices each, sub/noise, filter, two ADSRs, two LFOs, four modulation routes, chorus, delay and eight presets. [README](plugins/Prism%20Wave/README.md) |
 | **MPC Overwitch** *(preview)* | Overbridge for Elektron devices (tested with Digitone II) directly on the MPC, based on Overwitch (GPL-3): device tracks as plugin tracks, up to 16 at once, groups of several outputs, MIDI to the device, 48 → 44.1 kHz with drift correction. [README](plugins/MPC%20Overwitch/README.md) |
 | **MPC Overwitch Send** *(preview, effect)* | Sends MPC tracks over Overbridge into the Elektron device's inputs (Digitone II: Main, Delay, Reverb, Chorus). [README](plugins/MPC%20Overwitch%20Send/README.md) |

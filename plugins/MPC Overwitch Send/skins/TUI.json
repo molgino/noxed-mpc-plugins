@@ -154,20 +154,6 @@
                                 "handler": "Q-Link",
                                 "handleName": "Data",
                                 "additionalData": ""
-                            },
-                            {
-                                "version": 1,
-                                "onAction": "Double Click",
-                                "handler": "Show Overlay",
-                                "handleName": "Data",
-                                "additionalData": "menu overlay"
-                            },
-                            {
-                                "version": 1,
-                                "onAction": "Enter Pressed",
-                                "handler": "Show Overlay",
-                                "handleName": "Data",
-                                "additionalData": "menu overlay"
                             }
                         ],
                         "backgroundData": {
@@ -186,32 +172,6 @@
                         "ignoreMousePresses": false,
                         "disableCoarseDataWheel": false,
                         "componentsData": [
-                            {
-                                "version": 2,
-                                "componentData": {
-                                    "version": 1,
-                                    "name": "box",
-                                    "type": "Image",
-                                    "data": {
-                                        "version": 2,
-                                        "imageType": "Regular",
-                                        "colour": "0",
-                                        "image": "field.png"
-                                    }
-                                },
-                                "handle remapping": {
-                                    "version": 1,
-                                    "map": []
-                                },
-                                "bounds": {
-                                    "version": 1,
-                                    "acceptsHWFocus": "No",
-                                    "showWhenDataModelInvalid": "Show",
-                                    "whenVisible": "Always",
-                                    "boundsType": "Absolute",
-                                    "bounds": "0 0 352 48"
-                                }
-                            },
                             {
                                 "version": 2,
                                 "componentData": {
@@ -243,24 +203,16 @@
                                 "version": 2,
                                 "componentData": {
                                     "version": 1,
-                                    "name": "value",
-                                    "type": "Label",
+                                    "name": "dest 0",
+                                    "type": "Button",
                                     "data": {
-                                        "version": 1,
-                                        "textStyle": {
-                                            "version": 1,
-                                            "font": {
-                                                "version": 1,
-                                                "name": "Titillium Web",
-                                                "style": "Regular",
-                                                "height": 22.0
-                                            },
-                                            "colour": "ffe4e9f2",
-                                            "justification": "left verticallyCentred",
-                                            "case": "Original"
-                                        },
-                                        "type": "Value",
-                                        "handleName": "Data"
+                                        "version": 2,
+                                        "onImage": "dest-0-on.png",
+                                        "offImage": "dest-0-off.png",
+                                        "buttonId": 0,
+                                        "numButtonsInGroup": 4,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
                                     }
                                 },
                                 "handle remapping": {
@@ -273,7 +225,94 @@
                                     "showWhenDataModelInvalid": "Show",
                                     "whenVisible": "Always",
                                     "boundsType": "Absolute",
-                                    "bounds": "16 0 300 48"
+                                    "bounds": "0 0 85 48"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "dest 1",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "dest-1-on.png",
+                                        "offImage": "dest-1-off.png",
+                                        "buttonId": 1,
+                                        "numButtonsInGroup": 4,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "89 0 85 48"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "dest 2",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "dest-2-on.png",
+                                        "offImage": "dest-2-off.png",
+                                        "buttonId": 2,
+                                        "numButtonsInGroup": 4,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "178 0 85 48"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "dest 3",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "dest-3-on.png",
+                                        "offImage": "dest-3-off.png",
+                                        "buttonId": 3,
+                                        "numButtonsInGroup": 4,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "267 0 85 48"
                                 }
                             }
                         ]
@@ -288,12 +327,12 @@
                             "version": 1,
                             "focussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             },
                             "unfocussed": {
                                 "version": 1,
-                                "colour": "ff12141a",
+                                "colour": "00000000",
                                 "image": ""
                             }
                         },
@@ -322,65 +361,6 @@
                                         "scaleType": "Linear",
                                         "polarityType": "Unipolar",
                                         "showMinusSign": true,
-                                        "handleName": "Data"
-                                    }
-                                },
-                                "handle remapping": {
-                                    "version": 1,
-                                    "map": []
-                                },
-                                "bounds": {
-                                    "version": 1,
-                                    "acceptsHWFocus": "No",
-                                    "showWhenDataModelInvalid": "Show",
-                                    "whenVisible": "Always",
-                                    "boundsType": "Absolute",
-                                    "bounds": "0 0 1280 800"
-                                }
-                            }
-                        ]
-                    }
-                },
-                {
-                    "key": "menu overlay",
-                    "value": {
-                        "version": 2,
-                        "actions": [],
-                        "backgroundData": {
-                            "version": 1,
-                            "focussed": {
-                                "version": 1,
-                                "colour": "ff12141a",
-                                "image": ""
-                            },
-                            "unfocussed": {
-                                "version": 1,
-                                "colour": "ff12141a",
-                                "image": ""
-                            }
-                        },
-                        "ignoreMousePresses": true,
-                        "disableCoarseDataWheel": false,
-                        "componentsData": [
-                            {
-                                "version": 2,
-                                "componentData": {
-                                    "version": 1,
-                                    "name": "overlay",
-                                    "type": "MenuOverlay",
-                                    "data": {
-                                        "version": 1,
-                                        "version": 1,
-                                        "actions": [
-                                            {
-                                                "version": 1,
-                                                "onAction": "Focus Lost",
-                                                "handler": "Focus Lost",
-                                                "handleName": "Focus Lost",
-                                                "additionalData": ""
-                                            }
-                                        ],
-                                        "withNumbers": false,
                                         "handleName": "Data"
                                     }
                                 },
@@ -571,7 +551,7 @@
                                             "style": "Regular",
                                             "height": 28.0
                                         },
-                                        "colour": "ff46c8f0",
+                                        "colour": "ffe65a46",
                                         "justification": "left verticallyCentred",
                                         "case": "Original"
                                     },
