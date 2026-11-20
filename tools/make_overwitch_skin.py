@@ -9,6 +9,7 @@ Reuses the drawing helpers of make_prismwave_skin.py so the NOXED plugins look a
 import argparse, json
 from pathlib import Path
 import gen_ui as ui
+from drawn_choices import build_picker
 import make_prismwave_skin as pw
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,23 +28,28 @@ def build(params):
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC OVERWITCH', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (300, 22), 'NOXED · OVERBRIDGE FOR THE MPC · 0.5.1 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (300, 22), 'NOXED · OVERBRIDGE FOR THE MPC · 0.6.0 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
 
     children = []
     # Output panel: source and level.
     pw.panel_box(d, (12, 48, 412, 616), 'OUTPUT', subtitle='TO THIS PLUGIN TRACK')
     pw.text(d, (36, 104), 'SOURCE', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
-    children.append(pw.entry('p1', 'owSource', ui.obj(('version', 1), ('handleName', 'Data')), '36 120 352 48',
-                             [('Data', 'Parameter 1')], 'Yes', None, 'Hide'))
-    pw.text(d, (36, 186), 'Double-tap to choose a device output.', 12, 'medium', pw.DIM, 'lm')
+    src_choices = list(next(p['choices'] for p in params['params'] if p['index'] == 1))
+    src_choices[-1] = 'Group'
+    f_src, d_src, n_srcl, d_srcl, e_srcl = build_picker(pw, SKINS, 1, 'Source', src_choices, UI_OPEN, 352, 48, 'field.png', (16, 48))
+    f_midi, d_midi, n_midil, d_midil, e_midil = build_picker(pw, SKINS, MIDI_PARAM, 'MIDI channel', MIDI_CHOICES, UI_OPEN, 352, 48,
+                                                             'field.png', (16, 48))
+    children.append(pw.entry('p1', f_src, ui.obj(('version', 1), ('handleName', 'Data')), '36 120 352 48',
+                             [('Data', 'Parameter 1'), ('Open', 'Parameter %d' % UI_OPEN)], 'Yes', None, 'Hide'))
+    pw.text(d, (36, 186), 'Tap to choose a device output.', 12, 'medium', pw.DIM, 'lm')
     pw.line(d, [(28, 214), (396, 214)], '#232835', 1)
     children.append(pw.entry('p0', 'owLevel', ui.obj(('version', 1), ('handleName', 'Data')), '142 240 140 118',
                              [('Data', 'Parameter 0')], 'Yes', None, 'Hide'))
     pw.knob_name(d, 142, 240, 'LEVEL')
     pw.line(d, [(28, 384), (396, 384)], '#232835', 1)
     pw.text(d, (36, 404), 'MIDI CHANNEL', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
-    children.append(pw.entry('p%d' % MIDI_PARAM, 'owSource', ui.obj(('version', 1), ('handleName', 'Data')), '36 420 352 48',
-                             [('Data', 'Parameter %d' % MIDI_PARAM)], 'Yes', None, 'Hide'))
+    children.append(pw.entry('p%d' % MIDI_PARAM, f_midi, ui.obj(('version', 1), ('handleName', 'Data')), '36 420 352 48',
+                             [('Data', 'Parameter %d' % MIDI_PARAM), ('Open', 'Parameter %d' % UI_OPEN)], 'Yes', None, 'Hide'))
     for i, t in enumerate(['Notes and CC of this track go to the', 'device on this channel (USB MIDI).',
                            'Set the device USB config to OVERBRIDGE.']):
         pw.text(d, (36, 488 + i * 22), t, 12, 'medium', pw.MUTED, 'lm')
@@ -71,17 +77,15 @@ def build(params):
             pw.focus(140, 118),
             pw.entry('knob', 'Knob', ui.knob_filmstrip_data('knob.png', pw.FRAMES), '%d 0 %d %d' % ((140 - pw.KN) // 2, pw.KN, pw.KN)),
             pw.entry('value', 'Label', ui.label_data('Value', pw.VALUE_COL, 19.0, 'horizontallyCentred verticallyCentred'), '0 88 140 28')], '0')),
-        ('owSource', ui.component_definition(ui.control_actions('menu overlay'), [
-            pw.entry('box', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'field.png')), '0 0 352 48'),
-            pw.focus(352, 48),
-            pw.entry('value', 'Label', ui.label_data('Value', pw.FIELD_TEXT, 22.0, 'left verticallyCentred'), '16 0 300 48')], '0')),
+        (f_src, d_src), (f_midi, d_midi), (n_srcl, d_srcl), (n_midil, d_midil),
         ('knob overlay', ui.overlay_component('KnobOverlay', ui.knob_overlay_data(False), 'ff12141a')),
         ('menu overlay', ui.overlay_component('MenuOverlay', ui.menu_overlay_data(), 'ff12141a')),
     ]
     bg = pw.entry('panel', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'panel.png')),
                   '0 0 1280 628')
+    # The lists come last so they draw on top of everything on the page.
     tab = ui.obj(('version', 1), ('tabName', 'STREAM'), ('fnKeyIndex', 0), ('fnKeySubIndex', 0),
-                 ('componentDefinition', ui.component_definition([], [bg] + children, 'ff12141a')),
+                 ('componentDefinition', ui.component_definition([], [bg] + children + [e_srcl, e_midil], 'ff12141a')),
                  ('qlinkBoundsData', ['20 92 384 280', '0 0 0 0']))
     group_tab, group_defs, group_qmap = build_group_tab()
     defs += group_defs
@@ -109,6 +113,8 @@ def build(params):
 
 GROUP_FIRST = 8   # parameter index of "G Track 1"
 MIDI_PARAM = 28   # MPC Overwitch "MIDI Ch"
+UI_OPEN = 29      # MPC Overwitch "Choice Picker" (which drawn list is open)
+BRIDGE_UI_OPEN = 9
 MIDI_CHOICES = ['Off'] + ['Ch %d' % c for c in range(1, 17)]
 FX_NAMES = ['DELAY', 'REVERB', 'CHORUS', 'INPUT']
 
@@ -173,21 +179,39 @@ SEND_SKINS = ROOT / 'plugins' / 'MPC Overwitch Send' / 'skins'
 SEND_ROWS = [(3, 'STATUS'), (4, 'DEVICE'), (5, 'STREAM'), (6, 'LEVELS')]
 
 
+def dest_seg(out, choices):
+    # Send has only a few inputs (Digitone II: 4): one radio button each, caption drawn into the image.
+    # MPC's native list overlay opens empty for VST2 plugins, so no list is used here.
+    n = len(choices)
+    w = (352 - 4 * (n - 1)) // n
+    kids = [pw.focus(352, 48)]
+    for i, name in enumerate(choices):
+        for lit in (True, False):
+            im, d = pw.canvas(w, 48, (0, 0, 0, 0))
+            pw.rrect(d, (1, 1, w - 1, 47), '#143746' if lit else '#212632', pw.ACCENT if lit else '#424956', 1.2, 6)
+            pw.text(d, (w / 2, 24), name.upper(), 13, 'bold', '#eef9ff' if lit else pw.MUTED, 'mm', spacing=0.8)
+            pw.finish(im, w, 48).save(out / ('dest-%d-%s.png' % (i, 'on' if lit else 'off')))
+        kids.append(pw.entry('dest %d' % i, 'Button', ui.button_data('dest-%d-on.png' % i, 'dest-%d-off.png' % i, i, n),
+                             '%d 0 %d 48' % (i * (w + 4), w)))
+    return ui.component_definition([ui.action('Mouse Down', 'Q-Link', 'Data', '')], kids, '0')
+
+
 def build_send(params):
     out = SEND_SKINS
+    dest_choices = list(next(p['choices'] for p in params['params'] if p['index'] == 1))
     out.mkdir(parents=True, exist_ok=True)
     im, d = pw.canvas(W, H, pw.hex_rgb(pw.BG))
     pw.rrect(d, (0, 0, W, 42), '#0d0f14')
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC OVERWITCH SEND', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (372, 22), 'NOXED · USB AUDIO SEND · 0.5.1 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (372, 22), 'NOXED · USB AUDIO SEND · 0.6.0 PREVIEW', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
     children = []
     pw.panel_box(d, (12, 48, 412, 616), 'SEND', subtitle='MPC TRACK TO DEVICE')
     pw.text(d, (36, 104), 'DESTINATION', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
     children.append(pw.entry('p1', 'owDest', ui.obj(('version', 1), ('handleName', 'Data')), '36 120 352 48',
                              [('Data', 'Parameter 1')], 'Yes', None, 'Hide'))
-    pw.text(d, (36, 186), 'Double-tap to choose a device input.', 12, 'medium', pw.DIM, 'lm')
+    pw.text(d, (36, 186), 'Tap the device input to send to.', 12, 'medium', pw.DIM, 'lm')
     pw.line(d, [(28, 214), (396, 214)], '#232835', 1)
     for x, prm, name in [(56, 2, 'SEND'), (228, 0, 'DRY')]:
         children.append(pw.entry('p%d' % prm, 'owKnob', ui.obj(('version', 1), ('handleName', 'Data')), '%d 240 140 118' % x,
@@ -225,12 +249,8 @@ def build_send(params):
             pw.focus(140, 118),
             pw.entry('knob', 'Knob', ui.knob_filmstrip_data('knob.png', pw.FRAMES), '%d 0 %d %d' % ((140 - pw.KN) // 2, pw.KN, pw.KN)),
             pw.entry('value', 'Label', ui.label_data('Value', pw.VALUE_COL, 19.0, 'horizontallyCentred verticallyCentred'), '0 88 140 28')], '0')),
-        ('owDest', ui.component_definition(ui.control_actions('menu overlay'), [
-            pw.entry('box', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'field.png')), '0 0 352 48'),
-            pw.focus(352, 48),
-            pw.entry('value', 'Label', ui.label_data('Value', pw.FIELD_TEXT, 22.0, 'left verticallyCentred'), '16 0 300 48')], '0')),
+        ('owDest', dest_seg(out, dest_choices)),
         ('knob overlay', ui.overlay_component('KnobOverlay', ui.knob_overlay_data(False), 'ff12141a')),
-        ('menu overlay', ui.overlay_component('MenuOverlay', ui.menu_overlay_data(), 'ff12141a')),
     ]
     bg = pw.entry('panel', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'panel.png')),
                   '0 0 1280 628')
@@ -268,15 +288,17 @@ def build_bridge(params):
     pw.line(d, [(0, 42), (W, 42)], '#232835', 1)
     pw.prism_logo(d, 22, 8)
     pw.text(d, (76, 21), 'MPC USB BRIDGE', 19, 'black', pw.TEXT, 'lm', spacing=2.2)
-    pw.text(d, (290, 22), 'NOXED · USB AUDIO DEVICE AS A PLUGIN TRACK (ROLAND S-1 ...) · 0.2.1', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
+    pw.text(d, (290, 22), 'NOXED · USB AUDIO DEVICE AS A PLUGIN TRACK (ROLAND S-1 ...) · 0.2.3', 12, 'semibold', pw.MUTED, 'lm', spacing=1.6)
     children = []
     pw.panel_box(d, (12, 48, 412, 436), 'INPUT', subtitle='USB DEVICE TO THIS TRACK')
     children.append(pw.entry('p0', 'ubKnob', ui.obj(('version', 1), ('handleName', 'Data')), '36 96 140 118',
                              [('Data', 'Parameter 0')], 'Yes', None, 'Hide'))
     pw.knob_name(d, 36, 96, 'LEVEL')
     pw.text(d, (212, 104), 'MIDI CHANNEL', 12, 'bold', pw.MUTED, 'lm', spacing=1.4)
-    children.append(pw.entry('p8', 'ubMidi', ui.obj(('version', 1), ('handleName', 'Data')), '212 120 176 48',
-                             [('Data', 'Parameter 8')], 'Yes', None, 'Hide'))
+    f_bm, d_bm, n_bml, d_bml, e_bml = build_picker(pw, out, 8, 'MIDI channel', MIDI_CHOICES, BRIDGE_UI_OPEN, 176, 48,
+                                                   'field-small.png', (16, 48))
+    children.append(pw.entry('p8', f_bm, ui.obj(('version', 1), ('handleName', 'Data')), '212 120 176 48',
+                             [('Data', 'Parameter 8'), ('Open', 'Parameter %d' % BRIDGE_UI_OPEN)], 'Yes', None, 'Hide'))
     for i, t in enumerate(['Notes and CC of this', 'track to the device.']):
         pw.text(d, (212, 190 + i * 20), t, 12, 'medium', pw.DIM, 'lm')
     pw.line(d, [(28, 250), (396, 250)], '#232835', 1)
@@ -302,11 +324,7 @@ def build_bridge(params):
     pw.field_img(176, 48).save(out / 'field-small.png')
     pw.finish(im, W, H).convert('RGB').save(out / 'panel.png', optimize=True)
     defs = [
-        ('ubMidi', ui.component_definition(ui.control_actions('menu overlay'), [
-            pw.entry('box', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'field-small.png')), '0 0 176 48'),
-            pw.focus(176, 48),
-            pw.entry('value', 'Label', ui.label_data('Value', pw.FIELD_TEXT, 22.0, 'left verticallyCentred'), '16 0 130 48')], '0')),
-        ('menu overlay', ui.overlay_component('MenuOverlay', ui.menu_overlay_data(), 'ff12141a')),
+        (f_bm, d_bm), (n_bml, d_bml),
         ('ubKnob', ui.component_definition(ui.control_actions('knob overlay'), [
             pw.focus(140, 118),
             pw.entry('knob', 'Knob', ui.knob_filmstrip_data('knob.png', pw.FRAMES), '%d 0 %d %d' % ((140 - pw.KN) // 2, pw.KN, pw.KN)),
@@ -324,7 +342,7 @@ def build_bridge(params):
     bg = pw.entry('panel', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'panel.png')),
                   '0 0 1280 628')
     tab = ui.obj(('version', 1), ('tabName', 'USB'), ('fnKeyIndex', 0), ('fnKeySubIndex', 0),
-                 ('componentDefinition', ui.component_definition([], [bg] + children, 'ff12141a')),
+                 ('componentDefinition', ui.component_definition([], [bg] + children + [e_bml], 'ff12141a')),
                  ('qlinkBoundsData', ['20 88 384 264']))
     data = ui.obj(('pageData', ui.obj(
         ('version', 1),

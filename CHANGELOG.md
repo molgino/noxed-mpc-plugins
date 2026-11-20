@@ -1,5 +1,13 @@
 # Änderungen
 
+
+## MPC Overwitch 0.6.0 / MPC Overwitch Send 0.6.0 / MPC USB Bridge 0.2.3 – drawn choice lists (20 Nov 2026)
+
+- MPC's native list overlay opens empty for VST2 plugins (confirmed by the Open MPC project on MPC OS 3.10.1). SOURCE and MIDI CHANNEL (Overwitch) and MIDI CHANNEL (USB Bridge) now open their own drawn list: tap the field, tap a value, X closes. A new UI-only parameter `ui_open` is appended at the end, so existing projects keep their settings.
+- MPC Overwitch Send: DESTINATION is now a row of four buttons instead of a list.
+- Offline: picker open/pick/close test, host simulator, ThreadSanitizer/AddressSanitizer stress test of state save/load while audio runs. Not yet checked on hardware.
+- The repository is now `molgino/noxend-mpc-plugins`; catalog packages carry the new name.
+
 ## Release 0.2.3 – 303 pattern workflow and explicit Prism pickers
 
 - Acidline 0.3.0: replace the four step tables with one silver-panel keyboard page and Pitch/Time/Normal modes, octave input, Accent/Slide, TAP/BACK and Note/Tie/Rest. Pitch and timing sequences are separate; ties/rests do not consume a pitch. Existing 0.2.0 pattern mapping is retained until writing is started.

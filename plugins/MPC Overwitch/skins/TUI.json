@@ -144,7 +144,7 @@
                     }
                 },
                 {
-                    "key": "owSource",
+                    "key": "pickField1_352x48",
                     "value": {
                         "version": 2,
                         "actions": [
@@ -154,20 +154,6 @@
                                 "handler": "Q-Link",
                                 "handleName": "Data",
                                 "additionalData": ""
-                            },
-                            {
-                                "version": 1,
-                                "onAction": "Double Click",
-                                "handler": "Show Overlay",
-                                "handleName": "Data",
-                                "additionalData": "menu overlay"
-                            },
-                            {
-                                "version": 1,
-                                "onAction": "Enter Pressed",
-                                "handler": "Show Overlay",
-                                "handleName": "Data",
-                                "additionalData": "menu overlay"
                             }
                         ],
                         "backgroundData": {
@@ -273,7 +259,1486 @@
                                     "showWhenDataModelInvalid": "Show",
                                     "whenVisible": "Always",
                                     "boundsType": "Absolute",
-                                    "bounds": "16 0 300 48"
+                                    "bounds": "16 0 312 48"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "open",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "hit-352x48.png",
+                                        "offImage": "hit-352x48.png",
+                                        "buttonId": 2,
+                                        "numButtonsInGroup": 30,
+                                        "handleName": "Open",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 0 352 48"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "key": "pickField28_352x48",
+                    "value": {
+                        "version": 2,
+                        "actions": [
+                            {
+                                "version": 1,
+                                "onAction": "Mouse Down",
+                                "handler": "Q-Link",
+                                "handleName": "Data",
+                                "additionalData": ""
+                            }
+                        ],
+                        "backgroundData": {
+                            "version": 1,
+                            "focussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            },
+                            "unfocussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            }
+                        },
+                        "ignoreMousePresses": false,
+                        "disableCoarseDataWheel": false,
+                        "componentsData": [
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "box",
+                                    "type": "Image",
+                                    "data": {
+                                        "version": 2,
+                                        "imageType": "Regular",
+                                        "colour": "0",
+                                        "image": "field.png"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 0 352 48"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "focus",
+                                    "type": "Focus",
+                                    "data": {
+                                        "version": 1,
+                                        "backgroundColour": "19ffffff",
+                                        "outlineColour": "ff46c8f0",
+                                        "backgroundInset": 4.0,
+                                        "outlineThickness": 1.0
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "WhenFocussed",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 0 352 48"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "value",
+                                    "type": "Label",
+                                    "data": {
+                                        "version": 1,
+                                        "textStyle": {
+                                            "version": 1,
+                                            "font": {
+                                                "version": 1,
+                                                "name": "Titillium Web",
+                                                "style": "Regular",
+                                                "height": 22.0
+                                            },
+                                            "colour": "ffe4e9f2",
+                                            "justification": "left verticallyCentred",
+                                            "case": "Original"
+                                        },
+                                        "type": "Value",
+                                        "handleName": "Data"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 0 312 48"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "open",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "hit-352x48.png",
+                                        "offImage": "hit-352x48.png",
+                                        "buttonId": 29,
+                                        "numButtonsInGroup": 30,
+                                        "handleName": "Open",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 0 352 48"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "key": "picker1",
+                    "value": {
+                        "version": 2,
+                        "actions": [],
+                        "backgroundData": {
+                            "version": 1,
+                            "focussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            },
+                            "unfocussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            }
+                        },
+                        "ignoreMousePresses": false,
+                        "disableCoarseDataWheel": false,
+                        "componentsData": [
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "panel",
+                                    "type": "Image",
+                                    "data": {
+                                        "version": 2,
+                                        "imageType": "Regular",
+                                        "colour": "0",
+                                        "image": "picker-1.png"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 0 662 532"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "close",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "picker-close.png",
+                                        "offImage": "picker-close.png",
+                                        "buttonId": 0,
+                                        "numButtonsInGroup": 30,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": [
+                                        {
+                                            "key": "Data",
+                                            "value": "Parameter 29"
+                                        }
+                                    ]
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "602 10 48 40"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 0",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-0-on.png",
+                                        "offImage": "choice-1-0-off.png",
+                                        "buttonId": 0,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 62 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 1",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-1-on.png",
+                                        "offImage": "choice-1-1-off.png",
+                                        "buttonId": 1,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 106 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 2",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-2-on.png",
+                                        "offImage": "choice-1-2-off.png",
+                                        "buttonId": 2,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 150 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 3",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-3-on.png",
+                                        "offImage": "choice-1-3-off.png",
+                                        "buttonId": 3,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 194 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 4",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-4-on.png",
+                                        "offImage": "choice-1-4-off.png",
+                                        "buttonId": 4,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 238 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 5",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-5-on.png",
+                                        "offImage": "choice-1-5-off.png",
+                                        "buttonId": 5,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 282 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 6",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-6-on.png",
+                                        "offImage": "choice-1-6-off.png",
+                                        "buttonId": 6,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 326 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 7",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-7-on.png",
+                                        "offImage": "choice-1-7-off.png",
+                                        "buttonId": 7,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 370 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 8",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-8-on.png",
+                                        "offImage": "choice-1-8-off.png",
+                                        "buttonId": 8,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 414 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 9",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-9-on.png",
+                                        "offImage": "choice-1-9-off.png",
+                                        "buttonId": 9,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 458 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 10",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-10-on.png",
+                                        "offImage": "choice-1-10-off.png",
+                                        "buttonId": 10,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 62 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 11",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-11-on.png",
+                                        "offImage": "choice-1-11-off.png",
+                                        "buttonId": 11,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 106 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 12",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-12-on.png",
+                                        "offImage": "choice-1-12-off.png",
+                                        "buttonId": 12,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 150 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 13",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-13-on.png",
+                                        "offImage": "choice-1-13-off.png",
+                                        "buttonId": 13,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 194 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 14",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-14-on.png",
+                                        "offImage": "choice-1-14-off.png",
+                                        "buttonId": 14,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 238 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 15",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-15-on.png",
+                                        "offImage": "choice-1-15-off.png",
+                                        "buttonId": 15,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 282 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 16",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-16-on.png",
+                                        "offImage": "choice-1-16-off.png",
+                                        "buttonId": 16,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 326 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 17",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-17-on.png",
+                                        "offImage": "choice-1-17-off.png",
+                                        "buttonId": 17,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 370 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 18",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-18-on.png",
+                                        "offImage": "choice-1-18-off.png",
+                                        "buttonId": 18,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 414 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 19",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-19-on.png",
+                                        "offImage": "choice-1-19-off.png",
+                                        "buttonId": 19,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "226 458 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 20",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-20-on.png",
+                                        "offImage": "choice-1-20-off.png",
+                                        "buttonId": 20,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "436 62 202 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 21",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-1-21-on.png",
+                                        "offImage": "choice-1-21-off.png",
+                                        "buttonId": 21,
+                                        "numButtonsInGroup": 22,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "436 106 202 38"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "key": "picker28",
+                    "value": {
+                        "version": 2,
+                        "actions": [],
+                        "backgroundData": {
+                            "version": 1,
+                            "focussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            },
+                            "unfocussed": {
+                                "version": 1,
+                                "colour": "0",
+                                "image": ""
+                            }
+                        },
+                        "ignoreMousePresses": false,
+                        "disableCoarseDataWheel": false,
+                        "componentsData": [
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "panel",
+                                    "type": "Image",
+                                    "data": {
+                                        "version": 2,
+                                        "imageType": "Regular",
+                                        "colour": "0",
+                                        "image": "picker-28.png"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "0 0 620 532"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "close",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "picker-close.png",
+                                        "offImage": "picker-close.png",
+                                        "buttonId": 0,
+                                        "numButtonsInGroup": 30,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": [
+                                        {
+                                            "key": "Data",
+                                            "value": "Parameter 29"
+                                        }
+                                    ]
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "560 10 48 40"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 0",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-0-on.png",
+                                        "offImage": "choice-28-0-off.png",
+                                        "buttonId": 0,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 62 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 1",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-1-on.png",
+                                        "offImage": "choice-28-1-off.png",
+                                        "buttonId": 1,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 106 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 2",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-2-on.png",
+                                        "offImage": "choice-28-2-off.png",
+                                        "buttonId": 2,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 150 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 3",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-3-on.png",
+                                        "offImage": "choice-28-3-off.png",
+                                        "buttonId": 3,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 194 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 4",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-4-on.png",
+                                        "offImage": "choice-28-4-off.png",
+                                        "buttonId": 4,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 238 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 5",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-5-on.png",
+                                        "offImage": "choice-28-5-off.png",
+                                        "buttonId": 5,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 282 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 6",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-6-on.png",
+                                        "offImage": "choice-28-6-off.png",
+                                        "buttonId": 6,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 326 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 7",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-7-on.png",
+                                        "offImage": "choice-28-7-off.png",
+                                        "buttonId": 7,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 370 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 8",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-8-on.png",
+                                        "offImage": "choice-28-8-off.png",
+                                        "buttonId": 8,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 414 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 9",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-9-on.png",
+                                        "offImage": "choice-28-9-off.png",
+                                        "buttonId": 9,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "16 458 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 10",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-10-on.png",
+                                        "offImage": "choice-28-10-off.png",
+                                        "buttonId": 10,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "310 62 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 11",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-11-on.png",
+                                        "offImage": "choice-28-11-off.png",
+                                        "buttonId": 11,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "310 106 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 12",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-12-on.png",
+                                        "offImage": "choice-28-12-off.png",
+                                        "buttonId": 12,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "310 150 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 13",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-13-on.png",
+                                        "offImage": "choice-28-13-off.png",
+                                        "buttonId": 13,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "310 194 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 14",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-14-on.png",
+                                        "offImage": "choice-28-14-off.png",
+                                        "buttonId": 14,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "310 238 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 15",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-15-on.png",
+                                        "offImage": "choice-28-15-off.png",
+                                        "buttonId": 15,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "310 282 286 38"
+                                }
+                            },
+                            {
+                                "version": 2,
+                                "componentData": {
+                                    "version": 1,
+                                    "name": "choice 16",
+                                    "type": "Button",
+                                    "data": {
+                                        "version": 2,
+                                        "onImage": "choice-28-16-on.png",
+                                        "offImage": "choice-28-16-off.png",
+                                        "buttonId": 16,
+                                        "numButtonsInGroup": 17,
+                                        "handleName": "Data",
+                                        "gestureBehaviour": "Instant"
+                                    }
+                                },
+                                "handle remapping": {
+                                    "version": 1,
+                                    "map": []
+                                },
+                                "bounds": {
+                                    "version": 1,
+                                    "acceptsHWFocus": "No",
+                                    "showWhenDataModelInvalid": "Show",
+                                    "whenVisible": "Always",
+                                    "boundsType": "Absolute",
+                                    "bounds": "310 326 286 38"
                                 }
                             }
                         ]
@@ -2553,7 +4018,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p1",
-                                "type": "owSource",
+                                "type": "pickField1_352x48",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2565,6 +4030,10 @@
                                     {
                                         "key": "Data",
                                         "value": "Parameter 1"
+                                    },
+                                    {
+                                        "key": "Open",
+                                        "value": "Parameter 29"
                                     }
                                 ]
                             },
@@ -2611,7 +4080,7 @@
                             "componentData": {
                                 "version": 1,
                                 "name": "p28",
-                                "type": "owSource",
+                                "type": "pickField28_352x48",
                                 "data": {
                                     "version": 1,
                                     "handleName": "Data"
@@ -2623,6 +4092,10 @@
                                     {
                                         "key": "Data",
                                         "value": "Parameter 28"
+                                    },
+                                    {
+                                        "key": "Open",
+                                        "value": "Parameter 29"
                                     }
                                 ]
                             },
@@ -2717,6 +4190,70 @@
                                 "whenVisible": "Always",
                                 "boundsType": "Absolute",
                                 "bounds": "600 164 650 44"
+                            }
+                        },
+                        {
+                            "version": 2,
+                            "componentData": {
+                                "version": 1,
+                                "name": "picker1",
+                                "type": "picker1",
+                                "data": {
+                                    "version": 1,
+                                    "handleName": "Data"
+                                }
+                            },
+                            "handle remapping": {
+                                "version": 1,
+                                "map": [
+                                    {
+                                        "key": "Data",
+                                        "value": "Parameter 1"
+                                    }
+                                ]
+                            },
+                            "bounds": {
+                                "version": 2,
+                                "acceptsHWFocus": "No",
+                                "showWhenDataModelInvalid": "Hide",
+                                "whenVisible": "Always",
+                                "boundsType": "Absolute",
+                                "bounds": "16 48 662 532",
+                                "additionalInvalidatingHandles": [
+                                    "IndexedEnabling/2/30/Parameter 29"
+                                ]
+                            }
+                        },
+                        {
+                            "version": 2,
+                            "componentData": {
+                                "version": 1,
+                                "name": "picker28",
+                                "type": "picker28",
+                                "data": {
+                                    "version": 1,
+                                    "handleName": "Data"
+                                }
+                            },
+                            "handle remapping": {
+                                "version": 1,
+                                "map": [
+                                    {
+                                        "key": "Data",
+                                        "value": "Parameter 28"
+                                    }
+                                ]
+                            },
+                            "bounds": {
+                                "version": 2,
+                                "acceptsHWFocus": "No",
+                                "showWhenDataModelInvalid": "Hide",
+                                "whenVisible": "Always",
+                                "boundsType": "Absolute",
+                                "bounds": "16 48 620 532",
+                                "additionalInvalidatingHandles": [
+                                    "IndexedEnabling/29/30/Parameter 29"
+                                ]
                             }
                         }
                     ]

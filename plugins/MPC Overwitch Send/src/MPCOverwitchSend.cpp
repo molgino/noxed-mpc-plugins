@@ -213,7 +213,7 @@ private:
         info.name         = "MPC Overwitch Send";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 501;            // 0.5.1
+        info.version      = 600;            // 0.6.0
         info.isInstrument = false;
         info.numInputs    = 2;
         info.numOutputs   = 2;

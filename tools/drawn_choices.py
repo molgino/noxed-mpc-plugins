@@ -60,3 +60,68 @@ def install(pw, pages, params, ui_open=56):
             popups.append(pw.entry(popup,popup,ui.obj(('version',1),('handleName','Data')),'16 48 %d %d'%(mw,mh),[('Data','Parameter %d'%target)],'No',['IndexedEnabling/%d/%d/Parameter %d'%(target+1,open_count,ui_open)],'Hide'))
         pg.children.extend(popups)
     return definitions
+
+
+def build_picker(pw, out, target, title, choices, ui_open, field_w, field_h, field_img, popup_xy=(16, 48), font=22):
+    """One drawn pick-list for parameter `target` (the Open MPC recipe, verified on a Live III):
+    a field = Value label under a transparent radio Button on `ui_open` (buttonId target+1), and a
+    list = panel + one radio Button per option (caption baked in) + an X Button (buttonId 0 on ui_open),
+    shown with IndexedEnabling/<target+1>/<ui_open+1>/Parameter <ui_open>.
+    Returns (field_def_name, field_def, popup_def_name, popup_def, popup_entry). The page entry that uses
+    the field definition must remap ('Data', 'Parameter <target>') and ('Open', 'Parameter <ui_open>')."""
+    open_count = ui_open + 1
+
+    def art(filename, w, h, caption='', lit=False, transparent=False):
+        im, d = pw.canvas(w, h, (0, 0, 0, 0))
+        if not transparent:
+            pw.rrect(d, (1, 1, w - 1, h - 1), '#143746' if lit else '#212632', pw.ACCENT if lit else '#424956', 1, 4)
+            pw.text(d, (14, h / 2), caption, 17, 'semibold', pw.TEXT, 'lm')
+        pw.finish(im, w, h).save(out / filename)
+
+    hit = 'hit-%dx%d.png' % (field_w, field_h)
+    art(hit, field_w, field_h, transparent=True)
+    open_btn = pw.entry('open', 'Button', ui.button_data(hit, hit, target + 1, open_count), '0 0 %d %d' % (field_w, field_h))
+    kids = [pw.entry('box', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', field_img)),
+                     '0 0 %d %d' % (field_w, field_h)),
+            pw.focus(field_w, field_h),
+            pw.entry('value', 'Label', ui.label_data('Value', pw.FIELD_TEXT, float(font), 'left verticallyCentred'),
+                     '16 0 %d %d' % (field_w - 40, field_h)),
+            open_btn]
+    # The open button listens on its own handle, remapped to ui_open by the page entry.
+    data = dict(dict(open_btn)['componentData'])['data']
+    for i, (k, v) in enumerate(data):
+        if k == 'handleName':
+            data[i] = ('handleName', 'Open')
+    field_name = 'pickField%d_%dx%d' % (target, field_w, field_h)
+    field_def = ui.component_definition([ui.action('Mouse Down', 'Q-Link', 'Data', '')], kids, '0')
+
+    rows = min(10, len(choices))
+    cols = math.ceil(len(choices) / rows)
+    mw = min(1248, max(620, cols * 210 + 32))
+    mh = 92 + rows * 44
+    panel, d = pw.canvas(mw, mh, pw.hex_rgb('#12161e'))
+    pw.rrect(d, (1, 1, mw - 1, mh - 1), '#12161e', '#657586', 1.5, 8)
+    pw.text(d, (20, 30), title.upper(), 21, 'bold', pw.TEXT, 'lm')
+    pw.text(d, (20, mh - 16), 'CHOOSE A VALUE · X CLOSES', 12, 'semibold', pw.MUTED, 'lm')
+    pw.finish(panel, mw, mh).save(out / ('picker-%d.png' % target))
+    close = 'picker-close.png'
+    art(close, 48, 40, 'X')
+    kids = [pw.entry('panel', 'Image', ui.obj(('version', 2), ('imageType', 'Regular'), ('colour', '0'), ('image', 'picker-%d.png' % target)),
+                     '0 0 %d %d' % (mw, mh)),
+            pw.entry('close', 'Button', ui.button_data(close, close, 0, open_count), '%d 10 48 40' % (mw - 60),
+                     [('Data', 'Parameter %d' % ui_open)])]
+    bw = (mw - 32) // cols - 8
+    for i, label in enumerate(choices):
+        on, off = 'choice-%d-%d-on.png' % (target, i), 'choice-%d-%d-off.png' % (target, i)
+        art(on, bw, 38, label, True)
+        art(off, bw, 38, label)
+        r, c = i % rows, i // rows
+        kids.append(pw.entry('choice %d' % i, 'Button', ui.button_data(on, off, i, len(choices)),
+                             '%d %d %d 38' % (16 + c * (bw + 8), 62 + r * 44, bw)))
+    popup_name = 'picker%d' % target
+    popup_def = ui.component_definition([], kids, '0')
+    x, y = popup_xy
+    popup_entry = pw.entry(popup_name, popup_name, ui.obj(('version', 1), ('handleName', 'Data')), '%d %d %d %d' % (x, y, mw, mh),
+                           [('Data', 'Parameter %d' % target)], 'No',
+                           ['IndexedEnabling/%d/%d/Parameter %d' % (target + 1, open_count, ui_open)], 'Hide')
+    return field_name, field_def, popup_name, popup_def, popup_entry

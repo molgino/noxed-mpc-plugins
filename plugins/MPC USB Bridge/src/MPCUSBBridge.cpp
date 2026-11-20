@@ -34,7 +34,7 @@
 
 namespace {
 
-enum ParamIndex { kLevel = 0, kCard, kLine, kStatus, kDevice, kStream, kLevels, kSystem, kMidiCh, kNumParams };
+enum ParamIndex { kLevel = 0, kCard, kLine, kStatus, kDevice, kStream, kLevels, kSystem, kMidiCh, kUiOpen, kNumParams };
 constexpr int kMaxLines = 96;
 constexpr int kMaxCard = 16;
 
@@ -59,6 +59,10 @@ public:
         std::vector<std::string> chans = {"Off"};
         for (int c = 1; c <= 16; ++c) chans.push_back(std::to_string(c));
         addParam(mpc::choiceParam("midich", "MIDI Ch", chans, 1));
+        // UI only: open drawn pick-list (0 none, k+1 = parameter k); MPC's native list overlay is empty for VST2.
+        mpc::Param pick = mpc::intParam("ui_open", "Choice Picker", 0, kUiOpen, 0);
+        pick.automatable = false;
+        addParam(pick);
         rep_ = ubdiag::scan(++scans_);
         rows();
         write();
@@ -81,7 +85,13 @@ public:
         srcRate_ = 0.0;   // re-primed on the next block
         gain_ = 0.0f;
     }
-    void reset() override { reader_.reset(); midi_.releaseHeld(); }
+    void reset() override { reader_.reset(); midi_.releaseHeld(); set(kUiOpen, 0); }
+
+    void parameterChanged(int index, float) override
+    {
+        if (index != kUiOpen && (int)std::lround(get(kUiOpen)) == index + 1) set(kUiOpen, 0);
+        if (index == kUiOpen) pickerDirty_.store(true);
+    }
 
     void process(mpc::ProcessContext& ctx) override
     {
@@ -176,7 +186,11 @@ private:
         int tick = 0;
         while (!stop_.load())
         {
-            for (int i = 0; i < 5 && !stop_.load(); ++i) std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            for (int i = 0; i < 20 && !stop_.load(); ++i)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(25));
+                if (pickerDirty_.exchange(false)) { notifyHostParameterChanged(kUiOpen); requestDisplayUpdate(); }
+            }
             if (stop_.load()) break;
             if (++tick % 20 == 0)
             {
@@ -258,7 +272,7 @@ private:
         info.name         = "MPC USB Bridge";
         info.vendor       = "NOXED";   // must match plugin.json "manufacturer"
         info.uniqueId     = MPC_FOURCC(kUid[0], kUid[1], kUid[2], kUid[3]);   // must match plugin.json "uid"
-        info.version      = 220;            // 0.2.2
+        info.version      = 230;            // 0.2.3
         info.isInstrument = true;
         info.numInputs    = 0;
         info.numOutputs   = 2;
@@ -280,7 +294,7 @@ private:
     std::mutex mutex_;
     ubdiag::Report rep_;
     std::string status_ = "Starting...", device_ = "-", stream_ = "-", levels_ = "-";
-    std::atomic<bool> stop_{false};
+    std::atomic<bool> stop_{false}, pickerDirty_{false};
     std::thread monitor_;
     std::string lastWritten_;
     int scans_ = 0;
