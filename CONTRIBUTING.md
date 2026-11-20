@@ -3,7 +3,7 @@
 Thanks for wanting to help! English or German – both are welcome.
 
 ## Reporting bugs
-[Open an issue](https://github.com/molgino/noxed-mpc-plugins/issues/new/choose) and include: MPC model, MPC OS version, plugin and version, connected device (for Overwitch/USB Bridge), what you expected and what happened. For Overwitch and USB Bridge a photo of the status rows (STATUS, DEVICE, STREAM …) or the report file from the plugin folder (`MPC-Overwitch-Report.txt`, `MPC-USB-Bridge-Report.txt`) helps a lot.
+[Open an issue](https://github.com/molgino/noxend-mpc-plugins/issues/new/choose) and include: MPC model, MPC OS version, plugin and version, connected device (for Overwitch/USB Bridge), what you expected and what happened. For Overwitch and USB Bridge a photo of the status rows (STATUS, DEVICE, STREAM …) or the report file from the plugin folder (`MPC-Overwitch-Report.txt`, `MPC-USB-Bridge-Report.txt`) helps a lot.
 
 ## Contributing code
 1. Fork the repository and create a branch.

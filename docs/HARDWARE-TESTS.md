@@ -1,7 +1,7 @@
 # Author-reported hardware tests
 
 On 17 November 2026, the author reported that all five plugins in release
-[v0.2.3](https://github.com/molgino/noxed-mpc-plugins/releases/tag/v0.2.3)
+[v0.2.3](https://github.com/molgino/noxend-mpc-plugins/releases/tag/v0.2.3)
 had been tested on an **MPC Live III (Gen2), MPC OS 3.10.1**.
 
 | Catalog ID | Tested plugin version |

@@ -1,6 +1,6 @@
 # NOXED MPC Plugins
 
-[![Build](https://github.com/molgino/noxed-mpc-plugins/actions/workflows/build-plugins.yml/badge.svg)](https://github.com/molgino/noxed-mpc-plugins/actions/workflows/build-plugins.yml) [![Ko-fi](https://img.shields.io/badge/Ko--fi-noxend-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/noxend)
+[![Build](https://github.com/molgino/noxend-mpc-plugins/actions/workflows/build-plugins.yml/badge.svg)](https://github.com/molgino/noxend-mpc-plugins/actions/workflows/build-plugins.yml) [![Ko-fi](https://img.shields.io/badge/Ko--fi-noxend-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/noxend)
 
 Open-source plugins for Akai MPC standalone (MPC Live/X/One/Key/Force, MPC OS 3.10.1+), built with the
 [inMusic MPC Plugin Builder SDK](https://github.com/inmusic-software/mpc-plugin-builder-sdk):

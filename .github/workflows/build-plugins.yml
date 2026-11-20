@@ -101,13 +101,13 @@ jobs:
           esac
           ver=$(python -c "import json;print(json.load(open('$P/plugin.json'))['version'])")
           python /tmp/openmpc/tools/sdk_release.py "$P/build/NOXED - VST - ${{ matrix.plugin }}" --version "$ver" \
-            --id "$CAT_ID" --repo molgino/noxed-mpc-plugins --license "$CAT_LICENSE" -o catalog-dist \
+            --id "$CAT_ID" --repo molgino/noxend-mpc-plugins --license "$CAT_LICENSE" -o catalog-dist \
             --asset-name "$CAT_ID" \
             --requires "$CAT_REQUIRES"
           ls -l catalog-dist
           python /tmp/openmpc/tools/sdk_zip.py "catalog-dist/$CAT_ID-$ver-mpc-sdk.zip" catalog-dist/*-mpc-armv7.zip catalog-dist/*-mpc-aarch64.zip || echo "::warning::sdk_zip failed"
           for z in catalog-dist/*-mpc-armv7.zip catalog-dist/*-mpc-aarch64.zip; do
-            if python /tmp/openmpc/tools/catalog_check.py "$z" --catalog --expect-id "$CAT_ID" --expect-repo molgino/noxed-mpc-plugins > check.txt 2>&1; then
+            if python /tmp/openmpc/tools/catalog_check.py "$z" --catalog --expect-id "$CAT_ID" --expect-repo molgino/noxend-mpc-plugins > check.txt 2>&1; then
               echo "::notice title=catalog_check OK $(basename "$z")::$(tr '\n' ' ' < check.txt | cut -c1-900)"
             else
               echo "::error title=catalog_check FAILED $(basename "$z")::$(tr '\n' ' ' < check.txt | cut -c1-900)"; exit 1
