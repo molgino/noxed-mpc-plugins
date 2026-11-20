@@ -87,7 +87,7 @@ jobs:
       # Open MPC plugin catalog (https://open-mpc.github.io): per-build zips in the catalog's format, made with
       # their tools at a pinned commit and checked with catalog_check.py. Only for plugins listed there.
       - name: Open MPC catalog zips
-        if: contains(fromJSON('["MPC Overwitch", "MPC Overwitch Send", "Prism Wave"]'), matrix.plugin)
+        if: contains(fromJSON('["Acidline", "MPC Overwitch", "MPC Overwitch Send", "MPC USB Bridge", "Prism Wave"]'), matrix.plugin)
         env:
           OPENMPC_COMMIT: 33d99c6a17f6b804cd5f710e6978243d6f3d827f
         run: |
@@ -98,6 +98,8 @@ jobs:
             "MPC Overwitch") CAT_ID=noxed-mpc-overwitch; CAT_LICENSE=GPL-3.0-or-later; CAT_REQUIRES="Elektron Overbridge device; USB mode Overbridge; MPC OS 3.10.1+" ;;
             "MPC Overwitch Send") CAT_ID=noxed-mpc-overwitch-send; CAT_LICENSE=GPL-3.0-or-later; CAT_REQUIRES="Elektron Overbridge device; USB mode Overbridge; MPC OS 3.10.1+" ;;
             "Prism Wave") CAT_ID=noxed-prism-wave; CAT_LICENSE=MIT; CAT_REQUIRES="MPC OS 3.10.1+" ;;
+            "Acidline") CAT_ID=noxed-acidline; CAT_LICENSE=MIT; CAT_REQUIRES="MPC OS 3.10.1+" ;;
+            "MPC USB Bridge") CAT_ID=noxed-mpc-usb-bridge; CAT_LICENSE=GPL-3.0-or-later; CAT_REQUIRES="Class-compliant USB audio device that is not the MPC's audio interface (e.g. Roland S-1); MPC OS 3.10.1+" ;;
           esac
           ver=$(python -c "import json;print(json.load(open('$P/plugin.json'))['version'])")
           python /tmp/openmpc/tools/sdk_release.py "$P/build/NOXED - VST - ${{ matrix.plugin }}" --version "$ver" \
@@ -115,7 +117,7 @@ jobs:
           done
 
       - uses: actions/upload-artifact@v4
-        if: contains(fromJSON('["MPC Overwitch", "MPC Overwitch Send", "Prism Wave"]'), matrix.plugin)
+        if: contains(fromJSON('["Acidline", "MPC Overwitch", "MPC Overwitch Send", "MPC USB Bridge", "Prism Wave"]'), matrix.plugin)
         with:
           name: catalog-${{ matrix.plugin }}
           path: catalog-dist/*.zip
